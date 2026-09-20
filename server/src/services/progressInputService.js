@@ -39,6 +39,7 @@ const submitTextProgress = async ({ projectId = 'default-project', reportText, r
     status: sourceDoc.status,
     createdAt: sourceDoc.createdAt,
   };
+  
 };
 
 /**
