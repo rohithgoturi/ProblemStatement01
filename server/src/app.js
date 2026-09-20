@@ -1,6 +1,7 @@
 const express = require('express');
 const healthRoutes = require('./routes/healthRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
+const progressRoutes = require('./routes/progressRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 // API Routes
 app.use('/api', healthRoutes);
 app.use('/api', scheduleRoutes);
+app.use('/api', progressRoutes);
 
 // 404 Handler for undefined routes
 app.use((req, res) => {
