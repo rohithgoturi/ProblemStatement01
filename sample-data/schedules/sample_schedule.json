@@ -1,0 +1,35 @@
+[
+  {
+    "activityId": "CIV-101",
+    "activityName": "Foundation Excavation - Block A",
+    "wbsCode": "1.1.1",
+    "hierarchyLevel": 5,
+    "discipline": "Civil",
+    "location": "Block A",
+    "plannedStartDate": "2026-10-01",
+    "plannedFinishDate": "2026-10-10",
+    "status": "PLANNED"
+  },
+  {
+    "activityId": "CIV-102",
+    "activityName": "Reinforcement & Concreting - Block A",
+    "wbsCode": "1.1.2",
+    "hierarchyLevel": 5,
+    "discipline": "Civil",
+    "location": "Block A",
+    "plannedStartDate": "2026-10-11",
+    "plannedFinishDate": "2026-10-20",
+    "status": "PLANNED"
+  },
+  {
+    "activityId": "PIP-201",
+    "activityName": "Main Header Pipe Spool Fitting",
+    "wbsCode": "2.1.1",
+    "hierarchyLevel": 5,
+    "discipline": "Piping",
+    "location": "Yard B",
+    "plannedStartDate": "2026-10-05",
+    "plannedFinishDate": "2026-10-18",
+    "status": "PLANNED"
+  }
+]

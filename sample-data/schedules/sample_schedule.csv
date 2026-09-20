@@ -1,0 +1,9 @@
+Activity ID,Activity Name,WBS Code,Hierarchy Level,Discipline,Location,Planned Start Date,Planned Finish Date,Status
+CIV-101,Foundation Excavation - Block A,1.1.1,5,Civil,Block A,2026-10-01,2026-10-10,PLANNED
+CIV-102,Reinforcement & Concreting - Block A,1.1.2,5,Civil,Block A,2026-10-11,2026-10-20,PLANNED
+PIP-201,Main Header Pipe Spool Fitting,2.1.1,5,Piping,Yard B,2026-10-05,2026-10-18,PLANNED
+PIP-202,Hydrotesting of Underground Lines,2.1.2,5,Piping,Yard B,2026-10-19,2026-10-25,PLANNED
+ELE-301,Substation Cable Tray Erection,3.1.1,5,Electrical,Substation 1,2026-10-02,2026-10-12,PLANNED
+INS-401,Control Panel Wiring & Termination,4.1.1,5,Instrumentation,Control Room,2026-10-15,2026-10-28,PLANNED
+ST-501,Distillation Column Heavy Lift & Erection,5.1.1,5,Static Equipment,Process Unit 1,2026-10-08,2026-10-22,PLANNED
+ROT-601,Centrifugal Pump Alignment & Pre-commissioning,6.1.1,5,Rotating Equipment,Pump House,2026-10-12,2026-10-25,PLANNED
