@@ -1,0 +1,75 @@
+// ============================================================
+// PRAGATIPATH — Mock Field Observations (DPR)
+// [Demo data] — Not real project data.
+// ============================================================
+
+import type { FieldObservation } from '@/types';
+
+export const MOCK_OBSERVATIONS: FieldObservation[] = [
+  {
+    id: 'OBS-2024-0142',
+    projectId: 'P-101',
+    activityText: 'Erection work completed for Line 24-XX pipe segment in Zone B. Team completed approximately 64% of the total pipe run. Observed minor delay due to equipment calibration.',
+    location: 'Zone B, Ch. 12+400',
+    progress: 64,
+    capturedAt: '2024-09-20T14:00:00Z',
+    source: 'text',
+    contractor: 'Larsen & Toubro ECC',
+    notes: 'Raina ji ka team ne kaam khatam kiya — equipment calibration mein 2 ghante delay hua.',
+    extractedActivity: 'Erect Main Line 24-XX Pipe Segment',
+    extractedLocation: 'Zone B, Ch. 12+400',
+    extractedProgress: 64,
+  },
+  {
+    id: 'OBS-2024-0141',
+    projectId: 'P-101',
+    activityText: 'Secondary pump piping alignment completed for Zone A section. All flanges torqued to spec. QC inspection passed.',
+    location: 'Zone A, Ch. 12+200',
+    progress: 58,
+    capturedAt: '2024-09-19T11:30:00Z',
+    source: 'voice',
+    contractor: 'TATA Projects Ltd.',
+    extractedActivity: 'Secondary Pump Piping & Alignment',
+    extractedLocation: 'Zone A, Ch. 12+200',
+    extractedProgress: 58,
+  },
+  {
+    id: 'OBS-2024-0140',
+    projectId: 'P-101',
+    activityText: 'Civil foundation work at Pump Station 3 showing delays. Only 72% complete against 90% target. Concrete curing issues reported.',
+    location: 'Zone C, Ch. 13+100',
+    progress: 72,
+    capturedAt: '2024-09-18T09:00:00Z',
+    source: 'pdf',
+    contractor: 'Shapoorji Pallonji',
+    extractedActivity: 'Civil Foundation — Pump Station 3',
+    extractedLocation: 'Zone C, Ch. 13+100',
+    extractedProgress: 72,
+  },
+  {
+    id: 'OBS-2024-0139',
+    projectId: 'P-101',
+    activityText: 'Cable tray installation progressing at 42%. Team ahead of schedule by 2 percentage points.',
+    location: 'Zone B, Ch. 12+600',
+    progress: 42,
+    capturedAt: '2024-09-20T16:00:00Z',
+    source: 'excel',
+    contractor: 'Siemens India',
+    extractedActivity: 'Instrumentation Cable Tray Installation',
+    extractedLocation: 'Zone B, Ch. 12+600',
+    extractedProgress: 42,
+  },
+  {
+    id: 'OBS-2024-0138',
+    projectId: 'P-101',
+    activityText: 'Flange connections at Ch. 12+450 — 60% done. Gasket quality issue reported for batch GK-2024-09-18. Replacement ordered.',
+    location: 'Zone B, Ch. 12+450',
+    progress: 60,
+    capturedAt: '2024-09-20T10:30:00Z',
+    source: 'photo',
+    contractor: 'Larsen & Toubro ECC',
+    extractedActivity: 'Flange Connections & Gasket Installation',
+    extractedLocation: 'Zone B, Ch. 12+450',
+    extractedProgress: 60,
+  },
+];
