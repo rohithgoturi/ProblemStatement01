@@ -31,6 +31,12 @@ const progressEventSchema = new mongoose.Schema(
       index: true,
       default: 'default-project',
     },
+    sourceDocumentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'SourceDocument',
+      default: null,
+      index: true,
+    },
     sourceFile: {
       type: String,
       required: [true, 'Source document or file identifier is required'],
