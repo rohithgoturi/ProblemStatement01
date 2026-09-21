@@ -10,6 +10,7 @@ import {
   MdChevronLeft, MdChevronRight,
 } from 'react-icons/md';
 import { cn } from '../../utils/helpers';
+import { Logo, PragatiPathIcon } from '../shared/Logo';
 
 const ICON_MAP = {
   MdDashboard:    <MdDashboard size={18} />,
@@ -68,22 +69,12 @@ export function Sidebar({ collapsed = false, onToggle }) {
       {/* Logo */}
       <div className={cn(
         'flex items-center border-b border-surface-border flex-shrink-0',
-        collapsed ? 'h-16 justify-center px-0' : 'h-16 px-5 gap-3',
+        collapsed ? 'h-16 justify-center px-0' : 'h-16 px-4 gap-2.5',
       )}>
-        {/* Construction hard hat logo mark */}
-        <div className="w-8 h-8 bg-brand-blue rounded-lg flex items-center justify-center flex-shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M12 3C7 3 3 7 3 12H4.5C4.5 7.8 7.8 4.5 12 4.5V3Z" fill="white"/>
-            <path d="M12 3C17 3 21 7 21 12H19.5C19.5 7.8 16.2 4.5 12 4.5V3Z" fill="white" opacity="0.7"/>
-            <rect x="3" y="12" width="18" height="2.5" rx="1.25" fill="white"/>
-            <rect x="7" y="14.5" width="10" height="4" rx="1" fill="white" opacity="0.85"/>
-          </svg>
-        </div>
-        {!collapsed && (
-          <div>
-            <span className="text-base font-bold text-ink-primary tracking-tight">PragatiPath</span>
-            <p className="text-[10px] text-ink-muted leading-tight">Construction Intelligence</p>
-          </div>
+        {collapsed ? (
+          <PragatiPathIcon size={28} />
+        ) : (
+          <Logo size="sm" to="/dashboard" />
         )}
       </div>
 
