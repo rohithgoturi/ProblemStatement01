@@ -15,6 +15,7 @@ import {
   MdCheckCircle, MdWarning, MdAccessTime,
   MdClose
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 import { allProjectsList } from '../../data/projectsData';
 
 export function ProjectsPage() {
@@ -59,56 +60,52 @@ export function ProjectsPage() {
         </div>
       )}
 
-      {/* Header Banner */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#0056D2] uppercase tracking-wider">
-            <MdFolderOpen size={16} />
-            <span>Project Directory</span>
-          </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
-            Projects Portfolio Workspace
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Explore and access all 12 active infrastructure projects across 5 regional sites.
-          </p>
-        </div>
+      {/* Unified PageHero Banner */}
+      <PageHero
+        title="Projects"
+        subtitle="Manage and monitor infrastructure projects"
+        icon={<MdFolderOpen />}
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/dashboard' },
+          { label: 'Projects' },
+        ]}
+        actions={
+          <div className="flex items-center gap-3">
+            {/* Grid / Table view toggle */}
+            <div className="inline-flex items-center p-1 rounded-xl bg-white/20 backdrop-blur-xs border border-white/20 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-lg transition-all ${
+                  viewMode === 'grid' ? 'bg-white text-[#0056D2] shadow-xs' : 'text-white/80 hover:text-white'
+                }`}
+                title="Grid View"
+              >
+                <MdViewModule size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('table')}
+                className={`p-1.5 rounded-lg transition-all ${
+                  viewMode === 'table' ? 'bg-white text-[#0056D2] shadow-xs' : 'text-white/80 hover:text-white'
+                }`}
+                title="Table View"
+              >
+                <MdViewList size={18} />
+              </button>
+            </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          {/* Grid / Table view toggle */}
-          <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 text-xs font-semibold">
             <button
               type="button"
-              onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg transition-all ${
-                viewMode === 'grid' ? 'bg-white text-[#0056D2] shadow-xs' : 'text-slate-500 hover:text-slate-800'
-              }`}
-              title="Grid View"
+              onClick={() => setShowModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-blue-50 text-[#0056D2] font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
             >
-              <MdViewModule size={18} />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('table')}
-              className={`p-1.5 rounded-lg transition-all ${
-                viewMode === 'table' ? 'bg-white text-[#0056D2] shadow-xs' : 'text-slate-500 hover:text-slate-800'
-              }`}
-              title="Table View"
-            >
-              <MdViewList size={18} />
+              <MdAdd size={16} />
+              <span>New Project</span>
             </button>
           </div>
-
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0056D2] hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95 cursor-pointer"
-          >
-            <MdAdd size={16} />
-            <span>New Project</span>
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Portfolio Summary Metric Chips */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

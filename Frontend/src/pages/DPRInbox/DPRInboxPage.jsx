@@ -15,8 +15,9 @@ import {
   MdOutlineArticle, MdMic, MdTableChart, MdPictureAsPdf, MdInsertPhoto,
   MdAttachFile, MdAdd, MdPlayArrow, MdPause, MdVolumeUp, MdVolumeOff,
   MdDeleteOutline, MdSend, MdInfoOutline, MdChevronRight, MdContentCopy,
-  MdCheckCircle, MdCalendarToday, MdLocationOn, MdClose, MdCheck
+  MdCheckCircle, MdCalendarToday, MdLocationOn, MdClose, MdCheck, MdInbox
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 import {
   dprContextInfo,
   recentDprSubmissions,
@@ -177,63 +178,44 @@ export default function DPRInboxPage() {
         </div>
       )}
 
-      {/* 1. DPR HERO BANNER */}
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-[#0047B3] via-[#0056D2] to-[#0A2540] text-white shadow-sm border border-blue-700/30">
-        {/* Background construction framework overlay */}
-        <div
-          className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none bg-cover bg-center"
-          style={{
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=1400&auto=format&fit=crop&q=80)',
-          }}
-        />
-
-        <div className="relative z-10 p-6 md:p-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            {/* Pill badge */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-sm text-xs font-semibold tracking-wider uppercase text-blue-100 border border-white/20">
-              DPR INBOX
-            </div>
-
-            {/* Title & Subtitle */}
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-              Submit Daily Progress Report – DPR
-            </h1>
-            <p className="text-blue-100 text-sm leading-relaxed">
-              Capture actual work done on site. Supports text, voice, Excel, PDF, photos (Hindi / Hinglish OK).
-            </p>
-
-            {/* Context Metadata Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-blue-100">
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
-                <MdLocationOn className="text-blue-200 text-sm" />
-                {dprContextInfo.projectName}
-              </span>
-              <span className="text-blue-300">•</span>
-              <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
-                {dprContextInfo.unit}
-              </span>
-              <span className="text-blue-300">•</span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
-                <MdCalendarToday className="text-blue-200 text-sm" />
-                {dprContextInfo.reportDate}
-              </span>
-            </div>
-          </div>
-
-          {/* Right Side: Construction Image + Date Picker Card */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:shrink-0">
+      {/* 1. UNIFIED DPR HERO BANNER */}
+      <PageHero
+        title="Daily Progress Reports"
+        subtitle="Capture and review field execution updates"
+        icon={<MdInbox />}
+        eyebrow="DPR INBOX"
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/dashboard' },
+          { label: 'DPR Inbox' },
+        ]}
+        meta={
+          <>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
+              <MdLocationOn className="text-blue-200 text-sm" />
+              {dprContextInfo.projectName}
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
+              {dprContextInfo.unit}
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
+              <MdCalendarToday className="text-blue-200 text-sm" />
+              {dprContextInfo.reportDate}
+            </span>
+          </>
+        }
+        actions={
+          <div className="flex items-center gap-3">
             {/* Date Picker Trigger Card */}
-            <div className="bg-white text-slate-800 rounded-xl px-4 py-2.5 shadow-md flex items-center gap-3 border border-slate-200 text-xs font-medium">
-              <div className="text-slate-400">
-                <MdCalendarToday size={18} className="text-[#0056D2]" />
-              </div>
+            <div className="bg-white text-slate-800 rounded-xl px-3.5 py-2 shadow-sm flex items-center gap-2.5 border border-slate-200 text-xs font-medium">
+              <MdCalendarToday size={16} className="text-[#0056D2]" />
               <div>
-                <div className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Report Date</div>
+                <div className="text-[9px] uppercase font-semibold text-slate-400 tracking-wider leading-none">Report Date</div>
                 <select
                   value={reportDate}
                   onChange={(e) => setReportDate(e.target.value)}
-                  className="font-bold text-slate-800 bg-transparent cursor-pointer focus:outline-none"
+                  className="font-bold text-slate-800 bg-transparent cursor-pointer focus:outline-none text-xs mt-0.5"
                 >
                   <option value="10 Sep 2026">10 Sep 2026</option>
                   <option value="09 Sep 2026">09 Sep 2026</option>
@@ -244,17 +226,16 @@ export default function DPRInboxPage() {
             </div>
 
             {/* Engineer Image Thumbnail matching reference */}
-            <div className="hidden sm:block relative w-24 h-24 md:w-28 md:h-28 rounded-xl overflow-hidden shadow-lg border-2 border-white/40 shrink-0">
+            <div className="hidden sm:block relative w-12 h-12 rounded-xl overflow-hidden shadow-md border-2 border-white/40 shrink-0">
               <img
-                src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&auto=format&fit=crop&q=80"
+                src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=200&auto=format&fit=crop&q=80"
                 alt="Site Engineer"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. MODE TABS STRIP */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">

@@ -20,6 +20,7 @@ import {
   MdArticle, MdImage, MdMic, MdPictureAsPdf,
   MdGridOn, MdCheck,
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 
 import {
   ps26122ProjectHeader,
@@ -73,108 +74,77 @@ export function ManagerProjectWorkspace() {
         </div>
       )}
 
-      {/* Breadcrumb back to portfolio */}
-      <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-        <Link to="/dashboard" className="hover:text-[#0056D2] transition-colors">
-          Main Dashboard
-        </Link>
-        <span>/</span>
-        <span className="text-slate-800 font-bold">PS 26122 — Project Dashboard</span>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 1. HERO BANNER WITH STITCH BACKGROUND IMAGE & OVERALL PROGRESS CARD       */}
-      {/* ========================================================================= */}
-      <section className="relative rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-900 text-white min-h-[190px]">
-        
-        {/* Background Construction Site Scene with Engineer from Stitch */}
-        <div
-          className="absolute inset-0 z-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(to right, #0040A1 0%, rgba(0, 64, 161, 0.95) 45%, rgba(0, 64, 161, 0.65) 68%, transparent 100%), url('/stitch-hero-bg.png')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'right bottom',
-          }}
-        />
-
-        <div className="relative z-10 p-6 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          
-          {/* Left Metadata & Title */}
-          <div className="space-y-1.5 max-w-xl">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-200 bg-blue-900/50 px-2.5 py-0.5 rounded border border-blue-400/20 inline-block mb-1">
-              {ps26122ProjectHeader.category}
+      {/* 1. UNIFIED HERO BANNER */}
+      <PageHero
+        title={ps26122ProjectHeader.title}
+        subtitle={ps26122ProjectHeader.description}
+        icon={<MdLayers />}
+        eyebrow={ps26122ProjectHeader.category}
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/dashboard' },
+          { label: 'Projects', path: '/projects' },
+          { label: 'PS 26122' },
+        ]}
+        meta={
+          <>
+            <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
+              <MdLocationOn className="text-sky-300" size={13} />
+              <span>{ps26122ProjectHeader.location}</span>
             </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              {ps26122ProjectHeader.title}
-            </h1>
-            <p className="text-xs sm:text-sm text-blue-100/90 font-normal leading-relaxed">
-              {ps26122ProjectHeader.description}
-            </p>
-
-            {/* Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-blue-100">
-              <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
-                <MdLocationOn className="text-sky-300" size={13} />
-                <span>{ps26122ProjectHeader.location}</span>
-              </span>
-              <span className="text-blue-300/60">|</span>
-              <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
-                {ps26122ProjectHeader.date}
-              </span>
+            <span className="text-blue-300/60">|</span>
+            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
+              {ps26122ProjectHeader.date}
+            </span>
+          </>
+        }
+        actions={
+          <Link
+            to="/progress"
+            className="bg-white/95 backdrop-blur-md text-slate-900 rounded-2xl p-3 sm:p-4 shadow-xl border border-white/80 flex items-center gap-3.5 hover:scale-[1.02] transition-transform group"
+          >
+            {/* Radial Progress Gauge */}
+            <div className="relative w-14 h-14 flex items-center justify-center">
+              <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#EFF6FF"
+                  strokeWidth="3.6"
+                />
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#0056D2"
+                  strokeWidth="3.6"
+                  strokeDasharray="68, 100"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center font-extrabold text-xs text-[#0056D2]">
+                68%
+              </div>
             </div>
-          </div>
 
-          {/* Right Floating Overall Progress Radial Card */}
-          <div className="flex-shrink-0">
-            <Link
-              to="/progress"
-              className="bg-white/95 backdrop-blur-md text-slate-900 rounded-2xl p-4 sm:p-5 shadow-xl border border-white/80 flex items-center gap-4 hover:scale-[1.02] transition-transform group"
-            >
-              {/* Radial Progress Gauge */}
-              <div className="relative w-16 h-16 flex items-center justify-center">
-                <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke="#EFF6FF"
-                    strokeWidth="3.6"
-                  />
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke="#0056D2"
-                    strokeWidth="3.6"
-                    strokeDasharray="68, 100"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center font-extrabold text-sm text-[#0056D2]">
-                  68%
-                </div>
+            {/* Progress Labels */}
+            <div>
+              <div className="text-[11px] font-bold text-slate-900 uppercase tracking-wide">
+                Overall Progress
               </div>
-
-              {/* Progress Labels */}
-              <div>
-                <div className="text-xs font-bold text-slate-900 uppercase tracking-wide">
-                  Overall Progress
-                </div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>On Track</span>
-                  </span>
-                </div>
-                <p className="text-[11px] text-emerald-600 font-semibold mt-1">
-                  ↑ +4% <span className="text-slate-400 font-normal">vs last month</span>
-                </p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span>On Track</span>
+                </span>
               </div>
+              <p className="text-[10px] text-emerald-600 font-semibold mt-0.5">
+                ↑ +4% <span className="text-slate-400 font-normal">vs last month</span>
+              </p>
+            </div>
 
-              <MdChevronRight className="text-slate-400 group-hover:text-[#0056D2] group-hover:translate-x-1 transition-all text-xl" />
-            </Link>
-          </div>
-
-        </div>
-      </section>
+            <MdChevronRight className="text-slate-400 group-hover:text-[#0056D2] group-hover:translate-x-1 transition-all text-lg" />
+          </Link>
+        }
+      />
 
       {/* ========================================================================= */}
       {/* 2. 5 ACTIVITY KPI CARDS WITH COLORED BOTTOM ACCENT LINES                   */}

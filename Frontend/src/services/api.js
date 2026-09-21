@@ -103,3 +103,56 @@ export const logout = async () => {
   await delay(200);
   return { data: { success: true }, error: null };
 };
+
+// ---- AI Matching & Verification ----
+import { AI_MATCHING_DATA } from '../data/aiMatchingData';
+import { PROGRESS_TRACKING_DATA } from '../data/progressData';
+
+export const getAIMatchingData = async () => {
+  await delay(300);
+  return { data: AI_MATCHING_DATA, error: null };
+};
+
+export const validateCandidateMatch = async (id, action) => {
+  await delay(300);
+  return {
+    data: {
+      id,
+      action, // 'approve' | 'change' | 'reject'
+      timestamp: new Date().toISOString(),
+      updatedStatus: action === 'approve' ? 'Approved' : action === 'reject' ? 'Rejected' : 'Changed',
+    },
+    error: null,
+  };
+};
+
+// ---- Progress Tracking ----
+
+export const getProgressTrackingData = async () => {
+  await delay(300);
+  return { data: PROGRESS_TRACKING_DATA, error: null };
+};
+
+// ---- Reports & Export ----
+import { REPORTS_DATA } from '../data/reportsData';
+
+export const getReportsData = async () => {
+  await delay(300);
+  return { data: REPORTS_DATA, error: null };
+};
+
+export const triggerReportExport = async (reportId, format = 'PDF') => {
+  await delay(500);
+  return {
+    data: {
+      success: true,
+      reportId,
+      format,
+      downloadUrl: `#download-${reportId}-${Date.now()}`,
+      generatedAt: new Date().toISOString(),
+    },
+    error: null,
+  };
+};
+
+

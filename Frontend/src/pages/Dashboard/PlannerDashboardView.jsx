@@ -14,6 +14,7 @@ import {
   MdCheckCircle, MdClose, MdArrowForward,
   MdTimeline, MdHistory
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 import {
   plannerMetrics,
   plannerAIValidationList,
@@ -59,39 +60,30 @@ export function PlannerDashboardView() {
       )}
 
       {/* 1. PLANNER HERO BANNER */}
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-[#0B2347] via-[#0056D2] to-[#091D3C] text-white p-6 md:p-8 shadow-sm">
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-400/20 text-blue-200 text-xs font-bold border border-blue-400/30 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-300 animate-pulse" />
-              Schedule & Reconciliation
-            </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              Project Planner Dashboard
-            </h1>
-            <p className="text-blue-100 text-xs sm:text-sm">
-              Current focus: Reconcile daily field reports with Baseline Rev 2 schedule and validate high-confidence AI matching candidates.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-blue-100">
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                Baseline: Rev 2 (10 Sep 2026)
-              </span>
-              <span className="text-blue-300">•</span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdTrendingUp className="text-rose-400" />
-                Variance: +4d Critical Path
-              </span>
-              <span className="text-blue-300">•</span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdAutoAwesome className="text-amber-300" />
-                {validationQueue.length} Matches Need Validation
-              </span>
-            </div>
-          </div>
-
-          {/* Planner Primary CTA & Secondary Action */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+      <PageHero
+        title="Project Planner Dashboard"
+        subtitle="Current focus: Reconcile daily field reports with Baseline Rev 2 schedule and validate high-confidence AI matching candidates."
+        icon={<MdAutoAwesome />}
+        eyebrow="SCHEDULE & RECONCILIATION"
+        meta={
+          <>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              Baseline: Rev 2 (10 Sep 2026)
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdTrendingUp className="text-rose-400" />
+              Variance: +4d Critical Path
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdAutoAwesome className="text-amber-300" />
+              {validationQueue.length} Matches Need Validation
+            </span>
+          </>
+        }
+        actions={
+          <>
             <button
               type="button"
               onClick={() => {
@@ -99,7 +91,7 @@ export function PlannerDashboardView() {
                 el?.scrollIntoView({ behavior: 'smooth' });
                 showToast('Reviewing 3 pending AI candidates');
               }}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#0056D2] font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#0056D2] font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <MdAutoAwesome size={16} />
               <span>Review Matches</span>
@@ -107,14 +99,14 @@ export function PlannerDashboardView() {
             <button
               type="button"
               onClick={() => navigate('/schedule')}
-              className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-colors"
             >
               <span>Open Schedule</span>
               <MdArrowForward size={16} />
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* 2. PLANNER 4 KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

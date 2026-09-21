@@ -10,13 +10,13 @@
  * - Bottom Right: Recent Activity attachments gallery
  */
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import {
   MdCalendarToday, MdCloudUpload, MdFolderOpen, MdCheckCircle, MdAccessTime,
   MdWarning, MdVisibility, MdMoreVert, MdRefresh,
   MdViewList, MdViewTimeline, MdInfoOutline, MdAdd,
   MdChevronLeft, MdChevronRight, MdTableChart, MdPictureAsPdf
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 import {
   scheduleKPIs,
   uploadedSchedulesList,
@@ -120,32 +120,31 @@ export default function SchedulePage() {
         </div>
       )}
 
-      {/* 1. PAGE TITLE & BREADCRUMBS HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-        <div className="flex items-center gap-3.5">
-          {/* Blue calendar rounded icon container matching reference */}
-          <div className="w-12 h-12 rounded-xl bg-[#0056D2] text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
-            <MdCalendarToday size={24} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              Schedule Management
-            </h1>
-            <p className="text-xs font-semibold text-slate-500 mt-0.5">
-              PS 26122 • Baseline Schedule
-            </p>
-          </div>
-        </div>
-
-        {/* Breadcrumb links */}
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-          <Link to="/dashboard" className="hover:text-[#0056D2] transition-colors flex items-center gap-1">
-            Dashboard
-          </Link>
-          <span>&gt;</span>
-          <span className="text-[#0056D2] font-semibold">Schedule</span>
-        </div>
-      </div>
+      {/* 1. UNIFIED SCHEDULE HERO BANNER */}
+      <PageHero
+        title="Schedule"
+        subtitle="Track planned activities and schedule performance"
+        icon={<MdCalendarToday />}
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/dashboard' },
+          { label: 'Schedule' },
+        ]}
+        meta={
+          <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
+            <span>PS 26122 • Baseline Schedule</span>
+          </span>
+        }
+        actions={
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-blue-50 text-[#0056D2] font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+          >
+            <MdFolderOpen size={16} />
+            <span>Upload Baseline</span>
+          </button>
+        }
+      />
 
       {/* 2. TOP SECTION: Upload Card (Left) + 5 KPIs & Uploaded Table (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">

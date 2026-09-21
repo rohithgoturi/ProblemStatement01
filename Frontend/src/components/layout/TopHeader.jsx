@@ -14,6 +14,7 @@ import {
 import { cn } from '../../utils/helpers';
 import { notifications as mockNotifications } from '../../data/navigation';
 import { useRole } from '../../context/RoleContext';
+import { Logo } from '../shared/Logo';
 
 export function TopHeader({ collapsed, onMenuToggle }) {
   const { currentRole, setRole, currentProfile, availableRoles } = useRole();
@@ -73,6 +74,11 @@ export function TopHeader({ collapsed, onMenuToggle }) {
         >
           <MdMenu size={22} />
         </button>
+
+        {/* Mobile Brand Mark */}
+        <div className="lg:hidden flex items-center">
+          <Logo size="xs" to="/dashboard" showWordmark={false} />
+        </div>
 
         {/* Search Input with ⌘ K Shortcut */}
         <div className="relative w-full max-w-md hidden sm:block">

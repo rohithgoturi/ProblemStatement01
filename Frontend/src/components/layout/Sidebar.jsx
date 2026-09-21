@@ -39,7 +39,6 @@ const NAV_GROUPS = [
       { id: 'schedule',   label: 'Schedule',   path: '/schedule',   icon: 'MdCalendarToday' },
       { id: 'ai-matching',label: 'AI Matching',path: '/ai-matching', icon: 'MdAutoAwesome' },
       { id: 'progress',   label: 'Progress',   path: '/progress',   icon: 'MdTrendingUp' },
-      { id: 'analytics',  label: 'Analytics',  path: '/progress',   icon: 'MdBarChart' },
       { id: 'reports',    label: 'Reports',    path: '/reports',    icon: 'MdBarChart' },
     ],
   },

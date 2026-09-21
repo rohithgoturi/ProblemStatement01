@@ -18,8 +18,9 @@ import {
   MdArrowForward, MdEngineering, MdDomain,
   MdBolt, MdSensors, MdGrain, MdCalendarToday,
   MdArticle, MdTrendingUp, MdSpeed, MdAutoAwesome,
-  MdFolderOpen, MdClose,
+  MdFolderOpen, MdClose, MdDashboard,
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 
 import {
   portfolioSummaryKPIs,
@@ -117,71 +118,40 @@ export function ManagerDashboardView() {
       )}
 
       {/* ========================================================================= */}
-      {/* 1. HERO BANNER WITH BLUEPRINT CONSTRUCTION BACKGROUND                      */}
+      {/* 1. UNIFIED HERO BANNER                                                    */}
       {/* ========================================================================= */}
-      <section className="relative rounded-2xl overflow-hidden shadow-sm border border-blue-200/50 bg-gradient-to-r from-[#0056D2] via-[#0047B3] to-[#0A2E6E] text-white">
-        
-        {/* Background construction scene overlay with cranes */}
-        <div
-          className="absolute inset-0 z-0 opacity-20 pointer-events-none"
-          style={{
-            backgroundImage: `url('/stitch-hero-bg.png')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'right center',
-          }}
-        />
-
-        {/* Blueprint grid effect */}
-        <div
-          className="absolute inset-0 z-0 opacity-15 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-          }}
-        />
-
-        <div className="relative z-10 px-6 sm:px-8 py-6 sm:py-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-1.5 max-w-2xl">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-200 bg-blue-900/40 px-2.5 py-0.5 rounded-md border border-blue-400/20 inline-block mb-1">
-              CONSTRUCTION PROJECT MANAGEMENT
+      <PageHero
+        title="Dashboard"
+        subtitle="Project health, progress and execution insights"
+        icon={<MdDashboard />}
+        eyebrow="CONSTRUCTION PROJECT MANAGEMENT"
+        meta={
+          <>
+            <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
+              <MdLocationOn className="text-sky-300" size={14} />
+              <span>Pump P-101</span>
             </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-              Pragatipath
-            </h1>
-            <p className="text-sm sm:text-base text-blue-100/90 font-normal leading-relaxed">
-              Track progress, monitor performance and keep your projects on schedule.
-            </p>
-
-            {/* Context chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-blue-100">
-              <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
-                <MdLocationOn className="text-sky-300" size={14} />
-                <span>Pump P-101</span>
-              </span>
-              <span className="text-blue-300/60">|</span>
-              <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
-                Unit 2
-              </span>
-              <span className="text-blue-300/60">|</span>
-              <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
-                10 Sept 2026
-              </span>
-            </div>
-          </div>
-
-          {/* New Project CTA Button */}
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={() => setShowNewProjectModal(true)}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-blue-50 text-[#0056D2] font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 group"
-            >
-              <MdAdd className="text-lg transition-transform group-hover:rotate-90" />
-              <span>+ New Project</span>
-            </button>
-          </div>
-        </div>
-      </section>
+            <span className="text-blue-300/60">|</span>
+            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
+              Unit 2
+            </span>
+            <span className="text-blue-300/60">|</span>
+            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
+              10 Sept 2026
+            </span>
+          </>
+        }
+        actions={
+          <button
+            type="button"
+            onClick={() => setShowNewProjectModal(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-blue-50 text-[#0056D2] font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 group"
+          >
+            <MdAdd className="text-lg transition-transform group-hover:rotate-90" />
+            <span>+ New Project</span>
+          </button>
+        }
+      />
 
       {/* ========================================================================= */}
       {/* 2. 5 SUMMARY KPI CARDS                                                    */}

@@ -14,6 +14,7 @@ import {
   MdLocationOn, MdSend, MdAttachFile,
   MdArrowForward, MdWbSunny, MdPeople
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 import {
   supervisorMetrics,
   supervisorAssignedActivities,
@@ -77,44 +78,35 @@ export function SupervisorDashboardView() {
       )}
 
       {/* 1. SUPERVISOR HERO BANNER */}
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-[#0B2347] via-[#0056D2] to-[#0B2347] text-white p-6 md:p-8 shadow-sm">
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-              Field Execution Command
-            </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              Site Supervisor Dashboard
-            </h1>
-            <p className="text-blue-100 text-xs sm:text-sm">
-              Today's operational priority: Execute Unit 2 mechanical installation and report shift progress.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-blue-100">
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdLocationOn className="text-emerald-400" />
-                Active Site: Site A · Unit 2
-              </span>
-              <span className="text-blue-300">•</span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdWbSunny className="text-amber-400" />
-                29°C Clear · Favorable
-              </span>
-              <span className="text-blue-300">•</span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdPeople className="text-blue-200" />
-                {supervisorCrewStatus.onSite} Workers Active
-              </span>
-            </div>
-          </div>
-
-          {/* Supervisor Primary CTA & Secondary Action */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+      <PageHero
+        title="Site Supervisor Dashboard"
+        subtitle="Today's operational priority: Execute Unit 2 mechanical installation and report shift progress."
+        icon={<MdAssignmentInd />}
+        eyebrow="FIELD EXECUTION COMMAND"
+        meta={
+          <>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdLocationOn className="text-emerald-400" />
+              Active Site: Site A · Unit 2
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdWbSunny className="text-amber-400" />
+              29°C Clear · Favorable
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdPeople className="text-blue-200" />
+              {supervisorCrewStatus.onSite} Workers Active
+            </span>
+          </>
+        }
+        actions={
+          <>
             <button
               type="button"
               onClick={() => navigate('/dpr')}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-[#0056D2] font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#0056D2] font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <MdSend size={16} />
               <span>Submit DPR</span>
@@ -122,14 +114,14 @@ export function SupervisorDashboardView() {
             <button
               type="button"
               onClick={() => navigate('/projects/PS-26122')}
-              className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-colors"
             >
               <span>View Assigned Site</span>
               <MdArrowForward size={16} />
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* 2. SUPERVISOR 4 KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

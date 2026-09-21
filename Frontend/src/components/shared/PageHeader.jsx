@@ -1,88 +1,76 @@
 /**
- * PageHeader — Top section of each page with title, breadcrumbs, and actions
+ * PageHeader — Global Standardized Page Header Component for PragatiPath
+ *
+ * Canonical Reference: Reports & Export Screen Header
+ *
+ * Strict Design Specifications:
+ * - Background: #3158C9 to #3F63D5 linear blue gradient
+ * - Border radius: 20px (rounded-[20px])
+ * - Minimum height: 138px (min-h-[138px])
+ * - Horizontal padding: 32px (px-6 sm:px-8), Vertical: py-5 sm:py-6
+ * - Icon container: 58px x 58px, rounded-[16px], bg-white/15, border 1px solid rgba(255,255,255,0.20)
+ * - Gap between icon and title: 20px (gap-5)
+ * - Title: 24-28px (text-2xl sm:text-[26px]), font-bold (700), #FFFFFF
+ * - Subtitle: 15-17px (text-[15px]), font-normal (400-500), rgba(255,255,255,0.80)
+ * - Vertical alignment: Perfectly centered flex container
+ * - Responsive: Stacks cleanly on smaller screens while preserving identical visual identity
  */
-import { MdChevronRight } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import { cn } from '../../utils/helpers';
 
-/**
- * @param {string} title
- * @param {string} [subtitle]
- * @param {Array<{label: string, path?: string}>} [breadcrumbs]
- * @param {ReactNode} [actions] - right-side action buttons
- * @param {ReactNode} [meta] - additional metadata below title
- */
-export function PageHeader({ title, subtitle, breadcrumbs, actions, meta, className = '' }) {
-  return (
-    <div className={cn('mb-6', className)}>
-      {/* Breadcrumbs */}
-      {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center gap-1 mb-2 text-xs text-ink-muted">
-          {breadcrumbs.map((crumb, i) => (
-            <span key={i} className="flex items-center gap-1">
-              {i > 0 && <MdChevronRight size={14} className="text-ink-disabled" />}
-              {crumb.path ? (
-                <Link to={crumb.path} className="hover:text-brand-blue transition-colors">
-                  {crumb.label}
-                </Link>
-              ) : (
-                <span className="text-ink-primary font-medium">{crumb.label}</span>
-              )}
-            </span>
-          ))}
-        </nav>
-      )}
+export function PageHeader({
+  title,
+  subtitle,
+  icon,
+  actions,
+  children,
+  className = '',
+}) {
+  const rightControls = actions || children;
 
-      {/* Title row */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-ink-primary leading-tight">{title}</h1>
-          {subtitle && (
-            <p className="text-sm text-ink-muted mt-0.5">{subtitle}</p>
-          )}
-          {meta && <div className="mt-2">{meta}</div>}
-        </div>
-        {actions && (
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {actions}
+  return (
+    <div
+      className={cn(
+        'w-full min-h-[138px] rounded-[20px] px-6 sm:px-8 py-5 sm:py-6',
+        'bg-gradient-to-r from-[#3158C9] to-[#3F63D5]',
+        'shadow-[0_4px_20px_rgba(49,88,201,0.18)] border border-[#4870E8]/30',
+        'flex flex-col md:flex-row md:items-center justify-between gap-4',
+        'transition-all duration-200',
+        className
+      )}
+    >
+      {/* Left Section: Icon Container + Title & Subtitle */}
+      <div className="flex items-center gap-5 min-w-0">
+        {/* Icon Container: 58px x 58px, 16px radius, translucent white with border */}
+        {icon && (
+          <div className="w-[58px] h-[58px] rounded-[16px] bg-white/15 border border-white/20 flex items-center justify-center text-white text-[28px] shrink-0 backdrop-blur-xs shadow-xs">
+            {icon}
           </div>
         )}
-      </div>
-    </div>
-  );
-}
 
-/**
- * SectionHeader — Section-level heading within a page
- */
-export function SectionHeader({ title, subtitle, actions, className = '' }) {
-  return (
-    <div className={cn('flex items-center justify-between mb-4', className)}>
-      <div>
-        <h2 className="text-sm font-semibold text-ink-primary">{title}</h2>
-        {subtitle && <p className="text-xs text-ink-muted mt-0.5">{subtitle}</p>}
-      </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
-    </div>
-  );
-}
-
-/**
- * ChartCard — Wrapper card for chart sections
- */
-export function ChartCard({ title, subtitle, actions, children, className = '' }) {
-  return (
-    <div className={cn('bg-white border border-surface-border rounded-lg', className)}>
-      <div className="px-5 py-4 border-b border-surface-border flex items-center justify-between">
-        <div>
-          <h3 className="text-sm font-semibold text-ink-primary">{title}</h3>
-          {subtitle && <p className="text-xs text-ink-muted mt-0.5">{subtitle}</p>}
+        {/* Title Content */}
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-[26px] font-bold text-white tracking-tight leading-tight">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="text-[15px] font-normal text-white/80 leading-normal mt-1">
+              {subtitle}
+            </p>
+          )}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
-      <div className="p-5">
-        {children}
-      </div>
+
+      {/* Right Section: Page-Specific Controls / Actions */}
+      {rightControls && (
+        <div className="flex flex-wrap items-center gap-3 shrink-0 self-start md:self-auto">
+          {rightControls}
+        </div>
+      )}
     </div>
   );
 }
+
+// Export both PageHeader and PageHero as aliases for full backward compatibility
+export const PageHero = PageHeader;
+export default PageHeader;

@@ -11,8 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   MdPeople, MdCheckCircle,
   MdPersonAdd, MdSecurity, MdHistory,
-  MdMoreVert, MdCloudDone, MdSync
+  MdMoreVert, MdCloudDone, MdSync, MdAdminPanelSettings
 } from 'react-icons/md';
+import { PageHero } from '../../components/shared/PageHero';
 import {
   adminMetrics,
   adminUsersList,
@@ -53,44 +54,35 @@ export function AdminDashboardView() {
       )}
 
       {/* 1. ADMIN HERO BANNER */}
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-[#0B2347] via-[#1E1B4B] to-[#0B2347] text-white p-6 md:p-8 shadow-sm">
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-400/20 text-purple-200 text-xs font-bold border border-purple-400/30 uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-              Platform Administration & Governance
-            </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              System Administrator Console
-            </h1>
-            <p className="text-purple-100 text-xs sm:text-sm">
-              Tenant: PragatiPath Enterprise Cloud • AI Pipeline v2.4 Active • 28 Active Team Members across 12 Projects.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-purple-100">
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdCloudDone className="text-emerald-400" />
-                Database Backup: 100% Synced
-              </span>
-              <span className="text-purple-300">•</span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdSecurity className="text-sky-300" />
-                MFA: Enforced for PMs
-              </span>
-              <span className="text-purple-300">•</span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-                <MdSync className="text-amber-300" />
-                API Latency: 42ms
-              </span>
-            </div>
-          </div>
-
-          {/* Admin Primary CTA & Secondary Action */}
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+      <PageHero
+        title="System Administrator Console"
+        subtitle="Tenant: PragatiPath Enterprise Cloud • AI Pipeline v2.4 Active • 28 Active Team Members across 12 Projects."
+        icon={<MdAdminPanelSettings />}
+        eyebrow="PLATFORM ADMINISTRATION & GOVERNANCE"
+        meta={
+          <>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdCloudDone className="text-emerald-400" />
+              Database Backup: 100% Synced
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdSecurity className="text-sky-300" />
+              MFA: Enforced for PMs
+            </span>
+            <span className="text-blue-300">•</span>
+            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
+              <MdSync className="text-amber-300" />
+              API Latency: 42ms
+            </span>
+          </>
+        }
+        actions={
+          <>
             <button
               type="button"
               onClick={() => showToast('Opening User Provisioning Modal')}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-purple-900 font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#0056D2] font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <MdPersonAdd size={16} />
               <span>Manage Users</span>
@@ -98,13 +90,13 @@ export function AdminDashboardView() {
             <button
               type="button"
               onClick={() => navigate('/settings')}
-              className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 transition-colors"
             >
               <span>Security Settings</span>
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* 2. ADMIN 4 KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
