@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const healthRoutes = require('./routes/healthRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
 const progressRoutes = require('./routes/progressRoutes');
@@ -9,7 +10,8 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 
-// Middleware for parsing JSON and URL-encoded data
+// Middleware for CORS, JSON and URL-encoded data
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
