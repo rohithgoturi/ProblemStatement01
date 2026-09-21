@@ -18,10 +18,12 @@ import {
 } from 'react-icons/md';
 import { Logo } from '../../components/shared/Logo';
 import { useAuth } from '../../hooks/useAuth';
+import { useRole } from '../../context/RoleContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { setRole } = useRole();
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -70,22 +72,26 @@ export default function LoginPage() {
     setIsLoading(true);
     setErrorMsg('');
 
+    const targetRole = roleKey === 'site_engineer' ? 'site_supervisor' : roleKey;
+    setRole(targetRole);
+
     // Prepopulate identifier visual feedback
     const mockEmails = {
       planner: 'planner@pragatipath.com',
-      site_engineer: 'engineer@pragatipath.com',
+      site_supervisor: 'supervisor@pragatipath.com',
       project_manager: 'manager@pragatipath.com',
       admin: 'admin@pragatipath.com',
     };
 
-    setIdentifier(mockEmails[roleKey]);
+    const email = mockEmails[targetRole] || 'user@pragatipath.com';
+    setIdentifier(email);
     setPassword('••••••••');
 
     // Simulate login and redirect to dashboard
     await login({
-      email: mockEmails[roleKey],
+      email,
       password: 'demo-password',
-      role: roleKey,
+      role: targetRole,
       name: `${roleName} User`,
     });
 
@@ -242,10 +248,10 @@ export default function LoginPage() {
                 </div>
               </button>
 
-              {/* Role 2: Site Engineer */}
+              {/* Role 2: Site Supervisor */}
               <button
                 type="button"
-                onClick={() => handleRoleSelect('site_engineer', 'Site Engineer')}
+                onClick={() => handleRoleSelect('site_supervisor', 'Site Supervisor')}
                 className="p-3 bg-white hover:bg-blue-50/40 border border-slate-200 hover:border-brand-blue rounded-xl flex items-center gap-3 transition-all text-left group shadow-2xs hover:shadow-xs"
               >
                 <div className="w-9 h-9 rounded-full bg-blue-100 text-brand-blue flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
@@ -253,7 +259,7 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <div className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-blue-900 leading-none">
-                    Site Engineer
+                    Site Supervisor
                   </div>
                 </div>
               </button>
