@@ -58,17 +58,21 @@ export function Sidebar({ collapsed = false, onToggle }) {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 bottom-0 bg-white border-r border-slate-200/80 flex flex-col z-30 shadow-xs transition-all duration-300',
-        collapsed ? 'w-16' : 'w-64',
+        'fixed left-0 top-0 bottom-0 bg-white border-r border-slate-200/80 flex flex-col z-30 transition-all duration-300',
+        collapsed
+          ? '-translate-x-full lg:translate-x-0 lg:w-16'
+          : 'translate-x-0 w-64 shadow-2xl lg:shadow-xs',
       )}
     >
       {/* Brand Logo */}
       <div className={cn(
         'flex items-center border-b border-slate-100 flex-shrink-0',
-        collapsed ? 'h-16 justify-center px-0' : 'h-16 px-4 gap-2.5',
+        collapsed ? 'h-16 lg:justify-center px-4 lg:px-0' : 'h-16 px-4 gap-2.5',
       )}>
         {collapsed ? (
-          <PragatiPathIcon size={28} />
+          <div className="hidden lg:block">
+            <PragatiPathIcon size={28} />
+          </div>
         ) : (
           <Logo size="sm" to="/dashboard" />
         )}

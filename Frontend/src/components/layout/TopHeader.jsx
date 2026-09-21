@@ -61,7 +61,8 @@ export function TopHeader({ collapsed, onMenuToggle }) {
     <header
       className={cn(
         'fixed top-0 right-0 h-16 bg-white border-b border-slate-200/80 z-20 flex items-center justify-between px-4 sm:px-6 shadow-xs transition-all duration-300',
-        collapsed ? 'left-16' : 'left-64',
+        'left-0',
+        collapsed ? 'lg:left-16' : 'lg:left-64',
       )}
     >
       {/* Left: Mobile Toggle & Global Search Bar */}
