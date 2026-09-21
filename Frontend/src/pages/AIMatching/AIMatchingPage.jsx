@@ -41,7 +41,7 @@ import {
 } from 'react-icons/md';
 import { AI_MATCHING_DATA } from '../../data/aiMatchingData';
 import { cn } from '../../utils/helpers';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 
 export default function AIMatchingPage() {
   const [data] = useState(AI_MATCHING_DATA);
@@ -140,28 +140,24 @@ export default function AIMatchingPage() {
         </div>
       )}
 
-      {/* 1. UNIFIED AI MATCHING HERO BANNER */}
-      <PageHero
-        title="AI Matching & Verification"
-        subtitle="Connect field execution with the correct schedule activity"
+      {/* 1. STANDARDIZED PAGE HEADER */}
+      <PageHeader
+        title="AI Activity Matching"
+        subtitle="Match DPR progress data with baseline schedule activities"
         icon={<MdAutoAwesome />}
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'AI Matching' },
-        ]}
         actions={
           <>
             {/* Date Range Selector */}
-            <div className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer border border-slate-100">
+            <div className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-medium shadow-xs transition-colors cursor-pointer border border-white/40">
               <MdCalendarToday className="text-slate-500 text-sm" />
-              <span>10 Sep 2026 &nbsp;–&nbsp; 10 Sep 2026</span>
+              <span>10 Sep 2026 – 10 Sep 2026</span>
               <MdKeyboardArrowDown className="text-slate-400 text-sm ml-0.5" />
             </div>
 
             {/* Unit / Project Selector */}
-            <div className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer border border-slate-100">
+            <div className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-medium shadow-xs transition-colors cursor-pointer border border-white/40">
               <MdLocationCity className="text-slate-500 text-sm" />
-              <span>Unit 2 - Pump Installation</span>
+              <span>Unit 2 – Pump Installation</span>
               <MdKeyboardArrowDown className="text-slate-400 text-sm ml-0.5" />
             </div>
           </>

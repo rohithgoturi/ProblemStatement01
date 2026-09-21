@@ -10,11 +10,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  MdAutoAwesome, MdWarning, MdTrendingUp,
+  MdAutoAwesome, MdWarning,
   MdCheckCircle, MdClose, MdArrowForward,
   MdTimeline, MdHistory
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 import {
   plannerMetrics,
   plannerAIValidationList,
@@ -59,29 +59,11 @@ export function PlannerDashboardView() {
         </div>
       )}
 
-      {/* 1. PLANNER HERO BANNER */}
-      <PageHero
+      {/* 1. STANDARDIZED PLANNER PAGE HEADER */}
+      <PageHeader
         title="Project Planner Dashboard"
-        subtitle="Current focus: Reconcile daily field reports with Baseline Rev 2 schedule and validate high-confidence AI matching candidates."
+        subtitle="Current focus: Reconcile daily field reports with Baseline Rev 2 schedule and validate high-confidence AI matching candidates"
         icon={<MdAutoAwesome />}
-        eyebrow="SCHEDULE & RECONCILIATION"
-        meta={
-          <>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              Baseline: Rev 2 (10 Sep 2026)
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdTrendingUp className="text-rose-400" />
-              Variance: +4d Critical Path
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdAutoAwesome className="text-amber-300" />
-              {validationQueue.length} Matches Need Validation
-            </span>
-          </>
-        }
         actions={
           <>
             <button

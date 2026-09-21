@@ -20,7 +20,7 @@ import {
   MdArticle, MdTrendingUp, MdSpeed, MdAutoAwesome,
   MdFolderOpen, MdClose, MdDashboard,
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 
 import {
   portfolioSummaryKPIs,
@@ -118,36 +118,19 @@ export function ManagerDashboardView() {
       )}
 
       {/* ========================================================================= */}
-      {/* 1. UNIFIED HERO BANNER                                                    */}
+      {/* 1. STANDARDIZED PAGE HEADER                                               */}
       {/* ========================================================================= */}
-      <PageHero
-        title="Dashboard"
-        subtitle="Project health, progress and execution insights"
+      <PageHeader
+        title="Project Dashboard"
+        subtitle="Real-time project performance and progress overview"
         icon={<MdDashboard />}
-        eyebrow="CONSTRUCTION PROJECT MANAGEMENT"
-        meta={
-          <>
-            <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
-              <MdLocationOn className="text-sky-300" size={14} />
-              <span>Pump P-101</span>
-            </span>
-            <span className="text-blue-300/60">|</span>
-            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
-              Unit 2
-            </span>
-            <span className="text-blue-300/60">|</span>
-            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
-              10 Sept 2026
-            </span>
-          </>
-        }
         actions={
           <button
             type="button"
             onClick={() => setShowNewProjectModal(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-blue-50 text-[#0056D2] font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 group"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#3158C9] font-bold text-sm shadow-xs transition-all duration-200"
           >
-            <MdAdd className="text-lg transition-transform group-hover:rotate-90" />
+            <MdAdd className="text-lg" />
             <span>+ New Project</span>
           </button>
         }

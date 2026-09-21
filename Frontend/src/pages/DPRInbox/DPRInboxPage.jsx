@@ -15,9 +15,9 @@ import {
   MdOutlineArticle, MdMic, MdTableChart, MdPictureAsPdf, MdInsertPhoto,
   MdAttachFile, MdAdd, MdPlayArrow, MdPause, MdVolumeUp, MdVolumeOff,
   MdDeleteOutline, MdSend, MdInfoOutline, MdChevronRight, MdContentCopy,
-  MdCheckCircle, MdCalendarToday, MdLocationOn, MdClose, MdCheck, MdInbox
+  MdCheckCircle, MdCalendarToday, MdClose, MdCheck, MdInbox
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 import {
   dprContextInfo,
   recentDprSubmissions,
@@ -178,38 +178,16 @@ export default function DPRInboxPage() {
         </div>
       )}
 
-      {/* 1. UNIFIED DPR HERO BANNER */}
-      <PageHero
-        title="Daily Progress Reports"
-        subtitle="Capture and review field execution updates"
+      {/* 1. STANDARDIZED PAGE HEADER */}
+      <PageHeader
+        title="DPR Inbox"
+        subtitle="Review, extract and validate daily progress reports"
         icon={<MdInbox />}
-        eyebrow="DPR INBOX"
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'DPR Inbox' },
-        ]}
-        meta={
-          <>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
-              <MdLocationOn className="text-blue-200 text-sm" />
-              {dprContextInfo.projectName}
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
-              {dprContextInfo.unit}
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
-              <MdCalendarToday className="text-blue-200 text-sm" />
-              {dprContextInfo.reportDate}
-            </span>
-          </>
-        }
         actions={
           <div className="flex items-center gap-3">
             {/* Date Picker Trigger Card */}
-            <div className="bg-white text-slate-800 rounded-xl px-3.5 py-2 shadow-sm flex items-center gap-2.5 border border-slate-200 text-xs font-medium">
-              <MdCalendarToday size={16} className="text-[#0056D2]" />
+            <div className="bg-white text-slate-800 rounded-xl px-4 py-2 shadow-xs flex items-center gap-2.5 border border-white/40 text-xs font-medium">
+              <MdCalendarToday size={16} className="text-[#3158C9]" />
               <div>
                 <div className="text-[9px] uppercase font-semibold text-slate-400 tracking-wider leading-none">Report Date</div>
                 <select
@@ -225,8 +203,8 @@ export default function DPRInboxPage() {
               </div>
             </div>
 
-            {/* Engineer Image Thumbnail matching reference */}
-            <div className="hidden sm:block relative w-12 h-12 rounded-xl overflow-hidden shadow-md border-2 border-white/40 shrink-0">
+            {/* Engineer Image Thumbnail */}
+            <div className="hidden sm:block relative w-11 h-11 rounded-xl overflow-hidden shadow-xs border-2 border-white/40 shrink-0">
               <img
                 src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=200&auto=format&fit=crop&q=80"
                 alt="Site Engineer"

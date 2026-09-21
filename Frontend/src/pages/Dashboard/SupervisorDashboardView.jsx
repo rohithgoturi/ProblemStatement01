@@ -11,10 +11,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   MdAssignmentInd, MdCheckCircle, MdInbox, MdWarning,
-  MdLocationOn, MdSend, MdAttachFile,
-  MdArrowForward, MdWbSunny, MdPeople
+  MdSend, MdAttachFile,
+  MdArrowForward, MdPeople
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 import {
   supervisorMetrics,
   supervisorAssignedActivities,
@@ -77,30 +77,11 @@ export function SupervisorDashboardView() {
         </div>
       )}
 
-      {/* 1. SUPERVISOR HERO BANNER */}
-      <PageHero
+      {/* 1. STANDARDIZED SUPERVISOR PAGE HEADER */}
+      <PageHeader
         title="Site Supervisor Dashboard"
-        subtitle="Today's operational priority: Execute Unit 2 mechanical installation and report shift progress."
+        subtitle="Today's operational priority: Execute Unit 2 mechanical installation and report shift progress"
         icon={<MdAssignmentInd />}
-        eyebrow="FIELD EXECUTION COMMAND"
-        meta={
-          <>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdLocationOn className="text-emerald-400" />
-              Active Site: Site A · Unit 2
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdWbSunny className="text-amber-400" />
-              29°C Clear · Favorable
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdPeople className="text-blue-200" />
-              {supervisorCrewStatus.onSite} Workers Active
-            </span>
-          </>
-        }
         actions={
           <>
             <button

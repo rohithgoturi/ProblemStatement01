@@ -9,7 +9,6 @@
  */
 import { useState } from 'react';
 import {
-  MdTrendingUp,
   MdCalendarToday,
   MdKeyboardArrowDown,
   MdLocationCity,
@@ -24,10 +23,11 @@ import {
   MdInfoOutline,
   MdLayers,
   MdClose,
+  MdShowChart,
 } from 'react-icons/md';
 import { PROGRESS_TRACKING_DATA } from '../../data/progressData';
 import { cn } from '../../utils/helpers';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 
 export default function ProgressPage() {
   const [data] = useState(PROGRESS_TRACKING_DATA);
@@ -163,34 +163,30 @@ export default function ProgressPage() {
         </div>
       )}
 
-      {/* 1. UNIFIED PROGRESS HERO BANNER */}
-      <PageHero
+      {/* 1. STANDARDIZED PAGE HEADER */}
+      <PageHeader
         title="Progress Tracking"
-        subtitle="Compare planned work with actual execution"
-        icon={<MdTrendingUp />}
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'Progress' },
-        ]}
+        subtitle="Monitor planned vs actual project progress"
+        icon={<MdShowChart />}
         actions={
           <>
             {/* Date Range Selector */}
             <div
-              onClick={() => showToast('Filtered schedule window: 01 Sep 2026 - 15 Sep 2026')}
-              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer border border-slate-100"
+              onClick={() => showToast('Filtered schedule window: 01 Sep 2026 – 15 Sep 2026')}
+              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-medium shadow-xs transition-colors cursor-pointer border border-white/40"
             >
               <MdCalendarToday className="text-slate-500 text-sm" />
-              <span>01 Sep 2026 &nbsp;–&nbsp; 15 Sep 2026</span>
+              <span>01 Sep 2026 – 15 Sep 2026</span>
               <MdKeyboardArrowDown className="text-slate-400 text-sm ml-0.5" />
             </div>
 
             {/* Project / Unit Selector */}
             <div
-              onClick={() => showToast('Switched to Unit 2 - Pump Installation')}
-              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer border border-slate-100"
+              onClick={() => showToast('Switched to Unit 2 – Pump Installation')}
+              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-medium shadow-xs transition-colors cursor-pointer border border-white/40"
             >
               <MdLocationCity className="text-slate-500 text-sm" />
-              <span>Unit 2 - Pump Installation</span>
+              <span>Unit 2 – Pump Installation</span>
               <MdKeyboardArrowDown className="text-slate-400 text-sm ml-0.5" />
             </div>
           </>

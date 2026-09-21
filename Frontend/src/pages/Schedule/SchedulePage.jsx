@@ -16,7 +16,7 @@ import {
   MdViewList, MdViewTimeline, MdInfoOutline, MdAdd,
   MdChevronLeft, MdChevronRight, MdTableChart, MdPictureAsPdf
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 import {
   scheduleKPIs,
   uploadedSchedulesList,
@@ -120,27 +120,18 @@ export default function SchedulePage() {
         </div>
       )}
 
-      {/* 1. UNIFIED SCHEDULE HERO BANNER */}
-      <PageHero
-        title="Schedule"
-        subtitle="Track planned activities and schedule performance"
+      {/* 1. STANDARDIZED PAGE HEADER */}
+      <PageHeader
+        title="Schedule Management"
+        subtitle="PS 26122 • Baseline Schedule"
         icon={<MdCalendarToday />}
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'Schedule' },
-        ]}
-        meta={
-          <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
-            <span>PS 26122 • Baseline Schedule</span>
-          </span>
-        }
         actions={
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-blue-50 text-[#0056D2] font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#3158C9] font-bold text-sm shadow-xs transition-all active:scale-95 cursor-pointer"
           >
-            <MdFolderOpen size={16} />
+            <MdCloudUpload size={18} />
             <span>Upload Baseline</span>
           </button>
         }

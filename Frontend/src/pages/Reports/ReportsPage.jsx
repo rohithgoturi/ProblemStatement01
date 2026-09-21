@@ -40,7 +40,7 @@ import {
 } from 'react-icons/md';
 import { REPORTS_DATA } from '../../data/reportsData';
 import { cn } from '../../utils/helpers';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 
 export default function ReportsPage() {
   const [data] = useState(REPORTS_DATA);
@@ -209,34 +209,30 @@ export default function ReportsPage() {
         </div>
       )}
 
-      {/* 1. UNIFIED REPORTS HERO BANNER */}
-      <PageHero
+      {/* 1. STANDARDIZED PAGE HEADER */}
+      <PageHeader
         title="Reports & Export"
         subtitle="Daily/Weekly progress, delay reports, Excel/PDF Export."
         icon={<MdDescription />}
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'Reports' },
-        ]}
         actions={
           <>
             {/* Date Range Selector */}
             <div
               onClick={() => showToast('Date range selected: 01 Sep 2026 - 15 Sep 2026')}
-              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer border border-slate-100"
+              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-medium shadow-xs transition-colors cursor-pointer border border-white/40"
             >
               <MdCalendarToday className="text-slate-500 text-sm" />
-              <span>01 Sep 2026 &nbsp;–&nbsp; 15 Sep 2026</span>
+              <span>01 Sep 2026 – 15 Sep 2026</span>
               <MdKeyboardArrowDown className="text-slate-400 text-sm ml-0.5" />
             </div>
 
             {/* Project / Unit Selector */}
             <div
               onClick={() => showToast('Active report unit: Unit 2 - Pump Installation')}
-              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2 text-xs font-semibold shadow-xs transition-colors cursor-pointer border border-slate-100"
+              className="bg-white hover:bg-slate-50 text-slate-800 rounded-xl px-4 py-2.5 flex items-center gap-2 text-sm font-medium shadow-xs transition-colors cursor-pointer border border-white/40"
             >
               <MdLocationCity className="text-slate-500 text-sm" />
-              <span>Unit 2 - Pump Installation</span>
+              <span>Unit 2 – Pump Installation</span>
               <MdKeyboardArrowDown className="text-slate-400 text-sm ml-0.5" />
             </div>
           </>

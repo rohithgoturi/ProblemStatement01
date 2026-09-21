@@ -15,12 +15,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  MdLocationOn, MdCheckCircle, MdAccessTime, MdWarning,
+  MdCheckCircle, MdAccessTime, MdWarning,
   MdPerson, MdLayers, MdChevronRight, MdAutoAwesome,
   MdArticle, MdImage, MdMic, MdPictureAsPdf,
   MdGridOn, MdCheck,
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 
 import {
   ps26122ProjectHeader,
@@ -74,29 +74,11 @@ export function ManagerProjectWorkspace() {
         </div>
       )}
 
-      {/* 1. UNIFIED HERO BANNER */}
-      <PageHero
+      {/* 1. STANDARDIZED PAGE HEADER */}
+      <PageHeader
         title={ps26122ProjectHeader.title}
-        subtitle={ps26122ProjectHeader.description}
+        subtitle={`${ps26122ProjectHeader.description} • ${ps26122ProjectHeader.location}`}
         icon={<MdLayers />}
-        eyebrow={ps26122ProjectHeader.category}
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'Projects', path: '/projects' },
-          { label: 'PS 26122' },
-        ]}
-        meta={
-          <>
-            <span className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/15">
-              <MdLocationOn className="text-sky-300" size={13} />
-              <span>{ps26122ProjectHeader.location}</span>
-            </span>
-            <span className="text-blue-300/60">|</span>
-            <span className="bg-white/10 px-2.5 py-1 rounded-md border border-white/15">
-              {ps26122ProjectHeader.date}
-            </span>
-          </>
-        }
         actions={
           <Link
             to="/progress"

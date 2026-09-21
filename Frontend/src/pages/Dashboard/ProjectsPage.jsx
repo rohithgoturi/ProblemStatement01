@@ -10,12 +10,12 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  MdFolderOpen, MdSearch, MdLocationOn,
+  MdFolder, MdFolderOpen, MdSearch, MdLocationOn,
   MdViewModule, MdViewList, MdAdd, MdArrowForward,
   MdCheckCircle, MdWarning, MdAccessTime,
   MdClose
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 import { allProjectsList } from '../../data/projectsData';
 
 export function ProjectsPage() {
@@ -60,15 +60,11 @@ export function ProjectsPage() {
         </div>
       )}
 
-      {/* Unified PageHero Banner */}
-      <PageHero
+      {/* Standardized PageHeader Banner */}
+      <PageHeader
         title="Projects"
-        subtitle="Manage and monitor infrastructure projects"
-        icon={<MdFolderOpen />}
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'Projects' },
-        ]}
+        subtitle="Manage projects, locations and project progress"
+        icon={<MdFolder />}
         actions={
           <div className="flex items-center gap-3">
             {/* Grid / Table view toggle */}
@@ -77,7 +73,7 @@ export function ProjectsPage() {
                 type="button"
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-lg transition-all ${
-                  viewMode === 'grid' ? 'bg-white text-[#0056D2] shadow-xs' : 'text-white/80 hover:text-white'
+                  viewMode === 'grid' ? 'bg-white text-[#3158C9] shadow-xs' : 'text-white/80 hover:text-white'
                 }`}
                 title="Grid View"
               >
@@ -87,7 +83,7 @@ export function ProjectsPage() {
                 type="button"
                 onClick={() => setViewMode('table')}
                 className={`p-1.5 rounded-lg transition-all ${
-                  viewMode === 'table' ? 'bg-white text-[#0056D2] shadow-xs' : 'text-white/80 hover:text-white'
+                  viewMode === 'table' ? 'bg-white text-[#3158C9] shadow-xs' : 'text-white/80 hover:text-white'
                 }`}
                 title="Table View"
               >
@@ -98,10 +94,10 @@ export function ProjectsPage() {
             <button
               type="button"
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-blue-50 text-[#0056D2] font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#3158C9] font-bold text-sm shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <MdAdd size={16} />
-              <span>New Project</span>
+              <MdAdd size={18} />
+              <span>Create Project</span>
             </button>
           </div>
         }

@@ -11,9 +11,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   MdPeople, MdCheckCircle,
   MdPersonAdd, MdSecurity, MdHistory,
-  MdMoreVert, MdCloudDone, MdSync, MdAdminPanelSettings
+  MdMoreVert, MdAdminPanelSettings
 } from 'react-icons/md';
-import { PageHero } from '../../components/shared/PageHero';
+import { PageHeader } from '../../components/shared/PageHeader';
 import {
   adminMetrics,
   adminUsersList,
@@ -53,30 +53,11 @@ export function AdminDashboardView() {
         </div>
       )}
 
-      {/* 1. ADMIN HERO BANNER */}
-      <PageHero
+      {/* 1. STANDARDIZED ADMIN PAGE HEADER */}
+      <PageHeader
         title="System Administrator Console"
-        subtitle="Tenant: PragatiPath Enterprise Cloud • AI Pipeline v2.4 Active • 28 Active Team Members across 12 Projects."
+        subtitle="Tenant: PragatiPath Enterprise Cloud • AI Pipeline Active • 28 Active Team Members"
         icon={<MdAdminPanelSettings />}
-        eyebrow="PLATFORM ADMINISTRATION & GOVERNANCE"
-        meta={
-          <>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdCloudDone className="text-emerald-400" />
-              Database Backup: 100% Synced
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdSecurity className="text-sky-300" />
-              MFA: Enforced for PMs
-            </span>
-            <span className="text-blue-300">•</span>
-            <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10 font-medium">
-              <MdSync className="text-amber-300" />
-              API Latency: 42ms
-            </span>
-          </>
-        }
         actions={
           <>
             <button
