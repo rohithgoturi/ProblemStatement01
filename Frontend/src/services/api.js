@@ -8,6 +8,7 @@
  * Pattern: all service functions return Promises to match real API behavior.
  */
 
+import client from './client';
 import { projects, projectSummary } from '../data/projects';
 import { dprs, dprStatusCounts } from '../data/dprs';
 import { scheduleActivities, scheduleStats } from '../data/schedule';
@@ -79,24 +80,24 @@ export const getScheduleActivities = async ({ status = null, discipline = null }
   return { data: result, error: null };
 };
 
-// ---- Auth (frontend mock only) ----
+// ---- Auth ----
 
-export const login = async ({ email, password, role }) => {
-  await delay(800);
-  if (!email || !password) return { data: null, error: 'Email and password required' };
-  // Mock successful login
-  return {
-    data: {
-      token: 'mock-jwt-token',
-      user: {
-        id: 'USR-001',
-        name: 'Rajesh Kumar',
-        role: role || 'project_manager',
-        email,
-      },
-    },
-    error: null,
-  };
+export const signup = async ({ name, email, password, role }) => {
+  try {
+    const res = await client.post('/auth/signup', { name, email, password, role });
+    return { data: res.data.data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message };
+  }
+};
+
+export const login = async ({ email, password, role, name }) => {
+  try {
+    const res = await client.post('/auth/login', { email, password });
+    return { data: res.data.data, error: null };
+  } catch (err) {
+    return { data: null, error: err.message };
+  }
 };
 
 export const logout = async () => {

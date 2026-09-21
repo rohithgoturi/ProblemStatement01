@@ -217,6 +217,14 @@ export default function LoginPage() {
               </button>
             </form>
 
+            {/* Don't have an account Link */}
+            <div className="mt-3 text-center text-xs text-slate-500">
+              Don't have an account?{' '}
+              <Link to="/signup" className="font-bold text-brand-blue hover:underline">
+                Create an account
+              </Link>
+            </div>
+
             {/* Separator Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">

@@ -8,6 +8,7 @@ import { AppShell } from './components/layout/AppShell';
 
 import LandingPage           from './pages/Landing/LandingPage';
 import LoginPage             from './pages/Login/LoginPage';
+import SignupPage            from './pages/Signup/SignupPage';
 import DashboardPage         from './pages/Dashboard/DashboardPage';
 import ProjectsPage          from './pages/Dashboard/ProjectsPage';
 import ProjectDashboardPage  from './pages/ProjectDashboard/ProjectDashboardPage';
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/signup',
+    element: <SignupPage />,
   },
 
   // Authenticated app routes (inside AppShell)
