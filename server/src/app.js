@@ -7,6 +7,7 @@ const extractionRoutes = require('./routes/extractionRoutes');
 const matchingRoutes = require('./routes/matchingRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -24,6 +25,7 @@ app.use('/api', extractionRoutes);
 app.use('/api', matchingRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 Handler for undefined routes
 app.use((req, res) => {

@@ -13,6 +13,7 @@ import {
 } from 'react-icons/md';
 import { cn } from '../../utils/helpers';
 import { Logo, PragatiPathIcon } from '../shared/Logo';
+import { useRole } from '../../context/RoleContext';
 
 const ICON_MAP = {
   MdDashboard:    <MdDashboard size={18} />,
@@ -37,7 +38,7 @@ const NAV_GROUPS = [
       { id: 'projects',   label: 'Projects',   path: '/projects',   icon: 'MdFolderOpen',   badge: 12 },
       { id: 'dpr',        label: 'DPR Inbox',  path: '/dpr',        icon: 'MdInbox',        badge: 24 },
       { id: 'schedule',   label: 'Schedule',   path: '/schedule',   icon: 'MdCalendarToday' },
-      { id: 'ai-matching',label: 'AI Matching',path: '/ai-matching', icon: 'MdAutoAwesome' },
+      { id: 'ai-matching',label: 'AI Matching',path: '/ai-matching', icon: 'MdAutoAwesome', allowedRoles: ['planner', 'project_manager', 'admin'] },
       { id: 'progress',   label: 'Progress',   path: '/progress',   icon: 'MdTrendingUp' },
       { id: 'reports',    label: 'Reports',    path: '/reports',    icon: 'MdBarChart' },
     ],
@@ -55,6 +56,7 @@ const NAV_GROUPS = [
 ];
 
 export function Sidebar({ collapsed = false, onToggle }) {
+  const { currentRole } = useRole();
   return (
     <aside
       className={cn(
@@ -88,7 +90,9 @@ export function Sidebar({ collapsed = false, onToggle }) {
               </p>
             )}
             <ul className="space-y-0.5">
-              {group.items.map(item => (
+              {group.items
+                .filter(item => !item.allowedRoles || item.allowedRoles.includes(currentRole))
+                .map(item => (
                 <li key={item.id}>
                   <NavLink
                     to={item.path}

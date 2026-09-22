@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema(
       enum: ['planner', 'site_supervisor', 'project_manager', 'admin'],
       default: 'project_manager',
     },
+    avatar: {
+      type: String,
+      default: null,
+      trim: true,
+    },
   },
   {
     timestamps: true,

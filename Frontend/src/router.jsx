@@ -19,6 +19,9 @@ import AIMatchingPage        from './pages/AIMatching/AIMatchingPage';
 import ProgressPage          from './pages/Progress/ProgressPage';
 import ReportsPage           from './pages/Reports/ReportsPage';
 
+import SettingsPage         from './pages/Settings/SettingsPage';
+import { ProtectedRoute }      from './components/shared/ProtectedRoute';
+
 export const router = createBrowserRouter([
   // Public routes (no AppShell)
   {
@@ -37,10 +40,14 @@ export const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
   },
 
-  // Authenticated app routes (inside AppShell)
+  // Authenticated app routes (inside AppShell, protected)
   {
     path: '/',
-    element: <AppShell />,
+    element: (
+      <ProtectedRoute>
+        <AppShell />
+      </ProtectedRoute>
+    ),
     errorElement: <RouteErrorBoundary />,
     children: [
       {
@@ -66,7 +73,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'ai-matching',
-        element: <AIMatchingPage />,
+        element: (
+          <ProtectedRoute allowedRoles={['planner', 'project_manager', 'admin']}>
+            <AIMatchingPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'progress',
@@ -87,7 +98,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'settings',
-        element: <DashboardPage />,
+        element: <SettingsPage />,
       },
       {
         path: 'help',

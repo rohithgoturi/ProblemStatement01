@@ -19,8 +19,8 @@ const handleRequest = async (promise) => {
 // 1. AUTHENTICATION API
 // ==========================================
 
-export const signup = async ({ name, email, password, role }) => {
-  return handleRequest(client.post('/auth/signup', { name, email, password, role }));
+export const signup = async ({ name, email, password, role, avatar }) => {
+  return handleRequest(client.post('/auth/signup', { name, email, password, role, avatar }));
 };
 
 export const login = async ({ email, password }) => {
@@ -28,7 +28,42 @@ export const login = async ({ email, password }) => {
 };
 
 export const logout = async () => {
+  localStorage.removeItem('pragatipath_token');
+  localStorage.removeItem('pragatipath_auth');
+  localStorage.removeItem('pragatipath_demo_role');
   return { data: { success: true }, error: null };
+};
+
+export const getCurrentUser = async () => {
+  const res = await handleRequest(client.get('/auth/me'));
+  return { ...res, data: res.data?.user || res.data };
+};
+
+export const updateUserProfile = async (profileData) => {
+  const res = await handleRequest(client.put('/auth/profile', profileData));
+  return { ...res, data: res.data?.user || res.data };
+};
+
+export const changePassword = async ({ currentPassword, newPassword }) => {
+  return handleRequest(client.put('/auth/change-password', { currentPassword, newPassword }));
+};
+
+// ==========================================
+// 1b. ADMIN GOVERNANCE API
+// ==========================================
+
+export const getAdminUsers = async () => {
+  const res = await handleRequest(client.get('/admin/users'));
+  const users = res.data?.users || (Array.isArray(res.data) ? res.data : []);
+  return { ...res, data: Array.isArray(users) ? users : [] };
+};
+
+export const updateUserRole = async (userId, role) => {
+  return handleRequest(client.put(`/admin/users/${userId}/role`, { role }));
+};
+
+export const getAdminStats = async () => {
+  return handleRequest(client.get('/admin/stats'));
 };
 
 // ==========================================

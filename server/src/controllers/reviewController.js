@@ -5,7 +5,7 @@ const reviewService = require('../services/reviewService');
  * Extracts reviewer identity from header 'x-reviewer-id' or body 'reviewerId' or defaults to 'planner-1'.
  */
 const getReviewerId = (req) => {
-  return req.headers['x-reviewer-id'] || req.body.reviewerId || 'planner-1';
+  return req.user?.name || req.user?.email || req.headers['x-reviewer-id'] || req.body.reviewerId || 'planner-1';
 };
 
 /**

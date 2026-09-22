@@ -1,8 +1,10 @@
 /**
- * PragatiPath — Role Context
- * Manages active role and user profile for frontend demo role-switching.
+ * PragatiPath — Role Context (Server-Authoritative RBAC)
+ * Strictly derives the active role and user identity from the authenticated session.
+ * Arbitrary client-side role switching has been permanently removed.
  */
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 export const ROLES = {
   SITE_SUPERVISOR: 'site_supervisor',
@@ -11,102 +13,74 @@ export const ROLES = {
   ADMIN: 'admin',
 };
 
-export const ROLE_PROFILES = {
+export const ROLE_CONFIG = {
   [ROLES.SITE_SUPERVISOR]: {
     roleKey: ROLES.SITE_SUPERVISOR,
     label: 'Site Supervisor',
-    name: 'Suresh Patel',
-    title: 'Site Supervisor · Unit 2',
-    email: 'supervisor@pragatipath.com',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
     badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     primaryCTA: 'Submit DPR',
     tagline: 'Field Execution & Site Progress',
+    permissions: ['submit_dpr', 'view_schedule', 'view_progress'],
   },
   [ROLES.PLANNER]: {
     roleKey: ROLES.PLANNER,
     label: 'Project Planner',
-    name: 'Raghav Sharma',
-    title: 'Project Planner · Schedule Operations',
-    email: 'planner@pragatipath.com',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
     badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
     primaryCTA: 'Review Matches',
     tagline: 'Schedule Reconciliation & AI Validation',
+    permissions: ['submit_dpr', 'view_schedule', 'import_schedule', 'clear_schedule', 'review_matches', 'view_progress', 'view_reports'],
   },
   [ROLES.PROJECT_MANAGER]: {
     roleKey: ROLES.PROJECT_MANAGER,
     label: 'Project Manager',
-    name: 'Rahul Sharma',
-    title: 'Project Manager · Portfolio Lead',
-    email: 'manager@pragatipath.com',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
     badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
     primaryCTA: 'View Project Health',
     tagline: 'Project Health & Executive Oversight',
+    permissions: ['submit_dpr', 'view_schedule', 'import_schedule', 'review_matches', 'view_progress', 'view_reports', 'manage_projects'],
   },
   [ROLES.ADMIN]: {
     roleKey: ROLES.ADMIN,
     label: 'System Administrator',
-    name: 'Ananya Verma',
-    title: 'System Administrator · IT & Governance',
-    email: 'admin@pragatipath.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
     badgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
-    primaryCTA: 'Manage Users',
+    primaryCTA: 'Manage Platform',
     tagline: 'Platform Governance & Access Management',
+    permissions: ['all'],
   },
 };
 
 const RoleContext = createContext(null);
 
-const STORAGE_KEY = 'pragatipath_demo_role';
-
 export function RoleProvider({ children }) {
-  const [currentRole, setCurrentRole] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && ROLE_PROFILES[stored]) {
-        return stored;
-      }
-      // Check auth object as fallback
-      const auth = localStorage.getItem('pragatipath_auth');
-      if (auth) {
-        const parsed = JSON.parse(auth);
-        if (parsed?.role && ROLE_PROFILES[parsed.role]) {
-          return parsed.role;
-        }
-      }
-    } catch {
-      // ignore
-    }
-    return ROLES.PROJECT_MANAGER; // Default matching initial screenshot
-  });
+  const { user } = useAuth();
 
-  const setRole = (roleKey) => {
-    if (ROLE_PROFILES[roleKey]) {
-      setCurrentRole(roleKey);
-      localStorage.setItem(STORAGE_KEY, roleKey);
-      // Also update auth profile if present
-      try {
-        const auth = localStorage.getItem('pragatipath_auth');
-        const current = auth ? JSON.parse(auth) : {};
-        localStorage.setItem(
-          'pragatipath_auth',
-          JSON.stringify({
-            ...current,
-            role: roleKey,
-            name: ROLE_PROFILES[roleKey].name,
-            email: ROLE_PROFILES[roleKey].email,
-          })
-        );
-      } catch {
-        // ignore
-      }
-    }
+  // Authoritative role directly from authenticated database session
+  const currentRole = user?.role || ROLES.PROJECT_MANAGER;
+
+  const currentProfile = useMemo(() => {
+    const config = ROLE_CONFIG[currentRole] || ROLE_CONFIG[ROLES.PROJECT_MANAGER];
+    return {
+      roleKey: currentRole,
+      label: config.label,
+      name: user?.name || 'Authenticated User',
+      email: user?.email || '',
+      avatar: user?.avatar || null,
+      badgeColor: config.badgeColor,
+      primaryCTA: config.primaryCTA,
+      tagline: config.tagline,
+      permissions: config.permissions,
+    };
+  }, [user, currentRole]);
+
+  // Read-only stub to prevent breaking components while preventing role escalation
+  const setRole = () => {
+    console.warn('Security Alert: Client-side role switching is prohibited. Role is determined by backend authentication.');
   };
 
-  const currentProfile = ROLE_PROFILES[currentRole] || ROLE_PROFILES[ROLES.PROJECT_MANAGER];
+  const hasPermission = (permission) => {
+    if (currentRole === ROLES.ADMIN) return true;
+    const config = ROLE_CONFIG[currentRole];
+    return config?.permissions?.includes(permission) || false;
+  };
 
   return (
     <RoleContext.Provider
@@ -114,7 +88,8 @@ export function RoleProvider({ children }) {
         currentRole,
         setRole,
         currentProfile,
-        availableRoles: Object.values(ROLE_PROFILES),
+        hasPermission,
+        availableRoles: Object.values(ROLE_CONFIG),
       }}
     >
       {children}

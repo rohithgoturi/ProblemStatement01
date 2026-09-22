@@ -1,6 +1,8 @@
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { ensureDBConnected } = require('../config/db');
+const { JWT_SECRET } = require('../middleware/authMiddleware');
 
 /**
  * Hash password using Node crypto.pbkdf2
@@ -20,15 +22,30 @@ function verifyPassword(password, storedHash) {
   return hash === originalHash;
 }
 
+/**
+ * Issue cryptographically signed JWT token
+ */
+function issueToken(user) {
+  return jwt.sign(
+    {
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+}
+
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
 /**
  * POST /api/auth/signup
- * Register a new user
+ * Register a new user with secure password hashing and signed JWT issuance.
  */
 exports.signup = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body || {};
+    const { name, email, password, role, avatar } = req.body || {};
 
     // 1. Input Validation
     if (!name || !name.trim()) {
@@ -94,12 +111,13 @@ exports.signup = async (req, res, next) => {
       email: normalizedEmail,
       password: hash,
       role: userRole,
+      avatar: avatar && typeof avatar === 'string' ? avatar.trim() : null,
     });
 
     await user.save();
 
-    // 5. Generate session token
-    const token = `jwt_token_${user._id}_${Date.now()}`;
+    // 5. Generate cryptographically signed JWT token
+    const token = issueToken(user);
 
     // 6. Return response (passwords are strictly omitted)
     return res.status(201).json({
@@ -112,11 +130,11 @@ exports.signup = async (req, res, next) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          avatar: user.avatar,
         },
       },
     });
   } catch (error) {
-    // Handle MongoDB unique index duplicate key collision
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
@@ -125,7 +143,6 @@ exports.signup = async (req, res, next) => {
       });
     }
 
-    // Handle Mongoose schema validation failure
     if (error.name === 'ValidationError') {
       const firstMessage = Object.values(error.errors || {})[0]?.message || 'Validation failed';
       return res.status(400).json({
@@ -135,7 +152,6 @@ exports.signup = async (req, res, next) => {
       });
     }
 
-    // Handle Mongoose buffering timeout
     if (error.name === 'MongooseError' && error.message.includes('buffering timed out')) {
       return res.status(503).json({
         success: false,
@@ -150,7 +166,7 @@ exports.signup = async (req, res, next) => {
 
 /**
  * POST /api/auth/login
- * Log in an existing user
+ * Authenticate user credentials and return signed JWT token.
  */
 exports.login = async (req, res, next) => {
   try {
@@ -194,7 +210,7 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    const token = `jwt_token_${user._id}_${Date.now()}`;
+    const token = issueToken(user);
 
     return res.status(200).json({
       success: true,
@@ -206,6 +222,7 @@ exports.login = async (req, res, next) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          avatar: user.avatar,
         },
       },
     });
@@ -217,6 +234,136 @@ exports.login = async (req, res, next) => {
         error: { code: 'DATABASE_TIMEOUT' },
       });
     }
+    next(error);
+  }
+};
+
+/**
+ * GET /api/auth/me
+ * Returns the currently authenticated user's profile from database.
+ */
+exports.getMe = async (req, res) => {
+  const user = req.user;
+  return res.status(200).json({
+    success: true,
+    message: 'Current authenticated user profile retrieved',
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        createdAt: user.createdAt,
+      },
+    },
+  });
+};
+
+/**
+ * PUT /api/auth/profile
+ * Update user's profile information (name, avatar).
+ * STRICT SECURITY: Rejects any attempt by the user to modify their own role.
+ */
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { name, avatar, role } = req.body || {};
+
+    // Prevent self-role elevation
+    if (role && role !== req.user.role) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: You cannot change your own role. Roles must be assigned by a system administrator.',
+        error: { code: 'ROLE_MODIFICATION_FORBIDDEN' },
+      });
+    }
+
+    const updateFields = {};
+    if (name && name.trim()) {
+      updateFields.name = name.trim();
+    }
+    if (avatar !== undefined) {
+      updateFields.avatar = avatar ? avatar.trim() : null;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updateFields },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        user: {
+          id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          avatar: updatedUser.avatar,
+          updatedAt: updatedUser.updatedAt,
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * PUT /api/auth/change-password
+ * Allows authenticated user to change their password after verifying their current password.
+ */
+exports.changePassword = async (req, res, next) => {
+  try {
+    const currentPassword = req.body?.currentPassword || req.body?.oldPassword;
+    const newPassword = req.body?.newPassword;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password and new password are required',
+        error: { code: 'MISSING_FIELD' },
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long',
+        error: { code: 'INVALID_PASSWORD' },
+      });
+    }
+
+    // Load full user with password
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User account not found',
+        error: { code: 'USER_NOT_FOUND' },
+      });
+    }
+
+    const isMatch = verifyPassword(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password does not match records',
+        error: { code: 'INVALID_CREDENTIALS' },
+      });
+    }
+
+    const { hash } = hashPassword(newPassword);
+    user.password = hash;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password updated successfully',
+    });
+  } catch (error) {
     next(error);
   }
 };

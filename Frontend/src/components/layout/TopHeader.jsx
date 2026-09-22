@@ -14,17 +14,18 @@ import {
 import { cn } from '../../utils/helpers';
 import { getPendingReviews } from '../../services/api';
 import { useRole } from '../../context/RoleContext';
+import { useAuth } from '../../hooks/useAuth';
+import { Avatar } from '../shared/Avatar';
 import { Logo } from '../shared/Logo';
 
 export function TopHeader({ collapsed, onMenuToggle }) {
-  const { currentRole, setRole, currentProfile, availableRoles } = useRole();
-  const [roleOpen, setRoleOpen] = useState(false);
+  const { currentRole, currentProfile } = useRole();
+  const { logout } = useAuth();
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  const roleRef    = useRef(null);
   const notifRef   = useRef(null);
   const profileRef = useRef(null);
   const navigate   = useNavigate();
@@ -49,7 +50,6 @@ export function TopHeader({ collapsed, onMenuToggle }) {
 
   useEffect(() => {
     const handler = (e) => {
-      if (roleRef.current && !roleRef.current.contains(e.target)) setRoleOpen(false);
       if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
     };
@@ -57,9 +57,8 @@ export function TopHeader({ collapsed, onMenuToggle }) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('pragatipath_auth');
-    localStorage.removeItem('pragatipath_demo_role');
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -115,71 +114,14 @@ export function TopHeader({ collapsed, onMenuToggle }) {
       {/* Right: Controls, Demo Role Switcher & Profile */}
       <div className="flex items-center gap-2 sm:gap-3">
         
-        {/* LIVE DEMO ROLE SWITCHER PILL */}
-        <div className="relative" ref={roleRef}>
-          <button
-            type="button"
-            onClick={() => {
-              setRoleOpen((o) => !o);
-              setNotifOpen(false);
-              setProfileOpen(false);
-            }}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-blue-50/90 hover:bg-blue-100/80 border border-blue-200 text-xs font-bold text-[#0056D2] transition-all shadow-xs"
-            title="Switch Demo Role"
-          >
-            <span className="w-2 h-2 rounded-full bg-[#0056D2] animate-pulse" />
-            <span className="hidden sm:inline text-slate-500 font-medium text-[11px]">Role:</span>
-            <span className="truncate max-w-[120px]">{currentProfile.label}</span>
-            <MdKeyboardArrowDown size={16} className="text-[#0056D2]" />
-          </button>
-
-          {/* Role Dropdown Menu */}
-          {roleOpen && (
-            <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="px-3 py-2 border-b border-slate-100">
-                <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                  Switch Demo Role
-                </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Changes dashboard and project workspace experience.
-                </p>
-              </div>
-
-              <div className="space-y-1 py-1.5">
-                {availableRoles.map((roleItem) => {
-                  const isSelected = currentRole === roleItem.roleKey;
-                  return (
-                    <button
-                      key={roleItem.roleKey}
-                      type="button"
-                      onClick={() => {
-                        setRole(roleItem.roleKey);
-                        setRoleOpen(false);
-                      }}
-                      className={`w-full text-left p-2.5 rounded-xl transition-all flex items-start gap-2.5 ${
-                        isSelected
-                          ? 'bg-blue-50/80 border border-blue-200 text-[#0056D2]'
-                          : 'hover:bg-slate-50 text-slate-800'
-                      }`}
-                    >
-                      <div className="p-1.5 rounded-lg bg-white border border-slate-200 shadow-xs shrink-0 mt-0.5">
-                        {getRoleIcon(roleItem.roleKey)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold truncate">{roleItem.label}</span>
-                          {isSelected && <MdCheck size={16} className="text-[#0056D2]" />}
-                        </div>
-                        <div className="text-[10px] text-slate-500 leading-tight truncate mt-0.5">
-                          {roleItem.tagline}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+        {/* Authenticated Server-Authoritative Role Badge (Non-switchable) */}
+        <div
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 shadow-2xs select-none"
+          title={`Authenticated Role: ${currentProfile.label}`}
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+          <span className="hidden sm:inline text-slate-400 font-medium text-[11px]">Role:</span>
+          <span className="truncate max-w-[130px] text-slate-900">{currentProfile.label}</span>
         </div>
 
         {/* Theme Toggle Pill */}
@@ -258,20 +200,14 @@ export function TopHeader({ collapsed, onMenuToggle }) {
           <MdHelpOutline size={20} />
         </button>
 
-        {/* User Profile (Dynamic based on current role) */}
+        {/* User Profile */}
         <div className="relative" ref={profileRef}>
           <button
             type="button"
-            onClick={() => { setProfileOpen(o => !o); setNotifOpen(false); setRoleOpen(false); }}
+            onClick={() => { setProfileOpen(o => !o); setNotifOpen(false); }}
             className="flex items-center gap-2 p-1 rounded-xl hover:bg-slate-50 transition-colors"
           >
-            <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
-              <img
-                src={currentProfile.avatar}
-                alt={currentProfile.name}
-                className="w-9 h-9 object-cover rounded-full"
-              />
-            </div>
+            <Avatar name={currentProfile.name} avatar={currentProfile.avatar} size="md" />
             <div className="hidden md:block text-left max-w-[130px]">
               <p className="text-xs font-bold text-slate-900 leading-tight truncate">
                 {currentProfile.name}
@@ -284,12 +220,13 @@ export function TopHeader({ collapsed, onMenuToggle }) {
 
           {/* Profile Dropdown */}
           {profileOpen && (
-            <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 py-1.5 overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-slate-100">
-                <p className="text-xs font-bold text-slate-900">{currentProfile.name}</p>
-                <p className="text-[10px] text-slate-500 truncate">{currentProfile.email}</p>
-                <div className="mt-1.5">
-                  <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full border ${currentProfile.badgeColor}`}>
+            <div className="absolute right-0 top-full mt-2 w-60 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-3">
+                <Avatar name={currentProfile.name} avatar={currentProfile.avatar} size="lg" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-slate-900 truncate">{currentProfile.name}</p>
+                  <p className="text-[10px] text-slate-500 truncate">{currentProfile.email}</p>
+                  <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full border mt-1 ${currentProfile.badgeColor}`}>
                     {currentProfile.label}
                   </span>
                 </div>
