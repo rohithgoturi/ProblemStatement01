@@ -5,6 +5,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AppShell } from './components/layout/AppShell';
+import { RouteErrorBoundary } from './components/shared/ErrorBoundary';
 
 import LandingPage           from './pages/Landing/LandingPage';
 import LoginPage             from './pages/Login/LoginPage';
@@ -23,24 +24,29 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <LandingPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/login',
     element: <LoginPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/signup',
     element: <SignupPage />,
+    errorElement: <RouteErrorBoundary />,
   },
 
   // Authenticated app routes (inside AppShell)
   {
     path: '/',
     element: <AppShell />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         path: 'dashboard',
         element: <DashboardPage />,
+        errorElement: <RouteErrorBoundary />,
       },
       {
         path: 'projects',

@@ -64,7 +64,7 @@ async function runTests() {
   console.log('Duplicate Signup Status:', dupRes.status);
   console.log('Duplicate Response:', JSON.stringify(dupRes.body, null, 2));
 
-  if (dupRes.status !== 400 || dupRes.body.error?.code !== 'DUPLICATE_EMAIL') {
+  if (![400, 409].includes(dupRes.status) || dupRes.body.error?.code !== 'DUPLICATE_EMAIL') {
     console.error('FAILED Test 2');
     process.exit(1);
   }

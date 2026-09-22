@@ -76,7 +76,7 @@ async function runSelfContainedTests() {
     console.log('Duplicate Signup Status:', dupRes.status);
     console.log('Duplicate Response:', JSON.stringify(dupRes.body, null, 2));
 
-    if (dupRes.status !== 400 || dupRes.body.error?.code !== 'DUPLICATE_EMAIL') {
+    if (![400, 409].includes(dupRes.status) || dupRes.body.error?.code !== 'DUPLICATE_EMAIL') {
       throw new Error('FAILED Test 2: Duplicate check failed');
     }
 
@@ -98,6 +98,7 @@ async function runSelfContainedTests() {
     server.close();
     await mongoose.disconnect();
     console.log('Server & DB closed.');
+    process.exit(0);
   }
 }
 

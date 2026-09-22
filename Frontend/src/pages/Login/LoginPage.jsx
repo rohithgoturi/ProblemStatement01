@@ -67,35 +67,24 @@ export default function LoginPage() {
     }
   };
 
-  // Quick Role Selection Handler (instantly logs in with chosen role)
-  const handleRoleSelect = async (roleKey, roleName) => {
-    setIsLoading(true);
-    setErrorMsg('');
-
+  // Quick Role Selection Handler — prefills email for the chosen role.
+  // The user must still enter their real password and submit the form.
+  const handleRoleSelect = (roleKey, roleName) => {
     const targetRole = roleKey === 'site_engineer' ? 'site_supervisor' : roleKey;
     setRole(targetRole);
+    setErrorMsg('');
 
-    // Prepopulate identifier visual feedback
-    const mockEmails = {
+    // Pre-fill the email field to guide the user (typical credentials for each role)
+    const roleEmails = {
       planner: 'planner@pragatipath.com',
       site_supervisor: 'supervisor@pragatipath.com',
       project_manager: 'manager@pragatipath.com',
       admin: 'admin@pragatipath.com',
     };
 
-    const email = mockEmails[targetRole] || 'user@pragatipath.com';
+    const email = roleEmails[targetRole] || 'user@pragatipath.com';
     setIdentifier(email);
-    setPassword('••••••••');
-
-    // Simulate login and redirect to dashboard
-    await login({
-      email,
-      password: 'demo-password',
-      role: targetRole,
-      name: `${roleName} User`,
-    });
-
-    navigate('/dashboard');
+    setPassword(''); // Clear password — user must enter real credentials
   };
 
   const handleForgotSubmit = (e) => {
@@ -232,10 +221,13 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-xs">
                 <span className="px-3 bg-white text-slate-400 font-medium">
-                  Or continue with role
+                  Quick-fill credentials by role
                 </span>
               </div>
             </div>
+            <p className="text-[11px] text-slate-400 text-center -mt-4">
+              Selects role &amp; pre-fills email — enter your real password to sign in
+            </p>
 
             {/* 2x2 Grid of Role Cards */}
             <div className="grid grid-cols-2 gap-3">

@@ -1,159 +1,305 @@
 /**
- * PragatiPath API Service — Frontend Abstraction Layer
- *
- * This file provides a clean API boundary between the UI and data layer.
- * Currently uses mock data. Replace the implementations with real HTTP
- * calls when backend integration is ready.
- *
- * Pattern: all service functions return Promises to match real API behavior.
+ * PragatiPath API Service — Real Backend Integration Layer
+ * All mock data has been removed. All functions connect directly to the Express backend.
  */
 
 import client from './client';
-import { projects, projectSummary } from '../data/projects';
-import { dprs, dprStatusCounts } from '../data/dprs';
-import { scheduleActivities, scheduleStats } from '../data/schedule';
 
-// Simulate network delay
-const delay = (ms = 400) => new Promise(resolve => setTimeout(resolve, ms));
-
-// ---- Projects ----
-
-export const getProjectSummary = async () => {
-  await delay();
-  return { data: projectSummary, error: null };
+// Helper helper to format standard error/success response wrapper
+const handleRequest = async (promise) => {
+  try {
+    const res = await promise;
+    return { data: res.data?.data !== undefined ? res.data.data : res.data, message: res.data?.message || null, error: null };
+  } catch (err) {
+    return { data: null, error: err.message || 'API Request Failed' };
+  }
 };
 
-export const getProjects = async ({ status = null, search = '' } = {}) => {
-  await delay();
-  let result = [...projects];
-  if (status) result = result.filter(p => p.status === status);
-  if (search) result = result.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.id.toLowerCase().includes(search.toLowerCase())
-  );
-  return { data: result, error: null };
-};
-
-export const getProjectById = async (id) => {
-  await delay();
-  const project = projects.find(p => p.id === id);
-  if (!project) return { data: null, error: 'Project not found' };
-  return { data: project, error: null };
-};
-
-// ---- DPRs ----
-
-export const getDPRStatusCounts = async () => {
-  await delay();
-  return { data: dprStatusCounts, error: null };
-};
-
-export const getDPRs = async ({ projectId = null, status = null } = {}) => {
-  await delay();
-  let result = [...dprs];
-  if (projectId) result = result.filter(d => d.projectId === projectId);
-  if (status)    result = result.filter(d => d.status === status);
-  return { data: result, error: null };
-};
-
-export const submitDPR = async (payload) => {
-  await delay(800);
-  // Mock successful submission
-  return {
-    data: { id: `DPR-${Date.now()}`, status: 'pending_extraction', ...payload },
-    error: null,
-  };
-};
-
-// ---- Schedule ----
-
-export const getScheduleStats = async () => {
-  await delay();
-  return { data: scheduleStats, error: null };
-};
-
-export const getScheduleActivities = async ({ status = null, discipline = null } = {}) => {
-  await delay();
-  let result = [...scheduleActivities];
-  if (status)     result = result.filter(a => a.status === status);
-  if (discipline) result = result.filter(a => a.discipline === discipline);
-  return { data: result, error: null };
-};
-
-// ---- Auth ----
+// ==========================================
+// 1. AUTHENTICATION API
+// ==========================================
 
 export const signup = async ({ name, email, password, role }) => {
-  try {
-    const res = await client.post('/auth/signup', { name, email, password, role });
-    return { data: res.data.data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message };
-  }
+  return handleRequest(client.post('/auth/signup', { name, email, password, role }));
 };
 
-export const login = async ({ email, password, role, name }) => {
-  try {
-    const res = await client.post('/auth/login', { email, password });
-    return { data: res.data.data, error: null };
-  } catch (err) {
-    return { data: null, error: err.message };
-  }
+export const login = async ({ email, password }) => {
+  return handleRequest(client.post('/auth/login', { email, password }));
 };
 
 export const logout = async () => {
-  await delay(200);
   return { data: { success: true }, error: null };
 };
 
-// ---- AI Matching & Verification ----
-import { AI_MATCHING_DATA } from '../data/aiMatchingData';
-import { PROGRESS_TRACKING_DATA } from '../data/progressData';
+// ==========================================
+// ==========================================
+// 2. SCHEDULE API
+// ==========================================
 
-export const getAIMatchingData = async () => {
-  await delay(300);
-  return { data: AI_MATCHING_DATA, error: null };
-};
-
-export const validateCandidateMatch = async (id, action) => {
-  await delay(300);
+export const getScheduleActivities = async (params = {}) => {
+  const res = await handleRequest(client.get('/schedules', { params }));
+  const acts = res.data?.activities || (Array.isArray(res.data) ? res.data : []);
   return {
-    data: {
-      id,
-      action, // 'approve' | 'change' | 'reject'
-      timestamp: new Date().toISOString(),
-      updatedStatus: action === 'approve' ? 'Approved' : action === 'reject' ? 'Rejected' : 'Changed',
-    },
-    error: null,
+    ...res,
+    data: Array.isArray(acts) ? acts : [],
+    pagination: res.data?.activities
+      ? {
+          total: res.data.total ?? acts.length,
+          page: res.data.page ?? 1,
+          totalPages: res.data.totalPages ?? 1,
+          count: res.data.count ?? acts.length,
+        }
+      : null,
   };
 };
 
-// ---- Progress Tracking ----
-
-export const getProgressTrackingData = async () => {
-  await delay(300);
-  return { data: PROGRESS_TRACKING_DATA, error: null };
+export const getScheduleActivityById = async (id) => {
+  return handleRequest(client.get(`/schedules/${id}`));
 };
 
-// ---- Reports & Export ----
-import { REPORTS_DATA } from '../data/reportsData';
-
-export const getReportsData = async () => {
-  await delay(300);
-  return { data: REPORTS_DATA, error: null };
+export const importSchedule = async (fileOrFormData) => {
+  if (fileOrFormData instanceof FormData) {
+    return handleRequest(
+      client.post('/schedules/import', fileOrFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+    );
+  }
+  return handleRequest(client.post('/schedules/import', fileOrFormData));
 };
 
-export const triggerReportExport = async (reportId, format = 'PDF') => {
-  await delay(500);
+export const clearSchedule = async () => {
+  return handleRequest(client.delete('/schedules'));
+};
+
+// ==========================================
+// 3. PROGRESS INGESTION API
+// ==========================================
+
+export const getSourceDocuments = async (params = {}) => {
+  const res = await handleRequest(client.get('/progress/sources', { params }));
+  const docs = res.data?.documents || (Array.isArray(res.data) ? res.data : []);
   return {
-    data: {
-      success: true,
-      reportId,
-      format,
-      downloadUrl: `#download-${reportId}-${Date.now()}`,
-      generatedAt: new Date().toISOString(),
-    },
-    error: null,
+    ...res,
+    data: Array.isArray(docs) ? docs : [],
+    pagination: res.data?.documents
+      ? {
+          total: res.data.total ?? docs.length,
+          page: res.data.page ?? 1,
+          totalPages: res.data.totalPages ?? 1,
+          count: res.data.count ?? docs.length,
+        }
+      : null,
   };
 };
 
+export const getProgressEvents = async (params = {}) => {
+  const res = await handleRequest(client.get('/progress/events', { params }));
+  const evts = res.data?.events || (Array.isArray(res.data) ? res.data : []);
+  return {
+    ...res,
+    data: Array.isArray(evts) ? evts : [],
+    pagination: res.data?.events
+      ? {
+          total: res.data.total ?? evts.length,
+          page: res.data.page ?? 1,
+          totalPages: res.data.totalPages ?? 1,
+          count: res.data.count ?? evts.length,
+        }
+      : null,
+  };
+};
 
+export const uploadProgressFile = async (formData) => {
+  return handleRequest(
+    client.post('/progress/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  );
+};
+
+export const submitTextProgress = async (payload) => {
+  return handleRequest(client.post('/progress/text', payload));
+};
+
+// Legacy alias for compatibility with existing UI
+export const submitDPR = async (payload) => {
+  if (payload instanceof FormData) {
+    return uploadProgressFile(payload);
+  }
+  return submitTextProgress(payload);
+};
+
+// ==========================================
+// 4. AI EXTRACTION API
+// ==========================================
+
+export const extractProgressFromSource = async (sourceId) => {
+  return handleRequest(client.post(`/extraction/source/${sourceId}`));
+};
+
+export const extractProgressFromText = async (text) => {
+  return handleRequest(client.post('/extraction/text', { text }));
+};
+
+// ==========================================
+// 5. MATCHING ENGINE API
+// ==========================================
+
+export const matchSingleEvent = async (eventId) => {
+  return handleRequest(client.post(`/matching/event/${eventId}`));
+};
+
+export const batchMatchEvents = async (projectId = null) => {
+  const endpoint = projectId ? `/matching/project/${projectId}` : '/matching/batch';
+  return handleRequest(client.post(endpoint, { projectId }));
+};
+
+export const getUnmatchedEvents = async (params = {}) => {
+  const res = await handleRequest(client.get('/matching/unmatched', { params }));
+  const evts = res.data?.events || (Array.isArray(res.data) ? res.data : []);
+  return {
+    ...res,
+    data: Array.isArray(evts) ? evts : [],
+    pagination: res.data?.events
+      ? {
+          total: res.data.total ?? evts.length,
+          page: res.data.page ?? 1,
+          totalPages: res.data.totalPages ?? 1,
+          count: res.data.count ?? evts.length,
+        }
+      : null,
+  };
+};
+
+// ==========================================
+// 6. PLANNER REVIEW & APPROVAL API
+// ==========================================
+
+export const getPendingReviews = async (params = {}) => {
+  const res = await handleRequest(client.get('/reviews/pending', { params }));
+  const items = res.data?.items || res.data?.pendingReviews || (Array.isArray(res.data) ? res.data : []);
+  return {
+    ...res,
+    data: Array.isArray(items) ? items : [],
+    pagination: res.data?.items
+      ? {
+          total: res.data.total ?? items.length,
+          page: res.data.page ?? 1,
+          totalPages: res.data.totalPages ?? 1,
+          count: res.data.count ?? items.length,
+        }
+      : null,
+  };
+};
+
+export const approveMatch = async (eventId, payload = {}) => {
+  const body = {
+    scheduleActivityId: payload.selectedActivityId || payload.scheduleActivityId,
+    actualStartDate: payload.actualStartDate,
+    actualFinishDate: payload.actualFinishDate,
+    progressPercentage: payload.progressPercentage,
+    reviewerNotes: payload.notes || payload.reviewerNotes,
+  };
+  return handleRequest(client.post(`/reviews/${eventId}/approve`, body));
+};
+
+export const editAndApproveMatch = async (eventId, payload = {}) => {
+  const body = {
+    scheduleActivityId: payload.selectedActivityId || payload.scheduleActivityId,
+    extractedActivityName: payload.extractedActivityName,
+    discipline: payload.discipline,
+    location: payload.location,
+    actualStartDate: payload.actualStartDate,
+    actualFinishDate: payload.actualFinishDate,
+    progressPercentage: payload.progressPercentage,
+    reviewerNotes: payload.notes || payload.reviewerNotes,
+  };
+  return handleRequest(client.post(`/reviews/${eventId}/edit`, body));
+};
+
+export const rejectMatch = async (eventId, payload = {}) => {
+  const body = {
+    reviewerNotes: payload.notes || payload.reviewerNotes || 'Rejected by planner review',
+  };
+  return handleRequest(client.post(`/reviews/${eventId}/reject`, body));
+};
+
+// Legacy alias for existing UI components
+export const validateCandidateMatch = async (eventId, action, details = {}) => {
+  if (action === 'approve') {
+    return approveMatch(eventId, details);
+  } else if (action === 'reject') {
+    return rejectMatch(eventId, details);
+  } else {
+    return editAndApproveMatch(eventId, details);
+  }
+};
+
+// ==========================================
+// 7. AUDIT HISTORY & REPORTS API
+// ==========================================
+
+export const getAuditLogs = async (params = {}) => {
+  const res = await handleRequest(client.get('/reviews/audit', { params }));
+  const logs = res.data?.logs || res.data?.auditLogs || (Array.isArray(res.data) ? res.data : []);
+  return {
+    ...res,
+    data: Array.isArray(logs) ? logs : [],
+    pagination: res.data?.logs
+      ? {
+          total: res.data.total ?? logs.length,
+          page: res.data.page ?? 1,
+          totalPages: res.data.totalPages ?? 1,
+          count: res.data.count ?? logs.length,
+        }
+      : null,
+  };
+};
+
+// NOTE: triggerReportExport removed — ReportsPage handles CSV export client-side.
+// There is no backend export endpoint. Use handleExportCSV in ReportsPage directly.
+
+// ==========================================
+// 8. DASHBOARD SUMMARY AGGREGATOR
+// ==========================================
+
+export const getDashboardSummary = async () => {
+  try {
+    const [schedulesRes, eventsRes, pendingRes, sourcesRes] = await Promise.all([
+      getScheduleActivities(),
+      getProgressEvents(),
+      getPendingReviews(),
+      getSourceDocuments(),
+    ]);
+
+    const activities = schedulesRes.data || [];
+    const events = eventsRes.data || [];
+    const pendingReviews = pendingRes.data || [];
+    const sources = sourcesRes.data || [];
+
+    const completed = activities.filter((a) => a.actualFinishDate || a.progressPercentage >= 100).length;
+    const inProgress = activities.filter((a) => a.actualStartDate && (a.progressPercentage < 100 || !a.actualFinishDate)).length;
+    const pendingCount = pendingReviews.length;
+    const approvedEvents = events.filter((e) => e.status === 'APPROVED').length;
+
+    return {
+      data: {
+        totalActivities: activities.length,
+        completedActivities: completed,
+        inProgressActivities: inProgress,
+        notStartedActivities: activities.length - (completed + inProgress),
+        pendingReviewsCount: pendingCount,
+        approvedEventsCount: approvedEvents,
+        totalSources: sources.length,
+        activities,
+        events,
+        pendingReviews,
+        sources,
+      },
+      error: null,
+    };
+  } catch (err) {
+    return { data: null, error: err.message || 'Failed to fetch dashboard summary' };
+  }
+};

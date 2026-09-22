@@ -12,7 +12,7 @@ import {
   MdCheck, MdEngineering, MdAssignmentInd, MdAdminPanelSettings, MdBuild
 } from 'react-icons/md';
 import { cn } from '../../utils/helpers';
-import { notifications as mockNotifications } from '../../data/navigation';
+import { getPendingReviews } from '../../services/api';
 import { useRole } from '../../context/RoleContext';
 import { Logo } from '../shared/Logo';
 
@@ -22,14 +22,30 @@ export function TopHeader({ collapsed, onMenuToggle }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
-  const notifications = mockNotifications;
   const roleRef    = useRef(null);
   const notifRef   = useRef(null);
   const profileRef = useRef(null);
   const navigate   = useNavigate();
 
-  const unreadCount = 3; // Fixed 3 matching reference badge
+  useEffect(() => {
+    let isMounted = true;
+    getPendingReviews().then((res) => {
+      if (isMounted && res.data) {
+        const items = res.data.map((r, i) => ({
+          id: r._id || r.id || `notif-${i}`,
+          title: `AI Match: ${r.matchedActivityId || 'Schedule Item'}`,
+          message: `${Math.round((r.confidence || 0) * 100)}% match confidence • Action needed`,
+          time: 'Action Required',
+        }));
+        setNotifications(items);
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
+
+  const unreadCount = notifications.length;
 
   useEffect(() => {
     const handler = (e) => {
@@ -206,17 +222,28 @@ export function TopHeader({ collapsed, onMenuToggle }) {
                   <MdClose size={16} />
                 </button>
               </div>
-              <ul className="max-h-72 overflow-y-auto divide-y divide-slate-100">
-                {notifications.slice(0, 3).map(n => (
-                  <li key={n.id} className="p-3.5 hover:bg-slate-50 text-xs transition-colors">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-slate-900">{n.title}</span>
-                      <span className="text-[10px] text-slate-400">{n.time}</span>
-                    </div>
-                    <p className="text-slate-600 leading-snug">{n.message}</p>
-                  </li>
-                ))}
-              </ul>
+              {notifications.length === 0 ? (
+                <div className="p-6 text-center text-xs text-slate-500">
+                  <MdCheck className="mx-auto text-emerald-500 text-xl mb-1" />
+                  All caught up! No pending reviews or alerts.
+                </div>
+              ) : (
+                <ul className="max-h-72 overflow-y-auto divide-y divide-slate-100">
+                  {notifications.slice(0, 5).map(n => (
+                    <li
+                      key={n.id}
+                      onClick={() => { setNotifOpen(false); navigate('/ai-matching'); }}
+                      className="p-3.5 hover:bg-slate-50 text-xs transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-slate-900">{n.title}</span>
+                        <span className="text-[10px] text-amber-600 font-medium">{n.time}</span>
+                      </div>
+                      <p className="text-slate-600 leading-snug">{n.message}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
         </div>

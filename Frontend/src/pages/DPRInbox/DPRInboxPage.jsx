@@ -1,172 +1,116 @@
 /**
- * PragatiPath — DPR Inbox Page
- * Faithfully matches Phase 3 Reference Image 2:
- * - DPR Hero banner with site photo, metadata chips, and date selector
- * - 5-Mode Input Tabs (Text, Voice, Excel, PDF, Photos)
- * - DPR Text input with character counter & attachment triggers
- * - Interactive Voice Player (Play/Pause, scrub timer, volume, delete)
- * - Supported Formats & Tips box with handwritten cursive branding & crane/hardhat illustration
- * - Recent DPR Submissions with reactive selection
- * - AI Extraction Preview with syntax-colored JSON & confidence score bar
- * - Recent Attachments gallery with '+ Add More' trigger
+ * PragatiPath — DPR Inbox Page (Full Backend API Integrated)
+ * All mock data removed. Real file uploads & text progress reports connected to backend.
  */
 import { useState, useRef, useEffect } from 'react';
 import {
-  MdOutlineArticle, MdMic, MdTableChart, MdPictureAsPdf, MdInsertPhoto,
-  MdAttachFile, MdAdd, MdPlayArrow, MdPause, MdVolumeUp, MdVolumeOff,
-  MdDeleteOutline, MdSend, MdInfoOutline, MdChevronRight, MdContentCopy,
-  MdCheckCircle, MdCalendarToday, MdClose, MdCheck, MdInbox
+  MdOutlineArticle, MdTableChart, MdPictureAsPdf,
+  MdAttachFile, MdSend, MdInfoOutline,
+  MdCheckCircle, MdInbox, MdCloudUpload
 } from 'react-icons/md';
 import { PageHeader } from '../../components/shared/PageHeader';
-import {
-  dprContextInfo,
-  recentDprSubmissions,
-  defaultExtractionPreview,
-  dprSupportedTips,
-  recentDprAttachments,
-} from '../../data/dprData';
+import { getSourceDocuments, getProgressEvents, submitTextProgress, uploadProgressFile } from '../../services/api';
 
 export default function DPRInboxPage() {
-  // Mode tabs: 'text' | 'voice' | 'excel' | 'pdf' | 'photos'
-  const [activeMode, setActiveMode] = useState('text');
+  const [activeMode, setActiveMode] = useState('text'); // 'text' | 'file'
+  const [textInput, setTextInput] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  // Input states
-  const [reportDate, setReportDate] = useState('10 Sep 2026');
-  const [textInput, setTextInput] = useState(
-    'Pump P-101 installation completed in Unit 2.\nTesting work ongoing.'
-  );
-  const [attachments, setAttachments] = useState([
-    { id: 'att-excel', name: 'DPR_Report.xlsx', size: '245 KB', type: 'excel' },
-  ]);
-
-  // Voice player state
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioSeconds, setAudioSeconds] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [hasVoiceNote, setHasVoiceNote] = useState(true);
-
-  // Submissions and selected extraction
-  const [submissionsList, setSubmissionsList] = useState(recentDprSubmissions);
-  const [selectedSubmissionId, setSelectedSubmissionId] = useState('DPR-2025-001');
-  const [currentExtraction, setCurrentExtraction] = useState(defaultExtractionPreview);
-  const [currentConfidence, setCurrentConfidence] = useState(92);
-
-  // UI state
+  const [sources, setSources] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedSourceId, setSelectedSourceId] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
   const [toastMessage, setToastMessage] = useState(null);
-  const [isCopied, setIsCopied] = useState(false);
-  const [recentAtts, setRecentAtts] = useState(recentDprAttachments);
 
   const fileInputRef = useRef(null);
-  const photoInputRef = useRef(null);
-  const addMoreRef = useRef(null);
-
-  // Simulated voice timer playback
-  useEffect(() => {
-    let interval = null;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setAudioSeconds((prev) => {
-          if (prev >= 85) {
-            setIsPlaying(false);
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
-  const formatAudioTime = (sec) => {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleSelectSubmission = (sub) => {
-    setSelectedSubmissionId(sub.id);
-    if (sub.extraction) {
-      setCurrentExtraction(sub.extraction);
-      setCurrentConfidence(sub.confidence || 90);
+  // Fetch real source documents & events from Express API
+  const fetchData = async () => {
+    setLoading(true);
+    setErrorMsg('');
+    const [sourcesRes, eventsRes] = await Promise.all([
+      getSourceDocuments(),
+      getProgressEvents(),
+    ]);
+
+    if (sourcesRes.error) {
+      setErrorMsg(sourcesRes.error);
+    } else {
+      const srcList = Array.isArray(sourcesRes.data) ? sourcesRes.data : [];
+      setSources(srcList);
+      if (srcList.length > 0 && !selectedSourceId) {
+        setSelectedSourceId(srcList[0]._id || srcList[0].id);
+      }
     }
-  };
 
-  const handleRemoveAttachment = (id) => {
-    setAttachments((prev) => prev.filter((a) => a.id !== id));
-    showToast('Attachment removed');
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const newAtt = {
-        id: `att-${Date.now()}`,
-        name: file.name,
-        size: `${(file.size / 1024).toFixed(0)} KB`,
-        type: file.name.endsWith('.pdf') ? 'pdf' : file.name.endsWith('.xlsx') ? 'excel' : 'image',
-      };
-      setAttachments((prev) => [...prev, newAtt]);
-      setRecentAtts((prev) => [newAtt, ...prev]);
-      showToast(`Attached ${file.name}`);
+    if (eventsRes.data) {
+      setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : []);
     }
+    setLoading(false);
   };
 
-  const handleSubmitDPR = (e) => {
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSubmitText = async (e) => {
     e.preventDefault();
-    if (!textInput.trim() && !hasVoiceNote && attachments.length === 0) {
-      showToast('Please enter report notes or add an attachment');
-      return;
-    }
+    if (!textInput.trim()) return;
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setErrorMsg('');
 
-      const newId = `DPR-2026-${String(submissionsList.length + 1).padStart(3, '0')}`;
-      const newSub = {
-        id: newId,
-        title: activeMode === 'text' ? 'Text Report' : activeMode === 'voice' ? 'Voice Note' : `${activeMode.toUpperCase()} Report`,
-        type: activeMode,
-        code: newId,
-        date: '10 Sep 2026',
-        time: 'Just now',
-        status: 'Extracted',
-        statusVariant: 'success',
-        icon: activeMode,
-        content: textInput,
-        extraction: {
-          activity: 'Field DPR Submission Verified',
-          unit: dprContextInfo.unit,
-          status: 'In Progress',
-          progress: 85,
-          date: '2026-09-10',
-          source: activeMode.charAt(0).toUpperCase() + activeMode.slice(1),
-        },
-        confidence: 96,
-      };
+    const res = await submitTextProgress({
+      text: textInput.trim(),
+      rawContent: textInput.trim(),
+      submittedBy: 'site-supervisor-1',
+    });
 
-      setSubmissionsList([newSub, ...submissionsList]);
-      setSelectedSubmissionId(newId);
-      setCurrentExtraction(newSub.extraction);
-      setCurrentConfidence(newSub.confidence);
-      showToast('✓ DPR Submitted & Extracted with 96% confidence!');
-    }, 1000);
+    setIsSubmitting(false);
+
+    if (res.error) {
+      setErrorMsg(`Submission failed: ${res.error}`);
+    } else {
+      showToast('Progress update submitted successfully! AI extraction & matching initiated.');
+      setTextInput('');
+      fetchData();
+    }
   };
 
-  const handleCopyJSON = () => {
-    navigator.clipboard?.writeText(JSON.stringify(currentExtraction, null, 2));
-    setIsCopied(true);
-    showToast('JSON copied to clipboard');
-    setTimeout(() => setIsCopied(false), 2000);
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    setIsSubmitting(true);
+    setErrorMsg('');
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('submittedBy', 'site-supervisor-1');
+
+    const res = await uploadProgressFile(formData);
+    setIsSubmitting(false);
+
+    if (res.error) {
+      setErrorMsg(`File upload failed: ${res.error}`);
+    } else {
+      showToast(`Uploaded ${file.name} successfully! AI parsed ${res.data?.extractedEvents?.length || 0} events.`);
+      setSelectedFile(null);
+      fetchData();
+    }
   };
+
+  // Selected source & its extracted events
+  const activeSource = sources.find((s) => (s._id || s.id) === selectedSourceId) || sources[0];
+  const activeEvents = events.filter((ev) => (ev.sourceDocumentId?._id || ev.sourceDocumentId || ev.sourceDocument) === (activeSource?._id || activeSource?.id));
 
   return (
     <div className="space-y-5">
@@ -178,497 +122,218 @@ export default function DPRInboxPage() {
         </div>
       )}
 
-      {/* 1. STANDARDIZED PAGE HEADER */}
+      {/* Page Header */}
       <PageHeader
-        title="DPR Inbox"
-        subtitle="Review, extract and validate daily progress reports"
+        title="DPR & Progress Report Inbox"
+        subtitle="Ingest text progress reports, spreadsheets, and site diaries"
         icon={<MdInbox />}
-        actions={
-          <div className="flex items-center gap-3">
-            {/* Date Picker Trigger Card */}
-            <div className="bg-white text-slate-800 rounded-xl px-4 py-2 shadow-xs flex items-center gap-2.5 border border-white/40 text-xs font-medium">
-              <MdCalendarToday size={16} className="text-[#3158C9]" />
-              <div>
-                <div className="text-[9px] uppercase font-semibold text-slate-400 tracking-wider leading-none">Report Date</div>
-                <select
-                  value={reportDate}
-                  onChange={(e) => setReportDate(e.target.value)}
-                  className="font-bold text-slate-800 bg-transparent cursor-pointer focus:outline-none text-xs mt-0.5"
-                >
-                  <option value="10 Sep 2026">10 Sep 2026</option>
-                  <option value="09 Sep 2026">09 Sep 2026</option>
-                  <option value="08 Sep 2026">08 Sep 2026</option>
-                  <option value="07 Sep 2026">07 Sep 2026</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Engineer Image Thumbnail */}
-            <div className="hidden sm:block relative w-11 h-11 rounded-xl overflow-hidden shadow-xs border-2 border-white/40 shrink-0">
-              <img
-                src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=200&auto=format&fit=crop&q=80"
-                alt="Site Engineer"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        }
       />
 
-      {/* 2. MODE TABS STRIP */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {[
-          { id: 'text',   label: 'Text',   icon: MdOutlineArticle },
-          { id: 'voice',  label: 'Voice',  icon: MdMic },
-          { id: 'excel',  label: 'Excel',  icon: MdTableChart, iconColor: 'text-emerald-600' },
-          { id: 'pdf',    label: 'PDF',    icon: MdPictureAsPdf, iconColor: 'text-purple-600' },
-          { id: 'photos', label: 'Photos', icon: MdInsertPhoto, iconColor: 'text-blue-500' },
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeMode === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveMode(tab.id)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm ${
-                isActive
-                  ? 'bg-[#0056D2] text-white shadow-blue-500/20 shadow-md'
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'
-              }`}
-            >
-              <Icon size={18} className={isActive ? 'text-white' : tab.iconColor || 'text-slate-500'} />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* Error Message */}
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
+          {errorMsg}
+        </div>
+      )}
 
-      {/* 3. MAIN 2-COLUMN GRID (Left ~62% | Right ~38%) */}
+      {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* ================= LEFT COLUMN ================= */}
-        <div className="lg:col-span-7 space-y-5">
-          {/* Main DPR Input Card */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-5">
-            <h2 className="text-base font-bold text-slate-900 capitalize">
-              DPR Input ({activeMode})
-            </h2>
+        {/* Left Column: Progress Submission Form */}
+        <div className="lg:col-span-6 space-y-5">
+          {/* Submission Mode Card */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+            {/* Mode Switcher Tabs */}
+            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setActiveMode('text')}
+                className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                  activeMode === 'text' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <MdOutlineArticle size={16} />
+                <span>Text Progress</span>
+              </button>
 
-            {/* Input Content by Active Tab */}
+              <button
+                type="button"
+                onClick={() => setActiveMode('file')}
+                className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                  activeMode === 'file' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <MdCloudUpload size={16} />
+                <span>Upload Report / File</span>
+              </button>
+            </div>
+
+            {/* Mode 1: Text Input Form */}
             {activeMode === 'text' && (
-              <div className="space-y-2">
-                <div className="relative">
+              <form onSubmit={handleSubmitText} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Daily Progress Report Text
+                  </label>
                   <textarea
-                    rows={4}
+                    rows={5}
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
-                    placeholder="Enter site work description (Hindi / English / Hinglish supported)..."
-                    maxLength={1000}
-                    className="w-full rounded-xl border border-slate-200 p-3.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0056D2]/20 focus:border-[#0056D2] transition-colors leading-relaxed resize-none"
+                    placeholder="Enter site progress updates (e.g. 'Piping activity P-102 completed in Unit 2 today. Foundation pouring ongoing.')"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0056D2] focus:bg-white transition-all placeholder:text-slate-400"
                   />
-                  <div className="absolute right-3 bottom-3 text-xs text-slate-400 font-medium">
-                    {textInput.length}/1000
-                  </div>
                 </div>
-              </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-slate-400">
+                    {textInput.length} characters
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || !textInput.trim()}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0056D2] hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                  >
+                    <MdSend size={16} />
+                    <span>{isSubmitting ? 'Processing AI Extraction...' : 'Submit Update'}</span>
+                  </button>
+                </div>
+              </form>
             )}
 
-            {activeMode === 'voice' && (
-              <div className="p-6 border-2 border-dashed border-blue-200 bg-blue-50/40 rounded-xl text-center space-y-3">
-                <div className="w-14 h-14 mx-auto rounded-full bg-[#0056D2] text-white flex items-center justify-center shadow-lg shadow-blue-500/30 cursor-pointer hover:bg-blue-700 transition-all">
-                  <MdMic size={28} />
+            {/* Mode 2: File Upload */}
+            {activeMode === 'file' && (
+              <div className="text-center py-6 border-2 border-dashed border-slate-200 rounded-xl space-y-3">
+                <div className="w-12 h-12 mx-auto rounded-full bg-blue-50 text-[#0056D2] flex items-center justify-center">
+                  <MdCloudUpload size={28} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Record Voice Report</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Click mic to record notes in Hindi, English, or Hinglish.</p>
+                  <h3 className="text-sm font-bold text-slate-800">Upload Site Progress Report</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Supports Excel (.xlsx, .xls), CSV, or text reports
+                  </p>
                 </div>
-              </div>
-            )}
 
-            {activeMode === 'excel' && (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="p-6 border-2 border-dashed border-emerald-200 bg-emerald-50/30 rounded-xl text-center cursor-pointer hover:bg-emerald-50/60 transition-colors space-y-2"
-              >
-                <MdTableChart className="mx-auto text-emerald-600 text-3xl" />
-                <div className="text-sm font-bold text-slate-800">Upload Excel Spreadsheet (.xlsx, .xls)</div>
-                <div className="text-xs text-slate-500">Drag and drop or click to browse daily log sheets</div>
-              </div>
-            )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,.xls,.csv,.txt"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
 
-            {activeMode === 'pdf' && (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="p-6 border-2 border-dashed border-purple-200 bg-purple-50/30 rounded-xl text-center cursor-pointer hover:bg-purple-50/60 transition-colors space-y-2"
-              >
-                <MdPictureAsPdf className="mx-auto text-purple-600 text-3xl" />
-                <div className="text-sm font-bold text-slate-800">Upload PDF Inspection Report (.pdf)</div>
-                <div className="text-xs text-slate-500">Attach site QA/QC inspection sheets or signoffs</div>
-              </div>
-            )}
-
-            {activeMode === 'photos' && (
-              <div
-                onClick={() => photoInputRef.current?.click()}
-                className="p-6 border-2 border-dashed border-blue-200 bg-blue-50/30 rounded-xl text-center cursor-pointer hover:bg-blue-50/60 transition-colors space-y-2"
-              >
-                <MdInsertPhoto className="mx-auto text-blue-600 text-3xl" />
-                <div className="text-sm font-bold text-slate-800">Upload Site Photos (.jpg, .png)</div>
-                <div className="text-xs text-slate-500">Attach clear photos with equipment, foundation, or crew</div>
-              </div>
-            )}
-
-            {/* Hidden native inputs */}
-            <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileUpload} />
-            <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
-
-            {/* Attachments Row */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              {/* Attach Files button */}
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 transition-colors"
-              >
-                <MdAttachFile size={16} className="text-slate-500" />
-                Attach Files / Photos
-              </button>
-
-              {/* Add Photo Dashed Box */}
-              <button
-                type="button"
-                onClick={() => photoInputRef.current?.click()}
-                className="inline-flex items-center gap-1 px-3.5 py-2 rounded-xl border border-dashed border-slate-300 hover:border-[#0056D2] text-xs font-semibold text-slate-600 hover:text-[#0056D2] bg-white transition-colors"
-              >
-                <MdAdd size={16} />
-                Add Photo
-              </button>
-
-              {/* Attached file chips */}
-              {attachments.map((att) => (
-                <div
-                  key={att.id}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50/80 text-xs text-slate-800 font-medium"
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isSubmitting}
+                  className="px-5 py-2 bg-[#0056D2] text-white text-xs font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                 >
-                  <div className="w-5 h-5 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[10px]">
-                    X
-                  </div>
-                  <span>{att.name}</span>
-                  <span className="text-slate-400 text-[11px]">{att.size}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveAttachment(att.id)}
-                    className="text-slate-400 hover:text-slate-600 ml-0.5"
-                  >
-                    <MdClose size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Voice Note (Optional) Section */}
-            {hasVoiceNote && (
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                    <MdMic className="text-[#0056D2]" size={16} />
-                    <span>Voice Note (optional)</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setHasVoiceNote(false);
-                      setIsPlaying(false);
-                      showToast('Voice note removed');
-                    }}
-                    className="text-slate-400 hover:text-rose-600 transition-colors"
-                    title="Delete voice note"
-                  >
-                    <MdDeleteOutline size={17} />
-                  </button>
-                </div>
-
-                {/* Audio Player Bar */}
-                <div className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-200">
-                  {/* Play/Pause Circle */}
-                  <button
-                    type="button"
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="w-8 h-8 rounded-full bg-[#0056D2] hover:bg-blue-700 text-white flex items-center justify-center shadow-sm transition-transform active:scale-95 shrink-0"
-                  >
-                    {isPlaying ? <MdPause size={18} /> : <MdPlayArrow size={18} className="ml-0.5" />}
-                  </button>
-
-                  {/* Timestamp */}
-                  <span className="text-xs font-mono font-medium text-slate-600 w-24 shrink-0">
-                    {formatAudioTime(audioSeconds)} / 01:25
-                  </span>
-
-                  {/* Scrubber track */}
-                  <div
-                    onClick={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const clickX = e.clientX - rect.left;
-                      const percent = clickX / rect.width;
-                      setAudioSeconds(Math.floor(percent * 85));
-                    }}
-                    className="relative flex-1 h-1.5 bg-slate-200 rounded-full cursor-pointer overflow-hidden"
-                  >
-                    <div
-                      className="absolute left-0 top-0 bottom-0 bg-[#0056D2] rounded-full transition-all"
-                      style={{ width: `${(audioSeconds / 85) * 100}%` }}
-                    />
-                  </div>
-
-                  {/* Volume Toggle */}
-                  <button
-                    type="button"
-                    onClick={() => setIsMuted(!isMuted)}
-                    className="text-slate-500 hover:text-slate-800 transition-colors"
-                  >
-                    {isMuted ? <MdVolumeOff size={18} /> : <MdVolumeUp size={18} />}
-                  </button>
-                </div>
+                  {isSubmitting ? 'Uploading & Parsing...' : 'Select Report File'}
+                </button>
               </div>
             )}
-
-            {/* Submit DPR CTA Button */}
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={handleSubmitDPR}
-              className="w-full py-3 px-6 rounded-xl bg-[#0056D2] hover:bg-blue-700 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 transition-all active:scale-[0.99] disabled:opacity-75 cursor-pointer"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Submitting & Extracting...</span>
-                </>
-              ) : (
-                <>
-                  <MdSend size={16} className="-rotate-12" />
-                  <span>Submit DPR</span>
-                </>
-              )}
-            </button>
           </div>
 
-          {/* Supported Formats & Tips Card */}
-          <div className="bg-gradient-to-r from-blue-50/70 to-slate-50 rounded-2xl p-5 border border-blue-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-2 max-w-md">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#0056D2]">
-                <MdInfoOutline size={16} />
-                <span>Supported Formats & Tips</span>
-              </div>
-              <ul className="space-y-1 text-xs text-slate-600">
-                {dprSupportedTips.map((tip, idx) => (
-                  <li key={idx} className="flex items-start gap-1.5">
-                    <span className="text-[#0056D2] mt-0.5 font-bold">•</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
+          {/* Submitted Source Documents List */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-slate-900">Ingested Sources ({sources.length})</h2>
+              <button onClick={fetchData} className="text-xs text-blue-600 font-bold hover:underline">
+                Refresh
+              </button>
             </div>
 
-            {/* Decorative branding handwritten style & sketch */}
-            <div className="flex items-center gap-3 shrink-0 text-right md:border-l md:border-blue-200/60 md:pl-5">
-              <div className="text-right">
-                <p className="text-xs font-serif italic text-blue-900 font-medium leading-tight">
-                  Better data.<br />
-                  Smarter tracking.<br />
-                  On time progress.
-                </p>
+            {loading ? (
+              <div className="py-8 text-center text-xs text-slate-400">Loading sources...</div>
+            ) : sources.length === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-400 border border-dashed rounded-xl">
+                No progress reports submitted yet.
               </div>
-              {/* Construction hardhat SVG sketch */}
-              <div className="w-12 h-12 text-[#0056D2]/60 shrink-0">
-                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 34h36c2 0 3-1 3-3 0-11-8-20-21-20S3 20 3 31c0 2 1 3 3 3z" />
-                  <path d="M16 11v-3h16v3" />
-                  <path d="M24 8v26" />
-                  <path d="M12 34v4h24v-4" />
-                </svg>
+            ) : (
+              <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                {sources.map((src) => {
+                  const id = src._id || src.id;
+                  const isSelected = id === (activeSource?._id || activeSource?.id);
+                  return (
+                    <div
+                      key={id}
+                      onClick={() => setSelectedSourceId(id)}
+                      className={`p-3 rounded-xl border text-xs cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-[#0056D2] bg-blue-50/50 shadow-2xs ring-1 ring-[#0056D2]'
+                          : 'border-slate-200 bg-white hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between font-bold text-slate-800">
+                        <span>{src.originalFileName || src.sourceType || 'Text Progress Report'}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 uppercase font-mono">
+                          {src.fileType || 'text'}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 mt-1 flex items-center justify-between">
+                        <span>Submitted: {new Date(src.createdAt || Date.now()).toLocaleString()}</span>
+                        <span className="font-semibold text-blue-700">View Events →</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
+            )}
           </div>
         </div>
 
-        {/* ================= RIGHT COLUMN ================= */}
-        <div className="lg:col-span-5 space-y-5">
-          {/* Card 1: Recent DPR Submissions */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+        {/* Right Column: AI Extraction & Events Preview */}
+        <div className="lg:col-span-6 space-y-5">
+          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-blue-50 text-[#0056D2]">
-                  <MdOutlineArticle size={18} />
-                </div>
-                <h3 className="text-sm font-bold text-slate-900">Recent DPR Submissions</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => showToast('Displaying all 24 DPR submissions')}
-                className="text-xs font-semibold text-[#0056D2] hover:underline"
-              >
-                View All →
-              </button>
+              <h2 className="text-sm font-bold text-slate-900">Extracted Progress Events</h2>
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0056D2] text-xs font-bold">
+                {activeEvents.length} Extracted
+              </span>
             </div>
 
-            {/* Submissions List */}
-            <div className="divide-y divide-slate-100">
-              {submissionsList.map((sub) => {
-                const isSelected = selectedSubmissionId === sub.id;
-                return (
-                  <div
-                    key={sub.id}
-                    onClick={() => handleSelectSubmission(sub)}
-                    className={`p-3 rounded-xl flex items-center justify-between gap-3 cursor-pointer transition-colors ${
-                      isSelected
-                        ? 'bg-blue-50/70 border border-blue-200'
-                        : 'hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      {/* Icon badge */}
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs ${
-                          sub.type === 'text'
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : sub.type === 'voice'
-                            ? 'bg-blue-100 text-blue-700'
-                            : sub.type === 'excel'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : sub.type === 'pdf'
-                            ? 'bg-purple-100 text-purple-700'
-                            : 'bg-sky-100 text-sky-700'
+            {!activeSource ? (
+              <div className="py-12 text-center text-xs text-slate-400">
+                Select or submit a progress report to view AI extracted events.
+              </div>
+            ) : activeEvents.length === 0 ? (
+              <div className="py-12 text-center bg-slate-50 rounded-xl border border-dashed text-xs text-slate-500 p-6">
+                No progress events extracted for this source yet.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {activeEvents.map((ev) => (
+                  <div key={ev._id || ev.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="text-xs font-bold text-slate-900">{ev.rawActivityName || ev.extractedActivityName}</h4>
+                        <span className="text-[10px] font-mono text-slate-500">{ev.discipline || 'General Discipline'}</span>
+                      </div>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          ev.status === 'APPROVED'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : ev.status === 'MATCH_SUGGESTED' || ev.status === 'PENDING_REVIEW'
+                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                            : 'bg-slate-100 text-slate-600'
                         }`}
                       >
-                        {sub.type === 'text' && 'TF'}
-                        {sub.type === 'voice' && <MdMic size={16} />}
-                        {sub.type === 'excel' && <MdTableChart size={16} />}
-                        {sub.type === 'pdf' && <MdPictureAsPdf size={16} />}
-                        {sub.type === 'photos' && <MdInsertPhoto size={16} />}
-                      </div>
-
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-slate-800 truncate">{sub.title}</div>
-                        <div className="text-[11px] text-slate-400 truncate">
-                          {sub.code} • {sub.time}
-                        </div>
-                      </div>
+                        {ev.status}
+                      </span>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                          sub.status === 'Extracted'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200'
-                        }`}
-                      >
-                        {sub.status}
-                      </span>
-                      <MdChevronRight className="text-slate-400" size={18} />
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-100">
+                      <div>
+                        <span className="text-slate-400">Actual Start: </span>
+                        <strong className="text-slate-700">{ev.actualStartDate ? new Date(ev.actualStartDate).toLocaleDateString() : 'N/A'}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Actual Finish: </span>
+                        <strong className="text-slate-700">{ev.actualFinishDate ? new Date(ev.actualFinishDate).toLocaleDateString() : 'N/A'}</strong>
+                      </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Card 2: AI Extraction Preview */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="font-mono text-xs font-bold text-[#0056D2]">A |</span>
-                <h3 className="text-sm font-bold text-slate-900">AI Extraction Preview</h3>
+                ))}
               </div>
-              <button
-                type="button"
-                onClick={handleCopyJSON}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-600 transition-colors"
-              >
-                {isCopied ? <MdCheck size={14} className="text-emerald-600" /> : <MdContentCopy size={14} />}
-                <span>{isCopied ? 'Copied' : 'Copy'}</span>
-              </button>
-            </div>
-
-            {/* Syntax styled JSON box */}
-            <div className="bg-slate-900 rounded-xl p-4 font-mono text-xs text-slate-200 overflow-x-auto leading-relaxed border border-slate-800">
-              <pre className="text-xs">
-                {JSON.stringify(currentExtraction, null, 2)}
-              </pre>
-            </div>
-
-            {/* Confidence Score Bar */}
-            <div className="space-y-1.5 pt-1">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1 text-slate-600 font-medium">
-                  <MdCheckCircle className="text-emerald-500 text-sm" />
-                  <span>Extraction Confidence</span>
-                </div>
-                <span className="font-bold text-slate-900">{currentConfidence}%</span>
-              </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                  style={{ width: `${currentConfidence}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Recent Attachments */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-slate-900 font-bold text-sm">
-                <MdAttachFile className="text-slate-500" size={18} />
-                <span>Recent Attachments</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => showToast('Opening attachments repository')}
-                className="text-xs font-semibold text-[#0056D2] hover:underline"
-              >
-                View All →
-              </button>
-            </div>
-
-            {/* Thumbnails Row */}
-            <div className="grid grid-cols-4 gap-2.5 pt-1">
-              {recentAtts.slice(0, 3).map((att) => (
-                <div
-                  key={att.id}
-                  onClick={() => showToast(`Opening ${att.name}`)}
-                  className="p-2 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition-all cursor-pointer text-center space-y-1"
-                >
-                  {att.thumbnail ? (
-                    <div className="w-full h-11 rounded-lg overflow-hidden bg-slate-100">
-                      <img src={att.thumbnail} alt={att.name} className="w-full h-full object-cover" />
-                    </div>
-                  ) : att.type === 'excel' ? (
-                    <div className="w-full h-11 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs">
-                      <MdTableChart size={22} />
-                    </div>
-                  ) : (
-                    <div className="w-full h-11 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xs">
-                      <MdPictureAsPdf size={22} />
-                    </div>
-                  )}
-                  <div className="text-[11px] font-semibold text-slate-700 truncate">{att.name}</div>
-                  <div className="text-[10px] text-slate-400">{att.size}</div>
-                </div>
-              ))}
-
-              {/* Add More card */}
-              <div
-                onClick={() => addMoreRef.current?.click()}
-                className="p-2 rounded-xl border-2 border-dashed border-slate-200 hover:border-[#0056D2] hover:bg-blue-50/20 transition-all cursor-pointer flex flex-col items-center justify-center text-center space-y-1"
-              >
-                <div className="w-8 h-8 rounded-full bg-blue-50 text-[#0056D2] flex items-center justify-center">
-                  <MdAdd size={18} />
-                </div>
-                <div className="text-[11px] font-bold text-[#0056D2]">Add More</div>
-                <input ref={addMoreRef} type="file" className="hidden" onChange={handleFileUpload} />
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

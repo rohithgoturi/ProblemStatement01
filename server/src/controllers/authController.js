@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const User = require('../models/User');
+const { ensureDBConnected } = require('../config/db');
 
 /**
  * Hash password using Node crypto.pbkdf2
@@ -19,20 +20,22 @@ function verifyPassword(password, storedHash) {
   return hash === originalHash;
 }
 
+const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
+
 /**
  * POST /api/auth/signup
  * Register a new user
  */
 exports.signup = async (req, res, next) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role } = req.body || {};
 
-    // Validation
+    // 1. Input Validation
     if (!name || !name.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Name is required',
-        error: { code: 'MISSING_FIELD' },
+        error: { code: 'MISSING_FIELD', field: 'name' },
       });
     }
 
@@ -40,7 +43,16 @@ exports.signup = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: 'Email is required',
-        error: { code: 'MISSING_FIELD' },
+        error: { code: 'MISSING_FIELD', field: 'email' },
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please enter a valid email address',
+        error: { code: 'INVALID_EMAIL', field: 'email' },
       });
     }
 
@@ -48,36 +60,48 @@ exports.signup = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: 'Password must be at least 6 characters long',
-        error: { code: 'INVALID_PASSWORD' },
+        error: { code: 'INVALID_PASSWORD', field: 'password' },
       });
     }
 
     const validRoles = ['planner', 'site_supervisor', 'project_manager', 'admin'];
     const userRole = role && validRoles.includes(role) ? role : 'project_manager';
 
-    // Check existing email
-    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+    // 2. Ensure Database Availability
+    const isConnected = await ensureDBConnected(3000);
+    if (!isConnected) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database service is temporarily unavailable. Please try again shortly.',
+        error: { code: 'SERVICE_UNAVAILABLE' },
+      });
+    }
+
+    // 3. Duplicate Email Check (returns 409 Conflict)
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         message: 'An account with this email address already exists',
         error: { code: 'DUPLICATE_EMAIL' },
       });
     }
 
-    // Hash password and save
+    // 4. Hash password securely & persist user
     const { hash } = hashPassword(password);
     const user = new User({
       name: name.trim(),
-      email: email.toLowerCase().trim(),
+      email: normalizedEmail,
       password: hash,
       role: userRole,
     });
 
     await user.save();
 
+    // 5. Generate session token
     const token = `jwt_token_${user._id}_${Date.now()}`;
 
+    // 6. Return response (passwords are strictly omitted)
     return res.status(201).json({
       success: true,
       message: 'Account created successfully',
@@ -92,6 +116,34 @@ exports.signup = async (req, res, next) => {
       },
     });
   } catch (error) {
+    // Handle MongoDB unique index duplicate key collision
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: 'An account with this email address already exists',
+        error: { code: 'DUPLICATE_EMAIL' },
+      });
+    }
+
+    // Handle Mongoose schema validation failure
+    if (error.name === 'ValidationError') {
+      const firstMessage = Object.values(error.errors || {})[0]?.message || 'Validation failed';
+      return res.status(400).json({
+        success: false,
+        message: firstMessage,
+        error: { code: 'VALIDATION_ERROR' },
+      });
+    }
+
+    // Handle Mongoose buffering timeout
+    if (error.name === 'MongooseError' && error.message.includes('buffering timed out')) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database operation timed out. Please try again shortly.',
+        error: { code: 'DATABASE_TIMEOUT' },
+      });
+    }
+
     next(error);
   }
 };
@@ -102,7 +154,7 @@ exports.signup = async (req, res, next) => {
  */
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
     if (!email || !email.trim() || !password) {
       return res.status(400).json({
@@ -112,7 +164,19 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Ensure Database Availability
+    const isConnected = await ensureDBConnected(3000);
+    if (!isConnected) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database service is temporarily unavailable. Please try again shortly.',
+        error: { code: 'SERVICE_UNAVAILABLE' },
+      });
+    }
+
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -146,6 +210,13 @@ exports.login = async (req, res, next) => {
       },
     });
   } catch (error) {
+    if (error.name === 'MongooseError' && error.message.includes('buffering timed out')) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database operation timed out. Please try again shortly.',
+        error: { code: 'DATABASE_TIMEOUT' },
+      });
+    }
     next(error);
   }
 };

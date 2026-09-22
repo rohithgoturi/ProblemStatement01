@@ -7,13 +7,14 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopHeader } from './TopHeader';
 import { cn } from '../../utils/helpers';
-import { currentUser } from '../../data/navigation';
+import { useAuth } from '../../hooks/useAuth';
 
 export function AppShell() {
   const [collapsed, setCollapsed] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 1024 : false));
+  const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-surface-light">
+    <div className="min-h-screen bg-surface-light font-sans">
       {/* Mobile backdrop when sidebar is open on small screens */}
       {!collapsed && (
         <div
@@ -32,7 +33,7 @@ export function AppShell() {
       <TopHeader
         collapsed={collapsed}
         onMenuToggle={() => setCollapsed(c => !c)}
-        user={currentUser}
+        user={user}
       />
 
       {/* Main Content */}
