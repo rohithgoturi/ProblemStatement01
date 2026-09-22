@@ -16,6 +16,30 @@ export default {
           'blue-light': '#dbeafe', // soft blue surfaces / card bg
           'blue-xlight': '#eff6ff', // very light blue bg / page bg
         },
+        // Warm Cream & Orange Design System (Clienter-inspired)
+        warm: {
+          50: '#FDFBF9',
+          100: '#FAF8F5',
+          200: '#F5F1E8',
+          300: '#ECE5D8',
+          400: '#DDD3C1',
+          card: '#FFFFFF',
+          'card-warm': '#F7F3EB',
+          border: '#E8E1D5',
+          'border-dark': '#D5CBB9',
+          dark: '#0B1320',
+          navy: '#0F1A2C',
+          charcoal: '#1A2332',
+          muted: '#626D7F',
+        },
+        accent: {
+          orange: '#FF5500',
+          'orange-hover': '#E64D00',
+          'orange-deep': '#D44400',
+          'orange-light': '#FFF2EB',
+          'orange-border': '#FFD8C7',
+          'orange-subtle': '#FEF7F2',
+        },
         // Surfaces
         surface: {
           white:   '#ffffff',

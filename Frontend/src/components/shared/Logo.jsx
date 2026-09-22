@@ -54,6 +54,11 @@ export function Logo({
   const current = sizeConfig[size] || sizeConfig.md;
 
   const wordmarkColors = {
+    orange: {
+      pragati: 'text-[#0B1320]',
+      path: 'text-[#FF5500]',
+      tagline: 'text-stone-500',
+    },
     primary: {
       pragati: 'text-[#0B192C]',
       path: 'text-[#0056D2]',

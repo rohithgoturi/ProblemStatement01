@@ -1,34 +1,72 @@
 /**
  * PragatiPath — Application Router
- * All routes defined. Pages are placeholders until their phase is implemented.
+ * Provides unified routing across Public Website (PublicLayout) and Authenticated App (AppShell).
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
+import { PublicLayout } from './components/layout/PublicLayout';
 import { AppShell } from './components/layout/AppShell';
 import { RouteErrorBoundary } from './components/shared/ErrorBoundary';
+import { ProtectedRoute } from './components/shared/ProtectedRoute';
 
-import LandingPage           from './pages/Landing/LandingPage';
-import LoginPage             from './pages/Login/LoginPage';
-import SignupPage            from './pages/Signup/SignupPage';
-import DashboardPage         from './pages/Dashboard/DashboardPage';
-import ProjectsPage          from './pages/Dashboard/ProjectsPage';
-import ProjectDashboardPage  from './pages/ProjectDashboard/ProjectDashboardPage';
-import DPRInboxPage          from './pages/DPRInbox/DPRInboxPage';
-import SchedulePage          from './pages/Schedule/SchedulePage';
-import AIMatchingPage        from './pages/AIMatching/AIMatchingPage';
-import ProgressPage          from './pages/Progress/ProgressPage';
-import ReportsPage           from './pages/Reports/ReportsPage';
+// Public Pages
+import LandingPage from './pages/Landing/LandingPage';
+import AboutPage from './pages/Public/AboutPage';
+import ServicesPage from './pages/Public/ServicesPage';
+import ContactPage from './pages/Public/ContactPage';
+import PrivacyPage from './pages/Public/PrivacyPage';
+import TermsPage from './pages/Public/TermsPage';
+import LoginPage from './pages/Login/LoginPage';
+import SignupPage from './pages/Signup/SignupPage';
 
-import SettingsPage         from './pages/Settings/SettingsPage';
-import { ProtectedRoute }      from './components/shared/ProtectedRoute';
+// Authenticated Pages
+import DashboardPage from './pages/Dashboard/DashboardPage';
+import ProjectsPage from './pages/Dashboard/ProjectsPage';
+import ProjectDashboardPage from './pages/ProjectDashboard/ProjectDashboardPage';
+import DPRInboxPage from './pages/DPRInbox/DPRInboxPage';
+import SchedulePage from './pages/Schedule/SchedulePage';
+import AIMatchingPage from './pages/AIMatching/AIMatchingPage';
+import ProgressPage from './pages/Progress/ProgressPage';
+import ReportsPage from './pages/Reports/ReportsPage';
+import SettingsPage from './pages/Settings/SettingsPage';
+import TeamPage from './pages/Team/TeamPage';
+import LocationsPage from './pages/Locations/LocationsPage';
 
 export const router = createBrowserRouter([
-  // Public routes (no AppShell)
+  // Public website routes (wrapped in PublicLayout with navbar & footer)
   {
     path: '/',
-    element: <LandingPage />,
+    element: <PublicLayout />,
     errorElement: <RouteErrorBoundary />,
+    children: [
+      {
+        index: true,
+        element: <LandingPage />,
+      },
+      {
+        path: 'about',
+        element: <AboutPage />,
+      },
+      {
+        path: 'services',
+        element: <ServicesPage />,
+      },
+      {
+        path: 'contact',
+        element: <ContactPage />,
+      },
+      {
+        path: 'privacy',
+        element: <PrivacyPage />,
+      },
+      {
+        path: 'terms',
+        element: <TermsPage />,
+      },
+    ],
   },
+
+  // Public standalone authentication routes (no shell/footer)
   {
     path: '/login',
     element: <LoginPage />,
@@ -40,7 +78,7 @@ export const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
   },
 
-  // Authenticated app routes (inside AppShell, protected)
+  // Authenticated app routes (inside AppShell, protected with JWT check)
   {
     path: '/',
     element: (
@@ -87,14 +125,13 @@ export const router = createBrowserRouter([
         path: 'reports',
         element: <ReportsPage />,
       },
-      // Misc system routes
       {
         path: 'team',
-        element: <DashboardPage />,
+        element: <TeamPage />,
       },
       {
         path: 'locations',
-        element: <DashboardPage />,
+        element: <LocationsPage />,
       },
       {
         path: 'settings',
@@ -110,6 +147,6 @@ export const router = createBrowserRouter([
   // Catch-all redirect
   {
     path: '*',
-    element: <Navigate to="/dashboard" replace />,
+    element: <Navigate to="/" replace />,
   },
 ]);

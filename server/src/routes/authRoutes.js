@@ -12,5 +12,8 @@ router.post('/auth/login', authController.login);
 router.get('/auth/me', authenticateToken, authController.getMe);
 router.put('/auth/profile', authenticateToken, authController.updateProfile);
 router.put('/auth/change-password', authenticateToken, authController.changePassword);
+router.get('/team', authenticateToken, authController.getTeam);
+router.get('/auth/team', authenticateToken, authController.getTeam);
 
 module.exports = router;
+

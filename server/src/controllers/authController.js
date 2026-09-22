@@ -367,3 +367,28 @@ exports.changePassword = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * GET /api/team
+ * Returns the sanitized list of registered project team members.
+ * Requires authentication.
+ */
+exports.getTeam = async (req, res, next) => {
+  try {
+    const users = await User.find()
+      .select('name email role avatar createdAt')
+      .sort({ createdAt: 1 });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Project team members retrieved successfully',
+      data: {
+        total: users.length,
+        members: users,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

@@ -338,3 +338,9 @@ export const getDashboardSummary = async () => {
     return { data: null, error: err.message || 'Failed to fetch dashboard summary' };
   }
 };
+
+export async function getTeamMembers() {
+  const { data } = await client.get('/team');
+  return data;
+}
+
