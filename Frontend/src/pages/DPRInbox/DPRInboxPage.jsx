@@ -6,13 +6,14 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   MdOutlineArticle, MdSend,
-  MdCheckCircle, MdInbox, MdCloudUpload, MdArrowForward
+  MdCheckCircle, MdInbox, MdCloudUpload, MdArrowForward,
+  MdMic, MdMicOff, MdStop, MdGraphicEq
 } from 'react-icons/md';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { getSourceDocuments, getProgressEvents, submitTextProgress, uploadProgressFile } from '../../services/api';
 
 export default function DPRInboxPage() {
-  const [activeMode, setActiveMode] = useState('text'); // 'text' | 'file'
+  const [activeMode, setActiveMode] = useState('text'); // 'text' | 'voice' | 'file'
   const [textInput, setTextInput] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -24,11 +25,95 @@ export default function DPRInboxPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Real Web Speech Recognition state
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [speechSupported, setSpeechSupported] = useState(true);
+  const recognitionRef = useRef(null);
+  const timerRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  useEffect(() => {
+    const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+    if (!SpeechRecognition) {
+      setSpeechSupported(false);
+    }
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
+  const startVoiceDictation = () => {
+    setErrorMsg('');
+    const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+    if (!SpeechRecognition) {
+      setErrorMsg('Web Speech API is not supported in this browser. Please use Chrome, Edge, or Safari, or type your update.');
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsRecording(true);
+        setRecordingDuration(0);
+        timerRef.current = setInterval(() => {
+          setRecordingDuration((prev) => prev + 1);
+        }, 1000);
+      };
+
+      recognition.onresult = (event) => {
+        let currentTranscript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          currentTranscript += event.results[i][0].transcript + ' ';
+        }
+        setTextInput(currentTranscript.trim());
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('Speech recognition error:', event.error);
+        if (event.error === 'not-allowed') {
+          setErrorMsg('Microphone access denied. Please allow microphone access in your browser settings.');
+        }
+        stopVoiceDictation();
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      setErrorMsg(`Could not start voice recognition: ${err.message}`);
+    }
+  };
+
+  const stopVoiceDictation = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+    setIsRecording(false);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
   };
 
   // Fetch real source documents & events from Express API
@@ -61,8 +146,12 @@ export default function DPRInboxPage() {
   }, []);
 
   const handleSubmitText = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!textInput.trim()) return;
+
+    if (isRecording) {
+      stopVoiceDictation();
+    }
 
     setIsSubmitting(true);
     setErrorMsg('');
@@ -125,7 +214,7 @@ export default function DPRInboxPage() {
       {/* Page Header */}
       <PageHeader
         title="DPR & Progress Report Ingestion"
-        subtitle="Ingest raw text updates, supervisor logs, and spreadsheet site diaries"
+        subtitle="Ingest raw text updates, supervisor voice notes, and spreadsheet site diaries"
         icon={<MdInbox />}
       />
 
@@ -143,27 +232,46 @@ export default function DPRInboxPage() {
           {/* Submission Mode Card */}
           <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] shadow-2xs space-y-5">
             {/* Mode Switcher Tabs */}
-            <div className="flex items-center gap-2 p-1.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-full text-xs font-semibold">
+            <div className="flex items-center gap-1.5 p-1.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-full text-xs font-semibold">
               <button
                 type="button"
-                onClick={() => setActiveMode('text')}
-                className={`flex-1 py-2 px-4 rounded-full transition-all flex items-center justify-center gap-2 ${
+                onClick={() => {
+                  if (isRecording) stopVoiceDictation();
+                  setActiveMode('text');
+                }}
+                className={`flex-1 py-2 px-3 rounded-full transition-all flex items-center justify-center gap-1.5 ${
                   activeMode === 'text' ? 'bg-[#0B1320] text-white shadow-2xs font-bold' : 'text-stone-600 hover:text-[#0B1320]'
                 }`}
               >
                 <MdOutlineArticle size={16} />
-                <span>Text Progress Entry</span>
+                <span>Text Entry</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setActiveMode('file')}
-                className={`flex-1 py-2 px-4 rounded-full transition-all flex items-center justify-center gap-2 ${
+                onClick={() => {
+                  setActiveMode('voice');
+                }}
+                className={`flex-1 py-2 px-3 rounded-full transition-all flex items-center justify-center gap-1.5 ${
+                  activeMode === 'voice' ? 'bg-[#FF5500] text-white shadow-2xs font-bold' : 'text-stone-600 hover:text-[#0B1320]'
+                }`}
+              >
+                <MdMic size={16} />
+                <span>Voice Note</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (isRecording) stopVoiceDictation();
+                  setActiveMode('file');
+                }}
+                className={`flex-1 py-2 px-3 rounded-full transition-all flex items-center justify-center gap-1.5 ${
                   activeMode === 'file' ? 'bg-[#0B1320] text-white shadow-2xs font-bold' : 'text-stone-600 hover:text-[#0B1320]'
                 }`}
               >
                 <MdCloudUpload size={16} />
-                <span>Upload Report File</span>
+                <span>Upload File</span>
               </button>
             </div>
 
@@ -171,14 +279,30 @@ export default function DPRInboxPage() {
             {activeMode === 'text' && (
               <form onSubmit={handleSubmitText} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#0B1320] mb-2">
-                    Daily Progress Report Content
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold text-[#0B1320]">
+                      Daily Progress Report Content
+                    </label>
+                    {speechSupported && (
+                      <button
+                        type="button"
+                        onClick={isRecording ? stopVoiceDictation : startVoiceDictation}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                          isRecording
+                            ? 'bg-rose-600 text-white animate-pulse'
+                            : 'bg-[#FFF2EB] text-[#FF5500] hover:bg-[#FFE5D6]'
+                        }`}
+                      >
+                        <MdMic size={14} />
+                        <span>{isRecording ? 'Stop Recording' : 'Dictate'}</span>
+                      </button>
+                    )}
+                  </div>
                   <textarea
                     rows={5}
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
-                    placeholder="Enter site progress updates (e.g. 'Piping activity P-102 completed in Unit 2 today. Foundation pouring ongoing.')"
+                    placeholder="Enter site progress updates (e.g. 'Pier 42 concrete pouring completed today. Foundation reinforcement started on East bay.')"
                     className="w-full p-4 bg-[#FAF8F5] border border-[#E8E1D5] rounded-2xl text-xs text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all placeholder:text-stone-400"
                   />
                 </div>
@@ -199,7 +323,95 @@ export default function DPRInboxPage() {
               </form>
             )}
 
-            {/* Mode 2: File Upload */}
+            {/* Mode 2: Voice Dictation Form */}
+            {activeMode === 'voice' && (
+              <div className="space-y-4">
+                <div className="p-6 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5] text-center space-y-4">
+                  <div className="relative inline-block">
+                    <button
+                      type="button"
+                      onClick={isRecording ? stopVoiceDictation : startVoiceDictation}
+                      className={`w-20 h-20 rounded-full flex items-center justify-center text-white transition-all shadow-lg cursor-pointer ${
+                        isRecording
+                          ? 'bg-rose-600 scale-105 ring-8 ring-rose-600/20 animate-pulse'
+                          : 'bg-[#FF5500] hover:bg-[#E64400] ring-4 ring-[#FF5500]/20'
+                      }`}
+                      title={isRecording ? 'Click to stop listening' : 'Click to start speaking'}
+                    >
+                      {isRecording ? <MdStop size={34} /> : <MdMic size={34} />}
+                    </button>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold text-[#0B1320]">
+                      {isRecording ? 'Listening to Field Update...' : 'Tap Microphone to Speak Update'}
+                    </h3>
+                    <p className="text-xs text-stone-500 mt-1">
+                      {isRecording
+                        ? `Recording active • ${String(Math.floor(recordingDuration / 60)).padStart(2, '0')}:${String(recordingDuration % 60).padStart(2, '0')}`
+                        : 'Hands-free dictation for active work fronts and noise-heavy sites'}
+                    </p>
+                  </div>
+
+                  {/* Animated Waveform Bars */}
+                  {isRecording && (
+                    <div className="flex items-center justify-center gap-1.5 h-8">
+                      {[30, 70, 95, 45, 80, 100, 60, 40, 90, 75, 50, 85].map((h, i) => (
+                        <span
+                          key={i}
+                          style={{
+                            height: `${Math.max(25, (h + (i % 3) * 20) % 100)}%`,
+                          }}
+                          className="w-1.5 bg-[#FF5500] rounded-full transition-all duration-200"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Transcribed Text Box */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-[#0B1320]">
+                      Live Speech Transcription:
+                    </label>
+                    {textInput && (
+                      <button
+                        type="button"
+                        onClick={() => setTextInput('')}
+                        className="text-[11px] text-stone-400 hover:text-rose-600 cursor-pointer"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <textarea
+                    rows={4}
+                    value={textInput}
+                    onChange={(e) => setTextInput(e.target.value)}
+                    placeholder="Transcribed voice text will appear here. You can also edit it before submitting..."
+                    className="w-full p-4 bg-[#FAF8F5] border border-[#E8E1D5] rounded-2xl text-xs text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all placeholder:text-stone-400"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-stone-500 font-mono">
+                    {textInput ? `${textInput.split(/\s+/).filter(Boolean).length} words transcribed` : 'Ready for voice input'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleSubmitText}
+                    disabled={isSubmitting || !textInput.trim()}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#FF5500] hover:bg-[#EA580C] text-white font-bold text-xs shadow-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                  >
+                    <MdSend size={15} />
+                    <span>{isSubmitting ? 'Extracting Progress...' : 'Submit Transcribed Update'}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Mode 3: File Upload */}
             {activeMode === 'file' && (
               <div className="text-center py-8 border-2 border-dashed border-[#E8E1D5] rounded-2xl space-y-4 bg-[#FAF8F5]/50">
                 <div className="w-14 h-14 mx-auto rounded-2xl bg-[#FF5500]/10 text-[#FF5500] flex items-center justify-center shadow-2xs">

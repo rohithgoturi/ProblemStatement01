@@ -16,6 +16,7 @@ export function PublicNavbar() {
     { label: 'Home', path: '/' },
     { label: 'About', path: '/about' },
     { label: 'Services', path: '/services' },
+    { label: 'Help', path: '/help' },
     { label: 'Contact', path: '/contact' },
   ];
 

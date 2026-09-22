@@ -47,6 +47,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link to="/help" className="hover:text-white transition-colors">
+                  Help & Documentation
+                </Link>
+              </li>
+              <li>
                 <Link to="/contact" className="hover:text-white transition-colors">
                   Contact & Inquiries
                 </Link>

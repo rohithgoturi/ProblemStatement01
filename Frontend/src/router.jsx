@@ -32,9 +32,10 @@ import ReportsPage from './pages/Reports/ReportsPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import TeamPage from './pages/Team/TeamPage';
 import LocationsPage from './pages/Locations/LocationsPage';
+import HelpPage from './pages/Public/HelpPage';
 
 /**
- * Adaptive wrapper for Team and Locations pages:
+ * Adaptive wrapper for Team, Locations, and Help pages:
  * - If authenticated: renders seamlessly inside AppShell with sidebar & project controls.
  * - If public: renders inside PublicLayout with floating navbar, public header, and intentional empty state.
  */
@@ -121,6 +122,11 @@ export const router = createBrowserRouter([
     element: <AdaptiveRoute component={LocationsPage} />,
     errorElement: <RouteErrorBoundary />,
   },
+  {
+    path: '/help',
+    element: <AdaptiveRoute component={HelpPage} />,
+    errorElement: <RouteErrorBoundary />,
+  },
 
   // Authenticated app routes (inside AppShell, protected with JWT check)
   {
@@ -172,10 +178,6 @@ export const router = createBrowserRouter([
       {
         path: 'settings',
         element: <SettingsPage />,
-      },
-      {
-        path: 'help',
-        element: <DashboardPage />,
       },
     ],
   },

@@ -3,7 +3,7 @@
  * Warm cream background, technical engineering grid, subtle network lines, orange accents,
  * large bold typography, and human civil-engineering language.
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { NetworkLines } from '../../components/shared/NetworkLines';
 import {
@@ -41,6 +41,31 @@ export default function LandingPage() {
   const [activeInputType, setActiveInputType] = useState('csv'); // 'csv' | 'pdf' | 'txt' | 'voice'
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [activeFlowStep, setActiveFlowStep] = useState(0); // 0 to 5 (Flowchart step)
+  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+  const [cursorTrailingPos, setCursorTrailingPos] = useState({ x: -100, y: -100 });
+  const [isCursorHovered, setIsCursorHovered] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isTouch = window.matchMedia('(pointer: coarse)').matches;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isTouch || prefersReducedMotion) {
+        setIsTouchDevice(true);
+        return;
+      }
+    }
+
+    const handleMouseMove = (e) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+      requestAnimationFrame(() => {
+        setCursorTrailingPos({ x: e.clientX, y: e.clientY });
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const workflowSteps = [
     {
@@ -128,7 +153,34 @@ export default function LandingPage() {
 
   return (
     <div className="bg-[#FAF8F5] text-[#0B1320] min-h-screen selection:bg-[#FF5500] selection:text-white">
-      
+      {/* Subtle Live Cursor Follower (Desktop only, respects reduced-motion) */}
+      {!isTouchDevice && cursorPos.x > 0 && (
+        <>
+          <div
+            className="pointer-events-none fixed z-50 rounded-full bg-[#FF5500] transition-transform duration-75 ease-out shadow-xs"
+            style={{
+              width: isCursorHovered ? 18 : 10,
+              height: isCursorHovered ? 18 : 10,
+              left: cursorPos.x,
+              top: cursorPos.y,
+              transform: 'translate(-50%, -50%)',
+              opacity: 0.9,
+            }}
+          />
+          <div
+            className="pointer-events-none fixed z-40 rounded-full bg-[#FF5500]/25 blur-sm transition-all duration-300 ease-out"
+            style={{
+              width: isCursorHovered ? 44 : 28,
+              height: isCursorHovered ? 44 : 28,
+              left: cursorTrailingPos.x,
+              top: cursorTrailingPos.y,
+              transform: 'translate(-50%, -50%)',
+              opacity: 0.6,
+            }}
+          />
+        </>
+      )}
+
       {/* ========================================================================= */}
       {/* SECTION 1 — HERO SECTION                                                  */}
       {/* ========================================================================= */}
@@ -711,175 +763,589 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 5 — CONNECTED WORKFLOW FLOWCHART (CURVED PATH ROADMAP)            */}
-      {/* Inspired by Reference Image 1: Curved road connecting numbered steps       */}
+      {/* SECTION 5 — CONNECTED WORKFLOW FLOWCHART (CURVED ROAD / PATH ROADMAP)     */}
+      {/* Inspired by Roadmap Reference: Physical asphalt road connecting 01 to 06    */}
       {/* ========================================================================= */}
       <section id="how-it-works" className="py-16 sm:py-28 bg-[#FAF8F5] border-b border-[#E8E1D5] relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] text-[11px] font-bold uppercase tracking-wider mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500]" />
-              <span>Connected Product Journey</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500] animate-pulse" />
+              <span>01 TO 06 CONNECTED JOURNEY</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight">
-              How PragatiPath Works
+              The PragatiPath Flow Road
             </h2>
             <p className="text-base sm:text-lg text-[#475569] mt-3 leading-relaxed">
-              A visual path connecting messy site updates to verified project schedule records.
+              A continuous physical road connecting raw field notes to audited schedule baselines — with human planner review at the center.
+            </p>
+
+            {/* Quick interactive stage jumper */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+              {[
+                { idx: 0, num: '01', name: 'CAPTURE' },
+                { idx: 1, num: '02', name: 'EXTRACT' },
+                { idx: 2, num: '03', name: 'STRUCTURE' },
+                { idx: 3, num: '04', name: 'MATCH' },
+                { idx: 4, num: '05', name: 'REVIEW' },
+                { idx: 5, num: '06', name: 'PROGRESS' },
+              ].map((step) => (
+                <button
+                  key={step.idx}
+                  type="button"
+                  onClick={() => setActiveFlowStep(step.idx)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeFlowStep === step.idx
+                      ? 'bg-[#FF5500] text-white shadow-sm'
+                      : 'bg-white border border-[#E8E1D5] text-[#475569] hover:text-[#0B1320]'
+                  }`}
+                >
+                  <span className="font-mono">{step.num}</span>
+                  <span>{step.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ===================================================================== */}
+          {/* DESKTOP CURVED ROADMAP (SVG Highway with connected checkpoints & cards) */}
+          {/* ===================================================================== */}
+          <div className="hidden lg:block relative min-h-[1420px] w-full select-none">
+            {/* SVG Highway Layer */}
+            <svg
+              viewBox="0 0 1000 1380"
+              className="absolute inset-0 w-full h-full pointer-events-none z-0"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <defs>
+                <filter id="roadShadow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#0B1320" floodOpacity="0.12" />
+                </filter>
+                <linearGradient id="roadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#0B1320" />
+                  <stop offset="50%" stopColor="#111B2B" />
+                  <stop offset="100%" stopColor="#0B1320" />
+                </linearGradient>
+              </defs>
+
+              {/* Highway Kerb / Outer Cushion */}
+              <path
+                d="M 280 80 C 480 80, 720 180, 720 320 C 720 460, 280 480, 280 620 C 280 760, 720 780, 720 920 C 720 1020, 500 1060, 500 1140 L 500 1280"
+                fill="none"
+                stroke="#E2D9CC"
+                strokeWidth="62"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Main Dark Asphalt Roadway */}
+              <path
+                d="M 280 80 C 480 80, 720 180, 720 320 C 720 460, 280 480, 280 620 C 280 760, 720 780, 720 920 C 720 1020, 500 1060, 500 1140 L 500 1280"
+                fill="none"
+                stroke="url(#roadGradient)"
+                strokeWidth="52"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                filter="url(#roadShadow)"
+              />
+
+              {/* Light Dashed Center Lane Marking */}
+              <path
+                d="M 280 80 C 480 80, 720 180, 720 320 C 720 460, 280 480, 280 620 C 280 760, 720 780, 720 920 C 720 1020, 500 1060, 500 1140 L 500 1280"
+                fill="none"
+                stroke="#FAF8F5"
+                strokeWidth="3.5"
+                strokeDasharray="14 12"
+                strokeLinecap="round"
+              />
+
+              {/* Active Orange Progress Highlight Layer */}
+              <path
+                d="M 280 80 C 480 80, 720 180, 720 320 C 720 460, 280 480, 280 620 C 280 760, 720 780, 720 920 C 720 1020, 500 1060, 500 1140 L 500 1280"
+                fill="none"
+                stroke="#FF5500"
+                strokeWidth="6"
+                strokeLinecap="round"
+                style={{
+                  strokeDasharray: 2600,
+                  strokeDashoffset: 2600 - ((activeFlowStep + 1) / 6) * 2600,
+                  transition: 'stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              />
+
+              {/* Moving Progress Vehicle / Node */}
+              {[
+                { x: 280, y: 80 },
+                { x: 720, y: 320 },
+                { x: 280, y: 620 },
+                { x: 720, y: 920 },
+                { x: 500, y: 1140 },
+                { x: 500, y: 1280 },
+              ].map((pos, idx) => {
+                if (idx !== activeFlowStep) return null;
+                return (
+                  <g key={idx}>
+                    <circle cx={pos.x} cy={pos.y} r="18" fill="#FF5500" opacity="0.3" className="animate-ping" />
+                    <circle cx={pos.x} cy={pos.y} r="9" fill="#FF5500" stroke="#FFFFFF" strokeWidth="2.5" />
+                  </g>
+                );
+              })}
+            </svg>
+
+            {/* Checkpoint 01 — CAPTURE (Node at 280, 80 | Card at Right 370px) */}
+            <div className="absolute top-[50px] left-[252px] z-10">
+              <button
+                type="button"
+                onClick={() => setActiveFlowStep(0)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm transition-transform duration-300 shadow-lg cursor-pointer ${
+                  activeFlowStep === 0
+                    ? 'bg-[#FF5500] text-white ring-4 ring-[#FF5500]/30 scale-110'
+                    : 'bg-white text-[#0B1320] border-2 border-[#0B1320] hover:scale-105'
+                }`}
+              >
+                01
+              </button>
+            </div>
+            <div className="absolute top-[28px] left-[350px] w-[580px] z-10">
+              <div
+                onClick={() => setActiveFlowStep(0)}
+                className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer ${
+                  activeFlowStep === 0
+                    ? 'bg-white shadow-xl border-[#FF5500]/50 -translate-y-1'
+                    : 'bg-white/85 backdrop-blur-sm border-[#E8E1D5] hover:bg-white'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#FF5500]">01 · Field Ingestion</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8F5] text-stone-600 text-[11px] font-semibold border border-[#E8E1D5]">Multi-Source</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1320]">CAPTURE</h3>
+                <p className="text-xs text-[#475569] mt-1.5 leading-relaxed">
+                  Collect daily project updates into a single pipeline from site diaries, contractor logs, spreadsheets, PDFs, or supervisor voice notes.
+                </p>
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#E8E1D5]/60 text-[11px] text-stone-500">
+                  <span className="px-2 py-0.5 rounded bg-stone-100 font-mono">DPRs</span>
+                  <span className="px-2 py-0.5 rounded bg-stone-100 font-mono">.xlsx</span>
+                  <span className="px-2 py-0.5 rounded bg-stone-100 font-mono">.pdf</span>
+                  <span className="px-2 py-0.5 rounded bg-[#FFF2EB] text-[#FF5500] font-semibold">🎙 Voice Notes</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Checkpoint 02 — EXTRACT (Node at 720, 320 | Card at Left 80px) */}
+            <div className="absolute top-[292px] left-[692px] z-10">
+              <button
+                type="button"
+                onClick={() => setActiveFlowStep(1)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm transition-transform duration-300 shadow-lg cursor-pointer ${
+                  activeFlowStep === 1
+                    ? 'bg-[#FF5500] text-white ring-4 ring-[#FF5500]/30 scale-110'
+                    : 'bg-white text-[#0B1320] border-2 border-[#0B1320] hover:scale-105'
+                }`}
+              >
+                02
+              </button>
+            </div>
+            <div className="absolute top-[260px] left-[70px] w-[580px] z-10">
+              <div
+                onClick={() => setActiveFlowStep(1)}
+                className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer ${
+                  activeFlowStep === 1
+                    ? 'bg-white shadow-xl border-[#FF5500]/50 -translate-y-1'
+                    : 'bg-white/85 backdrop-blur-sm border-[#E8E1D5] hover:bg-white'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#FF5500]">02 · Information Parsing</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8F5] text-stone-600 text-[11px] font-semibold border border-[#E8E1D5]">Automated Extraction</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1320]">EXTRACT</h3>
+                <p className="text-xs text-[#475569] mt-1.5 leading-relaxed">
+                  Read raw site reports and extract work items, executed quantities, work front locations, and reported completion dates without manual typing.
+                </p>
+                <div className="p-2.5 bg-[#FAF8F5] rounded-xl border border-[#E8E1D5] mt-3 text-[11px] font-mono text-stone-600">
+                  <span className="text-[#FF5500] font-bold">Identified:</span> Raft Foundation Bay 3 · 45 m³ poured · Block A
+                </div>
+              </div>
+            </div>
+
+            {/* Checkpoint 03 — STRUCTURE (Node at 280, 620 | Card at Right 370px) */}
+            <div className="absolute top-[592px] left-[252px] z-10">
+              <button
+                type="button"
+                onClick={() => setActiveFlowStep(2)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm transition-transform duration-300 shadow-lg cursor-pointer ${
+                  activeFlowStep === 2
+                    ? 'bg-[#FF5500] text-white ring-4 ring-[#FF5500]/30 scale-110'
+                    : 'bg-white text-[#0B1320] border-2 border-[#0B1320] hover:scale-105'
+                }`}
+              >
+                03
+              </button>
+            </div>
+            <div className="absolute top-[560px] left-[350px] w-[580px] z-10">
+              <div
+                onClick={() => setActiveFlowStep(2)}
+                className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer ${
+                  activeFlowStep === 2
+                    ? 'bg-white shadow-xl border-[#FF5500]/50 -translate-y-1'
+                    : 'bg-white/85 backdrop-blur-sm border-[#E8E1D5] hover:bg-white'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#FF5500]">03 · Normalization</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#FAF8F5] text-stone-600 text-[11px] font-semibold border border-[#E8E1D5]">Standardized Record</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1320]">STRUCTURE</h3>
+                <p className="text-xs text-[#475569] mt-1.5 leading-relaxed">
+                  Convert messy narrative field notes into standardized progress data points: Activity Name, Work Front, Quantity, Unit, and Execution Date.
+                </p>
+                <div className="grid grid-cols-3 gap-2 mt-3 text-[11px]">
+                  <div className="p-2 bg-[#FAF8F5] rounded-lg border border-[#E8E1D5]">
+                    <span className="text-stone-400 block text-[9px]">Activity</span>
+                    <strong className="text-[#0B1320]">Foundation Raft</strong>
+                  </div>
+                  <div className="p-2 bg-[#FAF8F5] rounded-lg border border-[#E8E1D5]">
+                    <span className="text-stone-400 block text-[9px]">Location</span>
+                    <strong className="text-[#0B1320]">Block A</strong>
+                  </div>
+                  <div className="p-2 bg-[#FAF8F5] rounded-lg border border-[#E8E1D5]">
+                    <span className="text-stone-400 block text-[9px]">Status</span>
+                    <strong className="text-emerald-700">Completed</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Checkpoint 04 — MATCH (Node at 720, 920 | Card at Left 80px) */}
+            <div className="absolute top-[892px] left-[692px] z-10">
+              <button
+                type="button"
+                onClick={() => setActiveFlowStep(3)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm transition-transform duration-300 shadow-lg cursor-pointer ${
+                  activeFlowStep === 3
+                    ? 'bg-[#FF5500] text-white ring-4 ring-[#FF5500]/30 scale-110'
+                    : 'bg-white text-[#0B1320] border-2 border-[#0B1320] hover:scale-105'
+                }`}
+              >
+                04
+              </button>
+            </div>
+            <div className="absolute top-[860px] left-[70px] w-[580px] z-10">
+              <div
+                onClick={() => setActiveFlowStep(3)}
+                className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer ${
+                  activeFlowStep === 3
+                    ? 'bg-white shadow-xl border-[#FF5500]/50 -translate-y-1'
+                    : 'bg-white/85 backdrop-blur-sm border-[#E8E1D5] hover:bg-white'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#FF5500]">04 · Schedule Linking</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-semibold border border-emerald-200">94% Confidence</span>
+                </div>
+                <h3 className="text-xl font-bold text-[#0B1320]">MATCH</h3>
+                <p className="text-xs text-[#475569] mt-1.5 leading-relaxed">
+                  Correlate extracted progress items with master schedule baseline activities (Primavera P6 / Excel WBS), resolving contractor terminology gaps.
+                </p>
+                <div className="p-2.5 bg-emerald-50/60 rounded-xl border border-emerald-200 mt-3 text-[11px] text-emerald-900 font-medium flex items-center justify-between">
+                  <span>Matched: <strong>ACT-1042: Raft Concrete Bay 3</strong></span>
+                  <span className="text-[#FF5500] font-bold">Candidate Ready</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Checkpoint 05 — REVIEW (Node at 500, 1140 | Centered Highlight Card) */}
+            <div className="absolute top-[1112px] left-[472px] z-20">
+              <button
+                type="button"
+                onClick={() => setActiveFlowStep(4)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm transition-transform duration-300 shadow-xl cursor-pointer ${
+                  activeFlowStep === 4
+                    ? 'bg-[#FF5500] text-white ring-4 ring-[#FF5500]/40 scale-110'
+                    : 'bg-[#0B1320] text-white border-2 border-[#FF5500] hover:scale-105'
+                }`}
+              >
+                05
+              </button>
+            </div>
+            <div className="absolute top-[1080px] left-[60px] right-[60px] z-10">
+              <div
+                onClick={() => setActiveFlowStep(4)}
+                className={`p-6 sm:p-7 rounded-3xl border-2 transition-all duration-300 bg-[#0B1320] text-white cursor-pointer shadow-2xl relative overflow-hidden ${
+                  activeFlowStep === 4 ? 'border-[#FF5500] ring-4 ring-[#FF5500]/20' : 'border-white/20'
+                }`}
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                  <div className="lg:col-span-7 space-y-2.5">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF5500]/20 text-[#FF5500] border border-[#FF5500]/30 text-xs font-bold uppercase tracking-wider">
+                      <MdFactCheck size={16} />
+                      <span>CRITICAL HUMAN GOVERNANCE</span>
+                    </div>
+                    <h3 className="text-2xl font-black text-white">05 · PLANNER REVIEW</h3>
+                    <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                      <strong>AI Suggests. The Human Planner Decides.</strong> No progress record updates the schedule without authorized review. Planners check suggested matches and make one-click decisions.
+                    </p>
+                    <div className="flex items-center gap-2 pt-2 text-xs font-bold">
+                      <span className="px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✓ Approve Match</span>
+                      <span className="px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">✎ Edit Quantities</span>
+                      <span className="px-3 py-1.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">✕ Reject Link</span>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-5 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 space-y-2 text-xs font-mono">
+                    <div className="flex items-center justify-between text-[10px] text-stone-400">
+                      <span>SYSTEM SUGGESTION</span>
+                      <span className="text-[#FF5500] font-bold">94% MATCH</span>
+                    </div>
+                    <div className="p-2 rounded bg-black/40 text-stone-200">
+                      ACT-1042: Raft Foundation Bay 3 (Finish: 22-Sep-2026)
+                    </div>
+                    <div className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                      <MdCheck size={14} /> Planner Approval Pending Decision
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Checkpoint 06 — SAVE PROGRESS (Node at 500, 1280 | Bottom Verified Card) */}
+            <div className="absolute top-[1252px] left-[472px] z-20">
+              <button
+                type="button"
+                onClick={() => setActiveFlowStep(5)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center font-mono font-black text-sm transition-transform duration-300 shadow-xl cursor-pointer ${
+                  activeFlowStep === 5
+                    ? 'bg-emerald-600 text-white ring-4 ring-emerald-500/40 scale-110'
+                    : 'bg-white text-emerald-700 border-2 border-emerald-600 hover:scale-105'
+                }`}
+              >
+                06
+              </button>
+            </div>
+            <div className="absolute top-[1240px] left-[120px] right-[120px] z-10">
+              <div
+                onClick={() => setActiveFlowStep(5)}
+                className={`p-5 rounded-3xl border transition-all duration-300 cursor-pointer ${
+                  activeFlowStep === 5
+                    ? 'bg-white shadow-xl border-emerald-500 ring-2 ring-emerald-500/20'
+                    : 'bg-white/85 backdrop-blur-sm border-[#E8E1D5] hover:bg-white'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">06 · Permanent Schedule Record</span>
+                      <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">100% Audit Logged</span>
+                    </div>
+                    <h4 className="text-base font-bold text-[#0B1320]">PROGRESS SAVED</h4>
+                    <p className="text-xs text-stone-600">
+                      Approved updates become immutable project history with user stamp, time record, and live progress percentage update.
+                    </p>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <MdCheckCircle size={24} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ===================================================================== */}
+          {/* MOBILE RESPONSIVE ROADMAP (Vertical Highway with nodes and cards)     */}
+          {/* ===================================================================== */}
+          <div className="lg:hidden relative pl-12 sm:pl-16 space-y-6">
+            {/* Vertical Highway Road Strip */}
+            <div className="absolute left-4 sm:left-6 top-4 bottom-4 w-9 bg-[#0B1320] rounded-full shadow-inner flex justify-center">
+              <div className="w-0 border-r-2 border-dashed border-[#FAF8F5]/80 h-full" />
+            </div>
+
+            {[
+              {
+                step: '01',
+                title: 'CAPTURE',
+                badge: 'Multi-Source',
+                desc: 'Collect project updates from daily reports, spreadsheets, PDFs, or site voice notes.',
+              },
+              {
+                step: '02',
+                title: 'EXTRACT',
+                badge: 'Automated Extraction',
+                desc: 'Read raw site reports and identify work descriptions, quantities, locations, and dates.',
+              },
+              {
+                step: '03',
+                title: 'STRUCTURE',
+                badge: 'Normalization',
+                desc: 'Convert unstructured updates into standardized progress records ready for linking.',
+              },
+              {
+                step: '04',
+                title: 'MATCH',
+                badge: 'AI Candidate Match',
+                desc: 'Correlate extracted progress items with project schedule baseline activities.',
+              },
+              {
+                step: '05',
+                title: 'PLANNER REVIEW',
+                badge: 'Human Governance',
+                desc: 'System suggests. Authorized planning engineer approves, edits, or rejects.',
+                highlight: true,
+              },
+              {
+                step: '06',
+                title: 'SAVE PROGRESS',
+                badge: 'Audit Baseline',
+                desc: 'Approved actuals recorded into schedule baseline with permanent audit logging.',
+              },
+            ].map((st, idx) => (
+              <div key={st.step} className="relative">
+                {/* Road Checkpoint Node */}
+                <div
+                  className={`absolute -left-12 sm:-left-16 top-4 w-10 h-10 rounded-full flex items-center justify-center font-mono font-black text-xs shadow-md z-10 ${
+                    st.highlight
+                      ? 'bg-[#FF5500] text-white ring-2 ring-white'
+                      : 'bg-white text-[#0B1320] border-2 border-[#0B1320]'
+                  }`}
+                >
+                  {st.step}
+                </div>
+
+                {/* Card */}
+                <div
+                  className={`p-5 rounded-2xl border ${
+                    st.highlight
+                      ? 'bg-[#0B1320] text-white border-[#FF5500]/50 shadow-md'
+                      : 'bg-white border-[#E8E1D5] shadow-xs'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] font-bold text-[#FF5500] uppercase tracking-wider">{st.step} · {st.badge}</span>
+                  </div>
+                  <h4 className={`text-base font-bold ${st.highlight ? 'text-white' : 'text-[#0B1320]'}`}>{st.title}</h4>
+                  <p className={`text-xs mt-1 leading-relaxed ${st.highlight ? 'text-stone-300' : 'text-stone-600'}`}>{st.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* SECTION 5B — REAL PROJECT PROGRESS GRAPHICAL INTELLIGENCE                   */}
+      {/* Visual Charts demonstrating civil progress understanding                 */}
+      {/* ========================================================================= */}
+      <section className="py-14 sm:py-20 bg-white border-b border-[#E8E1D5]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320] text-xs font-bold uppercase tracking-wider mb-2">
+              <MdTrendingUp className="text-[#FF5500]" />
+              <span>Project Analytics Preview</span>
+            </div>
+            <h3 className="text-2xl sm:text-4xl font-black text-[#0B1320] tracking-tight">
+              Actionable Progress Data, Not Decorative Charts
+            </h3>
+            <p className="text-xs sm:text-sm text-[#475569] mt-2">
+              Visual metrics based on real schedule activities, approved site quantities, and planner review decisions.
             </p>
           </div>
 
-          {/* ROADMAP FLOWCHART: 6 CONNECTED STAGES */}
-          <div className="space-y-6 lg:space-y-8 relative">
-            
-            {/* STEP 01 — CAPTURE */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">01</span>
-                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
-                    Field Ingestion
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">CAPTURE</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  Bring daily project updates into one central inbox. Works with daily reports, site diaries, spreadsheets, PDFs, or voice notes.
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Visual 1: Activity Status Donut Representation */}
+            <div className="p-6 rounded-3xl bg-[#FAF8F5] border border-[#E8E1D5] space-y-4 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+                <span className="text-xs font-bold text-[#0B1320]">Activity Status Distribution</span>
+                <span className="text-[10px] font-mono text-stone-400">Sample WBS</span>
               </div>
-              <div className="hidden lg:flex lg:col-span-2 justify-center">
-                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
-              </div>
-              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic">
-                “DPRs, WhatsApp notes, spreadsheets collected across work fronts”
-              </div>
-            </div>
-
-            {/* STEP 02 — EXTRACT */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic text-right">
-                “Reads descriptions, completed quantities, dates and work fronts”
-              </div>
-              <div className="hidden lg:flex lg:col-span-2 justify-center">
-                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
-              </div>
-              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">02</span>
-                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
-                    AI Extraction
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">EXTRACT</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  Raw project information is read and important progress details are identified without manual data entry.
-                </p>
-              </div>
-            </div>
-
-            {/* STEP 03 — STRUCTURE */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">03</span>
-                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
-                    Standardization
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">STRUCTURE</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  Unstructured notes are organized into standardized progress items (Activity, Location, Quantity, Discipline, Date).
-                </p>
-              </div>
-              <div className="hidden lg:flex lg:col-span-2 justify-center">
-                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
-              </div>
-              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic">
-                “Normalized progress events ready for schedule linkage”
-              </div>
-            </div>
-
-            {/* STEP 04 — MATCH */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic text-right">
-                “Compensates for terminology differences between site and CPM schedules”
-              </div>
-              <div className="hidden lg:flex lg:col-span-2 justify-center">
-                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
-              </div>
-              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">04</span>
-                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
-                    AI Candidate Matching
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">MATCH</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  The extracted progress is matched with candidate activities from the imported project schedule, with clear confidence scores.
-                </p>
-              </div>
-            </div>
-
-            {/* STEP 05 — REVIEW (HUMAN-IN-THE-LOOP HIGHLIGHT) */}
-            <div className="p-6 sm:p-10 rounded-3xl bg-[#0B1320] text-white border-2 border-[#FF5500]/50 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-[#FF5500]/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                <div className="lg:col-span-7 space-y-3">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF5500]/20 text-[#FF5500] border border-[#FF5500]/30 text-xs font-bold uppercase tracking-wider">
-                    <MdFactCheck size={16} />
-                    <span>CRITICAL GOVERNANCE CHECKPOINT</span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white">
-                    05 · PLANNER REVIEW
-                  </h3>
-                  <p className="text-sm text-stone-300 leading-relaxed">
-                    <strong>AI Suggests. The Human Planner Decides.</strong> PragatiPath never silently alters master schedule baselines. The authorized planning engineer reviews candidate matches and chooses to Approve, Edit, or Reject.
-                  </p>
-                  <div className="flex items-center gap-2 pt-2 text-xs font-bold">
-                    <span className="px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✓ Approve</span>
-                    <span className="px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">✎ Edit Quantities</span>
-                    <span className="px-3 py-1.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">✕ Reject Match</span>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-5 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 space-y-2.5 text-xs">
-                  <span className="text-[10px] uppercase font-bold text-[#FF5500] tracking-wider block">
-                    Planner Review Console
-                  </span>
-                  <div className="p-2.5 rounded-lg bg-white/10 border border-white/10">
-                    <span className="text-[10px] text-stone-400">Site Update:</span>
-                    <p className="font-bold text-white">Raft Concrete 45m³ at Unit 2</p>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-[#FF5500]/20 border border-[#FF5500]/30">
-                    <span className="text-[10px] text-[#FF5500] font-bold">Suggested Match (94% Confidence):</span>
-                    <p className="font-bold text-white">ACT-1042: Pump House Foundation Raft</p>
+              <div className="flex items-center justify-center py-4">
+                <div className="relative w-36 h-36 rounded-full flex items-center justify-center shadow-inner"
+                  style={{
+                    background: 'conic-gradient(#10B981 0% 64%, #F59E0B 64% 88%, #FF5500 88% 100%)',
+                  }}
+                >
+                  <div className="w-24 h-24 rounded-full bg-[#FAF8F5] flex flex-col items-center justify-center text-center">
+                    <span className="text-2xl font-black text-[#0B1320]">100%</span>
+                    <span className="text-[9px] font-bold text-stone-400 uppercase">Tracked</span>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* STEP 06 — SAVE PROGRESS */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl sm:text-4xl font-black text-emerald-600 font-mono">06</span>
-                  <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800">
-                    Audit Logging
-                  </span>
+              <div className="space-y-1.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-stone-600">Completed</span>
+                  </div>
+                  <strong className="text-[#0B1320]">64%</strong>
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">SAVE PROGRESS</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-                  Only approved information becomes part of the permanent project record, updating progress percentages with complete historical traceability.
-                </p>
-              </div>
-              <div className="hidden lg:flex lg:col-span-2 justify-center">
-                <div className="w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20 shadow-md" />
-              </div>
-              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic">
-                “Immutable audit logs record reviewer identity, timestamp, and schedule impact”
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                    <span className="text-stone-600">In Progress</span>
+                  </div>
+                  <strong className="text-[#0B1320]">24%</strong>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5500]" />
+                    <span className="text-stone-600">Pending Review</span>
+                  </div>
+                  <strong className="text-[#FF5500]">12%</strong>
+                </div>
               </div>
             </div>
 
+            {/* Visual 2: Progress by Civil Discipline */}
+            <div className="p-6 rounded-3xl bg-[#FAF8F5] border border-[#E8E1D5] space-y-4 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+                <span className="text-xs font-bold text-[#0B1320]">Discipline Actuals</span>
+                <span className="text-[10px] font-mono text-stone-400">vs Planned</span>
+              </div>
+              <div className="space-y-3 pt-2">
+                {[
+                  { name: 'Substructure & Raft', pct: 100, color: 'bg-emerald-600' },
+                  { name: 'Pier Columns & Caps', pct: 65, color: 'bg-[#FF5500]' },
+                  { name: 'Viaduct Girder Launching', pct: 28, color: 'bg-amber-500' },
+                  { name: 'Track Bed Concrete', pct: 14, color: 'bg-stone-400' },
+                ].map((item) => (
+                  <div key={item.name} className="space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-semibold text-[#0B1320]">{item.name}</span>
+                      <strong className="font-mono text-stone-700">{item.pct}%</strong>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-stone-200 overflow-hidden">
+                      <div className={`h-full rounded-full ${item.color}`} style={{ width: `${item.pct}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="pt-2 text-[11px] text-stone-500 text-center font-medium">
+                Automatic schedule recalculation on planner approval
+              </div>
+            </div>
+
+            {/* Visual 3: Human Review Verification Rate */}
+            <div className="p-6 rounded-3xl bg-[#FAF8F5] border border-[#E8E1D5] space-y-4 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+                <span className="text-xs font-bold text-[#0B1320]">Planner Governance Ratio</span>
+                <span className="text-[10px] font-mono text-stone-400">Audit History</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-white border border-[#E8E1D5] space-y-2 text-center">
+                <span className="text-4xl font-black text-emerald-700 font-mono">92.4%</span>
+                <p className="text-xs font-bold text-[#0B1320]">First-Pass Match Accuracy</p>
+                <p className="text-[11px] text-stone-500">Extracted progress correctly linked to schedule activity on first presentation</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                <div className="p-2.5 rounded-xl bg-white border border-[#E8E1D5]">
+                  <span className="text-stone-400 block text-[10px]">Adjusted by Planner</span>
+                  <strong className="text-amber-600">6.8%</strong>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white border border-[#E8E1D5]">
+                  <span className="text-stone-400 block text-[10px]">Rejected Links</span>
+                  <strong className="text-rose-600">0.8%</strong>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
