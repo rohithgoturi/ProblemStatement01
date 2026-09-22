@@ -19,6 +19,7 @@ import PrivacyPage from './pages/Public/PrivacyPage';
 import TermsPage from './pages/Public/TermsPage';
 import LoginPage from './pages/Login/LoginPage';
 import SignupPage from './pages/Signup/SignupPage';
+import AuthPage from './pages/Auth/AuthPage';
 import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 
 // Authenticated Pages
@@ -103,12 +104,12 @@ export const router = createBrowserRouter([
   // Public standalone authentication routes (no shell/footer)
   {
     path: '/login',
-    element: <LoginPage />,
+    element: <AuthPage initialMode="login" />,
     errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/signup',
-    element: <SignupPage />,
+    element: <AuthPage initialMode="signup" />,
     errorElement: <RouteErrorBoundary />,
   },
   {
