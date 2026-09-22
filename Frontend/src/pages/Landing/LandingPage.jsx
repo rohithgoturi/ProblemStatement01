@@ -26,10 +26,21 @@ import {
   MdInsertDriveFile,
   MdCheck,
   MdSpeed,
+  MdTableChart,
+  MdPictureAsPdf,
+  MdMic,
+  MdGraphicEq,
+  MdPlayArrow,
+  MdPause,
+  MdFactCheck,
+  MdEdit,
 } from 'react-icons/md';
 
 export default function LandingPage() {
-  const [activeWorkflowTab, setActiveWorkflowTab] = useState(3); // 0 to 5
+  const [activeWorkflowTab, setActiveWorkflowTab] = useState(3); // 0 to 5 (Hero workflow card)
+  const [activeInputType, setActiveInputType] = useState('csv'); // 'csv' | 'pdf' | 'txt' | 'voice'
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [activeFlowStep, setActiveFlowStep] = useState(0); // 0 to 5 (Flowchart step)
 
   const workflowSteps = [
     {
@@ -315,56 +326,568 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 2.5 — CONSTRUCTION VISUAL STORY: PLAN TO PROGRESS                 */}
+      {/* SECTION 3 — DATA INPUT VISUALIZATION (90% SCREEN-WIDTH CARDS)              */}
+      {/* Inspired by Reference Image 2: Multi-format data processing                */}
       {/* ========================================================================= */}
-      <section className="py-10 bg-[#FAF8F5] border-b border-[#E8E1D5] overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-6">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF5500]">
-              The Planning-to-Execution Bridge
-            </span>
-            <h3 className="text-xl sm:text-2xl font-black text-[#0B1320] mt-1">
-              How Information Flows from Site to Schedule
-            </h3>
+      <section className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-[#E8E1D5] overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] text-[11px] font-bold uppercase tracking-wider mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500] animate-pulse" />
+            <span>Multi-Format Ingestion</span>
           </div>
+          <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight">
+            From Raw Project Data to Usable Progress
+          </h2>
+          <p className="text-base sm:text-lg text-[#475569] mt-3 max-w-2xl mx-auto leading-relaxed">
+            PragatiPath works with different forms of project information and turns field updates into structured progress data.
+          </p>
 
-          {/* Visual Step Banner */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 relative">
+          {/* Interactive Format Selector Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-8">
             {[
-              { step: '01', label: 'PLAN', sub: 'Schedule Baseline', icon: <MdCalendarToday size={18} /> },
-              { step: '02', label: 'SITE', sub: 'Daily Field Diary', icon: <MdConstruction size={18} /> },
-              { step: '03', label: 'DATA', sub: 'Extracted Quantities', icon: <MdSearch size={18} /> },
-              { step: '04', label: 'MATCH', sub: 'AI Match Candidate', icon: <MdLink size={18} /> },
-              { step: '05', label: 'REVIEW', sub: 'Planner Approval', icon: <MdAssignmentTurnedIn size={18} /> },
-              { step: '06', label: 'PROGRESS', sub: 'Traceable Update', icon: <MdTrendingUp size={18} /> },
-            ].map((item, idx) => (
-              <div
-                key={item.step}
-                className="p-4 rounded-2xl bg-white border border-[#E8E1D5] hover:border-[#FF5500]/50 hover:-translate-y-1 shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between"
+              { id: 'csv', label: 'Excel & CSV Spreadsheets', icon: <MdTableChart size={16} /> },
+              { id: 'pdf', label: 'PDF Daily Reports', icon: <MdPictureAsPdf size={16} /> },
+              { id: 'txt', label: 'Site Diaries & Text Notes', icon: <MdDescription size={16} /> },
+              { id: 'voice', label: 'Voice & Audio Notes', icon: <MdMic size={16} /> },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveInputType(tab.id)}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
+                  activeInputType === tab.id
+                    ? 'bg-[#0B1320] text-white shadow-md scale-102'
+                    : 'bg-white text-[#475569] border border-[#E8E1D5] hover:border-[#FF5500]/50 hover:text-[#0B1320]'
+                }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="w-8 h-8 rounded-xl bg-[#FFF2EB] text-[#FF5500] flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
-                    {item.icon}
-                  </span>
-                  <span className="text-[10px] font-mono font-black text-stone-400 group-hover:text-[#FF5500]">
-                    {item.step}
-                  </span>
+                <span className={activeInputType === tab.id ? 'text-[#FF5500]' : 'text-stone-400'}>
+                  {tab.icon}
+                </span>
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 90% Screen-Width Visual Data Card */}
+        <div className="w-[92vw] max-w-6xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl border border-[#E8E1D5] shadow-xl p-5 sm:p-8 lg:p-10 transition-all duration-300">
+          {/* SPREADSHEET (CSV/XLSX) VIEW */}
+          {activeInputType === 'csv' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
+                  <MdTableChart className="text-emerald-600" />
+                  <span>Structured Schedule Data</span>
                 </div>
-                <div>
-                  <h4 className="text-xs font-black tracking-wide text-[#0B1320]">{item.label}</h4>
-                  <p className="text-[11px] text-stone-500 truncate mt-0.5">{item.sub}</p>
+                <h3 className="text-2xl sm:text-3xl font-black text-[#0B1320]">
+                  Excel & CSV Schedule Baselines
+                </h3>
+                <p className="text-sm text-[#475569] leading-relaxed">
+                  Import schedules exported from Primavera P6, Microsoft Project, or custom contractor tracking sheets. Automatic header mapping recognizes activity IDs, planned dates, and WBS tiers.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-semibold">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">.xlsx</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">.csv</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">.xls</span>
+                  <span className="text-[#FF5500] font-bold">Automatic Column Mapping ✓</span>
                 </div>
               </div>
-            ))}
+
+              {/* Realistic Spreadsheet Preview */}
+              <div className="lg:col-span-7 bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] overflow-hidden shadow-xs">
+                <div className="bg-[#0B1320] text-white px-4 py-2.5 flex items-center justify-between text-xs font-bold font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                    <span>Schedule_Baseline_Rev4.xlsx</span>
+                  </div>
+                  <span className="text-stone-400 text-[11px]">Sheet: Master_WBS</span>
+                </div>
+                <div className="overflow-x-auto text-[11px] font-mono">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[#F5F1E8] border-b border-[#E8E1D5] text-stone-600">
+                        <th className="p-2.5 text-center w-8 text-stone-400">#</th>
+                        <th className="p-2.5 font-bold">Activity ID</th>
+                        <th className="p-2.5 font-bold">Activity Name</th>
+                        <th className="p-2.5 font-bold">Start Date</th>
+                        <th className="p-2.5 font-bold">Finish Date</th>
+                        <th className="p-2.5 font-bold text-right">Progress</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#E8E1D5]/60 bg-white">
+                      <tr className="hover:bg-[#FFF2EB]/50 transition-colors">
+                        <td className="p-2.5 text-center text-stone-400">1</td>
+                        <td className="p-2.5 font-bold text-[#FF5500]">ACT-1042</td>
+                        <td className="p-2.5 text-[#0B1320] font-semibold">P-101 Foundation Bay 3 Raft Concrete</td>
+                        <td className="p-2.5 text-stone-600">01-Sep-2026</td>
+                        <td className="p-2.5 text-stone-600">12-Sep-2026</td>
+                        <td className="p-2.5 text-right font-bold text-emerald-700">100%</td>
+                      </tr>
+                      <tr className="hover:bg-[#FFF2EB]/50 transition-colors">
+                        <td className="p-2.5 text-center text-stone-400">2</td>
+                        <td className="p-2.5 font-bold text-[#FF5500]">ACT-1043</td>
+                        <td className="p-2.5 text-[#0B1320] font-semibold">Pier P-42 Rebar Cage Binding</td>
+                        <td className="p-2.5 text-stone-600">05-Sep-2026</td>
+                        <td className="p-2.5 text-stone-600">18-Sep-2026</td>
+                        <td className="p-2.5 text-right font-bold text-[#FF5500]">65%</td>
+                      </tr>
+                      <tr className="hover:bg-[#FFF2EB]/50 transition-colors">
+                        <td className="p-2.5 text-center text-stone-400">3</td>
+                        <td className="p-2.5 font-bold text-[#FF5500]">ACT-1044</td>
+                        <td className="p-2.5 text-[#0B1320] font-semibold">Viaduct Precast Girder Launching Span 14</td>
+                        <td className="p-2.5 text-stone-600">10-Sep-2026</td>
+                        <td className="p-2.5 text-stone-600">24-Sep-2026</td>
+                        <td className="p-2.5 text-right font-bold text-stone-500">20%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="p-2.5 bg-[#FAF8F5] border-t border-[#E8E1D5] flex items-center justify-between text-[11px] text-[#64748B]">
+                  <span>Showing 3 of 1,248 activities</span>
+                  <span className="font-bold text-emerald-700">100% Validated Data</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* PDF REPORT VIEW */}
+          {activeInputType === 'pdf' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 text-rose-800 border border-rose-200 text-xs font-bold">
+                  <MdPictureAsPdf className="text-rose-600" />
+                  <span>Site Document Parsing</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-[#0B1320]">
+                  PDF Daily Progress Reports (DPR)
+                </h3>
+                <p className="text-sm text-[#475569] leading-relaxed">
+                  Upload official contractor daily reports, consultant logs, and inspection sheets in PDF. The system extracts headings, work quantities, weather conditions, and site observations.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-semibold">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">PDF Documents</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">Scanned DPRs</span>
+                  <span className="text-[#FF5500] font-bold">Entity Extraction Engine ✓</span>
+                </div>
+              </div>
+
+              {/* Realistic PDF Document Preview */}
+              <div className="lg:col-span-7 bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] p-5 shadow-xs">
+                <div className="bg-white rounded-xl border border-[#E8E1D5] p-5 space-y-3 relative overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-rose-600 text-white font-black text-[10px]">PDF</span>
+                      <strong className="text-xs text-[#0B1320]">Daily_Progress_Report_284.pdf</strong>
+                    </div>
+                    <span className="text-[11px] text-stone-500 font-mono">Date: 22-Sep-2026</span>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center justify-between text-[11px] text-[#64748B]">
+                      <span>Project: Metro Rail Viaduct Package 04</span>
+                      <span>Site In-Charge: Er. Rajiv M.</span>
+                    </div>
+                    <div className="p-3 rounded-lg bg-[#FAF8F5] border-l-4 border-l-[#FF5500] text-[#0B1320]">
+                      <span className="font-bold block mb-1">Extracted Site Execution Paragraph:</span>
+                      <p className="text-[11px] leading-relaxed text-stone-700">
+                        “Completed 64 m³ Pier Cap concrete pouring at Pier P-42 using Boom Placer #2. Batching slip #940 verified. Concrete slump 125mm compliant with design mix.”
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center text-[10px] pt-1">
+                      <div className="p-2 rounded bg-stone-50 border border-[#E8E1D5]">
+                        <span className="text-stone-400 block">Identified Item</span>
+                        <strong className="text-[#0B1320] text-xs">Pier Cap Concrete</strong>
+                      </div>
+                      <div className="p-2 rounded bg-stone-50 border border-[#E8E1D5]">
+                        <span className="text-stone-400 block">Extracted Quantity</span>
+                        <strong className="text-[#FF5500] text-xs">64 m³</strong>
+                      </div>
+                      <div className="p-2 rounded bg-stone-50 border border-[#E8E1D5]">
+                        <span className="text-stone-400 block">Location Front</span>
+                        <strong className="text-emerald-700 text-xs">Pier P-42</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TXT / SITE DIARY VIEW */}
+          {activeInputType === 'txt' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">
+                  <MdDescription className="text-amber-600" />
+                  <span>Field Note Input</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-[#0B1320]">
+                  Site Diaries & Field Notes
+                </h3>
+                <p className="text-sm text-[#475569] leading-relaxed">
+                  Field engineers don't need complex scheduling tools. They simply type or paste raw field logs, shift summaries, or WhatsApp updates into the submission box.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-semibold">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">Plain Text</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">Shift Logs</span>
+                  <span className="text-[#FF5500] font-bold">Instant Normalization ✓</span>
+                </div>
+              </div>
+
+              {/* Realistic Site Diary Preview */}
+              <div className="lg:col-span-7 bg-[#0B1320] text-white rounded-2xl p-5 shadow-xs font-mono text-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2.5 text-stone-400 text-[11px]">
+                  <span>FIELD_LOG_SUPERVISOR.txt</span>
+                  <span className="text-emerald-400 font-bold">● INGESTION READY</span>
+                </div>
+                <div className="p-3.5 bg-black/40 rounded-xl border border-white/10 space-y-1 text-stone-200 leading-relaxed text-[11px]">
+                  <p><span className="text-stone-400">Date:</span> 22 Sept 2026 | Shift: Day</p>
+                  <p><span className="text-stone-400">Area:</span> Block A Substructure</p>
+                  <p><span className="text-stone-400">Log:</span> Completed raft foundation concrete at Bay 3.</p>
+                  <p><span className="text-stone-400">Quantity:</span> 45 m³ poured, 6 cube specimens molded.</p>
+                  <p><span className="text-stone-400">Equipment:</span> 1 Boom Placer, 4 Transit Mixers on site.</p>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-stone-400 pt-1">
+                  <span>Direct submission via Web or Supervisor Portal</span>
+                  <span className="text-[#FF5500] font-bold">Extracted in &lt; 1s</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* VOICE & AUDIO NOTE VIEW */}
+          {activeInputType === 'voice' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF2EB] text-[#FF5500] border border-[#FFD8C7] text-xs font-bold">
+                  <MdMic />
+                  <span>Audio & Voice Updates</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-[#0B1320]">
+                  Voice Notes From the Job Site
+                </h3>
+                <p className="text-sm text-[#475569] leading-relaxed">
+                  Supervisors wearing safety gloves on noisy active sites can speak their daily progress. Voice recordings are transcribed and converted into verified progress items.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 pt-2 text-xs font-semibold">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">Voice Recording</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5] text-[#0B1320]">Speech-to-Text</span>
+                  <span className="text-[#FF5500] font-bold">Automated Entity Parsing ✓</span>
+                </div>
+              </div>
+
+              {/* Realistic Audio Player & Waveform Preview */}
+              <div className="lg:col-span-7 bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] p-5 sm:p-6 shadow-xs space-y-4">
+                {/* Audio Player Card */}
+                <div className="bg-white rounded-xl border border-[#E8E1D5] p-4 sm:p-5 flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+                    className="w-12 h-12 rounded-full bg-[#FF5500] hover:bg-[#E64400] text-white flex items-center justify-center shrink-0 shadow-md transition-all cursor-pointer"
+                    title={isPlayingAudio ? 'Pause Voice Note' : 'Play Voice Note'}
+                  >
+                    {isPlayingAudio ? <MdPause size={24} /> : <MdPlayArrow size={24} className="ml-0.5" />}
+                  </button>
+
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#0B1320]">
+                      <span>Site_Voice_Log_BlockA.m4a</span>
+                      <span className="text-stone-400 font-mono text-[11px]">{isPlayingAudio ? '00:18 / 00:42' : '00:00 / 00:42'}</span>
+                    </div>
+
+                    {/* Dynamic Sound Waveform */}
+                    <div className="flex items-center gap-1 h-8">
+                      {[35, 60, 85, 45, 95, 75, 40, 90, 100, 65, 50, 90, 80, 55, 85, 45, 70, 95, 60, 40, 75, 50].map((h, i) => (
+                        <span
+                          key={i}
+                          style={{ height: isPlayingAudio ? `${Math.max(25, (h + (i % 4) * 20) % 100)}%` : `${h}%` }}
+                          className={`flex-1 rounded-full transition-all duration-300 ${
+                            i < 9 ? 'bg-[#FF5500]' : 'bg-stone-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Real-time Transcription Display */}
+                <div className="p-3.5 bg-white rounded-xl border border-[#E8E1D5] text-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF5500] block">
+                    Speech-to-Text Transcription:
+                  </span>
+                  <p className="text-stone-700 italic">
+                    “Foundation work completed today in Block A. Pouring finished at 4:30 PM, testing cubes taken for lab verification.”
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* SECTION 4 — RAW → STRUCTURED PROGRESS TRANSFORMATION                       */}
+      {/* ========================================================================= */}
+      <section className="py-16 sm:py-24 bg-[#F5F1E8] border-b border-[#E8E1D5]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
+              Data Transformation
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-1">
+              Raw Field Notes → Structured Progress Data
+            </h2>
+            <p className="text-base text-[#475569] mt-2">
+              How PragatiPath converts unstructured site updates into verified operational records.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            {/* Left: Raw Unstructured Field Update */}
+            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow space-y-4">
+              <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
+                  01 · Raw Field Input
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[11px] font-bold">
+                  Unstructured Text
+                </span>
+              </div>
+              <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E8E1D5] font-mono text-xs text-stone-800 leading-relaxed">
+                “Block A foundation concrete completed today. Column work started near the east side with 12 men.”
+              </div>
+              <ul className="text-xs text-stone-500 space-y-1.5 pt-1">
+                <li>• No standard activity ID mentioned</li>
+                <li>• Informal location description</li>
+                <li>• Cannot link directly to CPM schedules</li>
+              </ul>
+            </div>
+
+            {/* Center: Processing Node */}
+            <div className="lg:col-span-2 flex flex-col items-center justify-center py-2 text-center">
+              <div className="w-12 h-12 rounded-full bg-[#0B1320] text-[#FF5500] flex items-center justify-center shadow-md animate-pulse">
+                <MdArrowForward size={22} className="rotate-90 lg:rotate-0" />
+              </div>
+              <span className="text-[10px] font-bold text-[#FF5500] uppercase tracking-wider mt-2">
+                Entity Parsing
+              </span>
+            </div>
+
+            {/* Right: Structured Progress Record */}
+            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 border-2 border-emerald-500/30 warm-card-shadow space-y-4">
+              <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                  02 · Structured Progress
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">
+                  Normalized Event
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div className="p-2.5 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5]">
+                  <span className="text-stone-400 block text-[10px]">Activity</span>
+                  <strong className="text-[#0B1320]">Foundation Concrete</strong>
+                </div>
+                <div className="p-2.5 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5]">
+                  <span className="text-stone-400 block text-[10px]">Location</span>
+                  <strong className="text-[#0B1320]">Block A</strong>
+                </div>
+                <div className="p-2.5 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5]">
+                  <span className="text-stone-400 block text-[10px]">Status</span>
+                  <strong className="text-emerald-700">Completed</strong>
+                </div>
+                <div className="p-2.5 rounded-lg bg-[#FAF8F5] border border-[#E8E1D5]">
+                  <span className="text-stone-400 block text-[10px]">Reported Date</span>
+                  <strong className="text-[#0B1320]">22-Sep-2026</strong>
+                </div>
+              </div>
+              <div className="text-xs text-emerald-800 font-bold flex items-center gap-1.5 pt-1">
+                <MdCheckCircle size={16} className="text-emerald-600" />
+                <span>Ready for Schedule Activity Matching</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 3 — THE CIVIL PROJECT CHALLENGE & REAL INFRASTRUCTURE IMAGE       */}
+      {/* SECTION 5 — CONNECTED WORKFLOW FLOWCHART (CURVED PATH ROADMAP)            */}
+      {/* Inspired by Reference Image 1: Curved road connecting numbered steps       */}
+      {/* ========================================================================= */}
+      <section id="how-it-works" className="py-16 sm:py-28 bg-[#FAF8F5] border-b border-[#E8E1D5] relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] text-[11px] font-bold uppercase tracking-wider mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500]" />
+              <span>Connected Product Journey</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight">
+              How PragatiPath Works
+            </h2>
+            <p className="text-base sm:text-lg text-[#475569] mt-3 leading-relaxed">
+              A visual path connecting messy site updates to verified project schedule records.
+            </p>
+          </div>
+
+          {/* ROADMAP FLOWCHART: 6 CONNECTED STAGES */}
+          <div className="space-y-6 lg:space-y-8 relative">
+            
+            {/* STEP 01 — CAPTURE */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">01</span>
+                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
+                    Field Ingestion
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">CAPTURE</h3>
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                  Bring daily project updates into one central inbox. Works with daily reports, site diaries, spreadsheets, PDFs, or voice notes.
+                </p>
+              </div>
+              <div className="hidden lg:flex lg:col-span-2 justify-center">
+                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
+              </div>
+              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic">
+                “DPRs, WhatsApp notes, spreadsheets collected across work fronts”
+              </div>
+            </div>
+
+            {/* STEP 02 — EXTRACT */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic text-right">
+                “Reads descriptions, completed quantities, dates and work fronts”
+              </div>
+              <div className="hidden lg:flex lg:col-span-2 justify-center">
+                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
+              </div>
+              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">02</span>
+                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
+                    AI Extraction
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">EXTRACT</h3>
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                  Raw project information is read and important progress details are identified without manual data entry.
+                </p>
+              </div>
+            </div>
+
+            {/* STEP 03 — STRUCTURE */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">03</span>
+                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
+                    Standardization
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">STRUCTURE</h3>
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                  Unstructured notes are organized into standardized progress items (Activity, Location, Quantity, Discipline, Date).
+                </p>
+              </div>
+              <div className="hidden lg:flex lg:col-span-2 justify-center">
+                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
+              </div>
+              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic">
+                “Normalized progress events ready for schedule linkage”
+              </div>
+            </div>
+
+            {/* STEP 04 — MATCH */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic text-right">
+                “Compensates for terminology differences between site and CPM schedules”
+              </div>
+              <div className="hidden lg:flex lg:col-span-2 justify-center">
+                <div className="w-4 h-4 rounded-full bg-[#FF5500] ring-4 ring-[#FF5500]/20 shadow-md" />
+              </div>
+              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-3xl sm:text-4xl font-black text-[#FF5500] font-mono">04</span>
+                  <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] font-bold text-[#0B1320]">
+                    AI Candidate Matching
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">MATCH</h3>
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                  The extracted progress is matched with candidate activities from the imported project schedule, with clear confidence scores.
+                </p>
+              </div>
+            </div>
+
+            {/* STEP 05 — REVIEW (HUMAN-IN-THE-LOOP HIGHLIGHT) */}
+            <div className="p-6 sm:p-10 rounded-3xl bg-[#0B1320] text-white border-2 border-[#FF5500]/50 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-[#FF5500]/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <div className="lg:col-span-7 space-y-3">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF5500]/20 text-[#FF5500] border border-[#FF5500]/30 text-xs font-bold uppercase tracking-wider">
+                    <MdFactCheck size={16} />
+                    <span>CRITICAL GOVERNANCE CHECKPOINT</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white">
+                    05 · PLANNER REVIEW
+                  </h3>
+                  <p className="text-sm text-stone-300 leading-relaxed">
+                    <strong>AI Suggests. The Human Planner Decides.</strong> PragatiPath never silently alters master schedule baselines. The authorized planning engineer reviews candidate matches and chooses to Approve, Edit, or Reject.
+                  </p>
+                  <div className="flex items-center gap-2 pt-2 text-xs font-bold">
+                    <span className="px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✓ Approve</span>
+                    <span className="px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">✎ Edit Quantities</span>
+                    <span className="px-3 py-1.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">✕ Reject Match</span>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/15 space-y-2.5 text-xs">
+                  <span className="text-[10px] uppercase font-bold text-[#FF5500] tracking-wider block">
+                    Planner Review Console
+                  </span>
+                  <div className="p-2.5 rounded-lg bg-white/10 border border-white/10">
+                    <span className="text-[10px] text-stone-400">Site Update:</span>
+                    <p className="font-bold text-white">Raft Concrete 45m³ at Unit 2</p>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-[#FF5500]/20 border border-[#FF5500]/30">
+                    <span className="text-[10px] text-[#FF5500] font-bold">Suggested Match (94% Confidence):</span>
+                    <p className="font-bold text-white">ACT-1042: Pump House Foundation Raft</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* STEP 06 — SAVE PROGRESS */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              <div className="lg:col-span-5 bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-3xl sm:text-4xl font-black text-emerald-600 font-mono">06</span>
+                  <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800">
+                    Audit Logging
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-[#0B1320] mb-1">SAVE PROGRESS</h3>
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                  Only approved information becomes part of the permanent project record, updating progress percentages with complete historical traceability.
+                </p>
+              </div>
+              <div className="hidden lg:flex lg:col-span-2 justify-center">
+                <div className="w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20 shadow-md" />
+              </div>
+              <div className="hidden lg:block lg:col-span-5 text-xs text-stone-400 italic">
+                “Immutable audit logs record reviewer identity, timestamp, and schedule impact”
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* SECTION 6 — THE CIVIL PROJECT CHALLENGE & REAL INFRASTRUCTURE IMAGE       */}
       {/* ========================================================================= */}
       <section className="py-16 sm:py-24 bg-gradient-to-br from-[#FF5500] via-[#F94D00] to-[#E64400] text-white relative overflow-hidden">
-        {/* White grid overlay */}
         <div className="absolute inset-0 bg-orange-grid opacity-30 pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -382,7 +905,7 @@ export default function LandingPage() {
 
           {/* Infrastructure Image + Side-by-Side Comparison */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-10">
-            {/* Visual Infrastructure Mega-Project Image (lg:col-span-5) */}
+            {/* Visual Infrastructure Mega-Project Image */}
             <div className="lg:col-span-5 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl relative group flex flex-col justify-end min-h-[360px] bg-[#0B1320]">
               <img
                 src="/infrastructure-flyover.jpg"
@@ -405,7 +928,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Comparison Cards (lg:col-span-7) */}
+            {/* Comparison Cards */}
             <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* The Old Way Card */}
               <div className="bg-[#FAF8F5] text-[#0B1320] rounded-3xl p-6 border border-[#E8E1D5] shadow-lg flex flex-col justify-between hover:-translate-y-1 transition-all">
@@ -419,7 +942,6 @@ export default function LandingPage() {
                     </span>
                   </div>
 
-                  {/* Visual Information Block (Steps) */}
                   <div className="mb-4 p-3 rounded-xl bg-white border border-[#E8E1D5] text-[11px] space-y-1.5 font-mono text-stone-600">
                     <div className="flex items-center gap-2 text-rose-600 font-bold">
                       <span>01</span> <span>Site diary filed in email</span>
@@ -438,10 +960,10 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  <ul className="space-y-2.5 text-xs text-[#475569]">
+                  <ul className="space-y-2 text-xs text-[#475569]">
                     <li className="flex items-start gap-2">
                       <span className="text-rose-600 font-bold">✕</span>
-                      <span>Information fragmented in WhatsApp & spreadsheets</span>
+                      <span>Information fragmented in WhatsApp & emails</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-rose-600 font-bold">✕</span>
@@ -449,7 +971,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-rose-600 font-bold">✕</span>
-                      <span>Unmatched field work causes milestone surprises</span>
+                      <span>Unmatched field work causes milestone delays</span>
                     </li>
                   </ul>
                 </div>
@@ -471,7 +993,6 @@ export default function LandingPage() {
                     </span>
                   </div>
 
-                  {/* Visual Information Block (Steps) */}
                   <div className="mb-4 p-3 rounded-xl bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] space-y-1.5 font-mono text-stone-700">
                     <div className="flex items-center gap-2 text-emerald-700 font-bold">
                       <span>01</span> <span>Upload DPR / Site Log</span>
@@ -490,7 +1011,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  <ul className="space-y-2.5 text-xs text-[#0B1320]">
+                  <ul className="space-y-2 text-xs text-[#0B1320]">
                     <li className="flex items-start gap-2">
                       <span className="text-emerald-600 font-bold">✓</span>
                       <span>All progress ingested into one unified workspace</span>
@@ -516,24 +1037,12 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 4 — HOW PRAGATIPATH WORKS (CONNECTED WORKFLOW + PLANNING DESK)    */}
+      {/* SECTION 7 — PLANNING OFFICE & VERIFIED ARCHITECTURE NUMBERS               */}
       {/* ========================================================================= */}
-      <section id="how-it-works" className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-[#E8E1D5]">
+      <section className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-[#E8E1D5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
-              Step-by-Step Workflow
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-2 mb-3">
-              How PragatiPath Works
-            </h2>
-            <p className="text-base text-[#475569] leading-relaxed">
-              A transparent, connected 6-step workflow built around how civil engineering teams already operate.
-            </p>
-          </div>
-
           {/* Planning Desk Image Callout */}
-          <div className="mb-12 rounded-3xl overflow-hidden border border-[#E8E1D5] warm-card-shadow bg-white grid grid-cols-1 lg:grid-cols-12 items-center">
+          <div className="mb-14 rounded-3xl overflow-hidden border border-[#E8E1D5] warm-card-shadow bg-white grid grid-cols-1 lg:grid-cols-12 items-center">
             <div className="lg:col-span-6 h-64 sm:h-80 overflow-hidden relative">
               <img
                 src="/planning-desk.jpg"
@@ -562,157 +1071,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Connected Steps Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-            {[
-              {
-                step: '01',
-                title: 'Add Schedule',
-                desc: 'Import project baseline activities, WBS structure (L1–L6), and planned dates from standard files.',
-                icon: <MdCalendarToday size={22} />,
-              },
-              {
-                step: '02',
-                title: 'Add Site Updates',
-                desc: 'Upload daily progress reports (DPRs), supervisor updates, contractor spreadsheets, or text notes.',
-                icon: <MdDescription size={22} />,
-              },
-              {
-                step: '03',
-                title: 'Extract Progress',
-                desc: 'The system reads the text to identify work done, locations, completed quantities, and dates.',
-                icon: <MdSearch size={22} />,
-              },
-              {
-                step: '04',
-                title: 'Match Activities',
-                desc: 'Compares extracted work descriptions with scheduled activities and suggests the best-fitting match.',
-                icon: <MdLink size={22} />,
-              },
-              {
-                step: '05',
-                title: 'Planner Reviews',
-                desc: 'The authorized planner reviews suggestions, adjusts progress values if needed, and clicks approve.',
-                icon: <MdAssignmentTurnedIn size={22} />,
-              },
-              {
-                step: '06',
-                title: 'Track Actual Progress',
-                desc: 'Approved updates update the project status and are permanently preserved in the audit log.',
-                icon: <MdTrendingUp size={22} />,
-              },
-            ].map((st, i) => (
-              <div
-                key={st.step}
-                className="bg-white rounded-3xl p-6 border border-[#E8E1D5] hover:border-[#FF5500]/50 hover:-translate-y-1.5 warm-card-shadow transition-all duration-200 group flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center group-hover:scale-105 transition-transform">
-                      {st.icon}
-                    </div>
-                    <span className="text-sm font-mono font-black text-[#94A3B8] group-hover:text-[#FF5500] transition-colors">
-                      {st.step}
-                    </span>
-                  </div>
-                  <h3 className="text-base font-bold text-[#0B1320] mb-2">{st.title}</h3>
-                  <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">{st.desc}</p>
-                </div>
-
-                <div className="mt-5 pt-3 border-t border-[#E8E1D5]/60 flex items-center justify-between text-[11px] text-[#94A3B8]">
-                  <span>Step {i + 1} of 6</span>
-                  {i < 5 && <span className="text-[#FF5500] font-bold">Next →</span>}
-                  {i === 5 && <span className="text-emerald-600 font-bold">Complete ✓</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* SECTION 5 — DATA TYPES (BRING UPDATES FROM DIFFERENT SOURCES)             */}
-      {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-[#F5F1E8] border-b border-[#E8E1D5]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
-              Supported Input Types
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-2 mb-4">
-              Bring Project Updates From Different Sources
-            </h2>
-            <p className="text-base text-[#475569] leading-relaxed">
-              We work with formats your planning office and field supervisors already generate every day.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Daily Progress Reports (DPR)',
-                desc: 'Upload structured daily progress report documents containing descriptions, quantities, and site conditions.',
-                icon: <MdDescription size={22} />,
-              },
-              {
-                title: 'Site Diaries & Field Logs',
-                desc: 'Capture shift updates, supervisor diaries, and daily contractor logs directly without reformatting.',
-                icon: <MdHistoryEdu size={22} />,
-              },
-              {
-                title: 'Excel & CSV Spreadsheets',
-                desc: 'Import schedule baselines or progress lists in .xlsx, .xls, or .csv with automatic column mapping.',
-                icon: <MdInsertDriveFile size={22} />,
-              },
-              {
-                title: 'Schedule Activities & Baselines',
-                desc: 'Load multi-level WBS activities with planned start and finish dates, activity IDs, and disciplines.',
-                icon: <MdCalendarToday size={22} />,
-              },
-              {
-                title: 'Supervisor Progress Notes',
-                desc: 'Enter plain text notes and observations from field engineers directly into the submission inbox.',
-                icon: <MdSupervisorAccount size={22} />,
-              },
-              {
-                title: 'PDF & Text Documents',
-                desc: 'Accept PDF and plain text progress reports for automated progress quantity and date extraction.',
-                icon: <MdInsertDriveFile size={22} />,
-              },
-            ].map((dt, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-3xl bg-white border border-[#E8E1D5] hover:border-[#D5CBB9] hover:-translate-y-1 warm-card-shadow transition-all"
-              >
-                <div className="w-11 h-11 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center mb-4">
-                  {dt.icon}
-                </div>
-                <h3 className="text-base font-bold text-[#0B1320] mb-2">{dt.title}</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">{dt.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* SECTION 6 — NUMERICAL PRODUCT FACTS (LARGE TYPOGRAPHY, NO FAKE STATS)    */}
-      {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-[#E8E1D5]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
-              Architecture Facts
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-[#0B1320] tracking-tight mt-2 mb-3">
-              Verified Project Architecture Numbers
-            </h2>
-            <p className="text-sm text-[#475569]">
-              Measurable system capabilities tested and proven on infrastructure schedules and reports.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center hover:-translate-y-1 transition-all">
               <span className="block text-4xl sm:text-5xl lg:text-6xl font-black text-[#0B1320] tracking-tight font-mono">
                 L1–L6
@@ -749,82 +1108,15 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 7 — WHY PRAGATIPATH?                                              */}
+      {/* SECTION 8 — WHO IS IT FOR? (ROLE CARDS)                                   */}
       {/* ========================================================================= */}
       <section className="py-16 sm:py-24 bg-[#F5F1E8] border-b border-[#E8E1D5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-14">
-            <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
-              Operational Benefits
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-2 mb-4">
-              Why Project Teams Use PragatiPath
-            </h2>
-            <p className="text-base text-[#475569] leading-relaxed">
-              Designed to help civil engineering planners and site engineers work together with clear accountability.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                num: '01',
-                title: 'Built Around Real Project Updates',
-                desc: 'Works with daily site logs, DPRs, and spreadsheets that your field team already creates.',
-              },
-              {
-                num: '02',
-                title: 'AI Suggests — Planner Decides',
-                desc: 'Automated matching suggests linkages, but the authorized planner reviews and approves every record.',
-              },
-              {
-                num: '03',
-                title: 'Connect Reports With Schedule Activities',
-                desc: 'Removes the guesswork of identifying which daily field entry belongs to which schedule activity ID.',
-              },
-              {
-                num: '04',
-                title: 'Catch Unmatched Updates',
-                desc: 'Site updates that do not match planned items are clearly flagged instead of being lost in email threads.',
-              },
-              {
-                num: '05',
-                title: 'Confidence Before Action',
-                desc: 'Candidate matches display similarity scores so planners immediately know which items need close checking.',
-              },
-              {
-                num: '06',
-                title: 'Track What Changed',
-                desc: 'Every approval, adjustment, and rejection is saved with timestamps and reviewer notes for permanent audit.',
-              },
-            ].map((item) => (
-              <div
-                key={item.num}
-                className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] hover:border-[#FF5500]/40 hover:-translate-y-1 warm-card-shadow flex flex-col justify-between transition-all"
-              >
-                <div>
-                  <span className="text-xs font-mono font-black text-[#FF5500] mb-2 block">
-                    {item.num}
-                  </span>
-                  <h3 className="text-base font-bold text-[#0B1320] mb-2">{item.title}</h3>
-                  <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* SECTION 8 — WHO IS IT FOR?                                                */}
-      {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-[#E8E1D5]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-14">
+          <div className="max-w-3xl mb-12">
             <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
               Project Roles
             </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-2 mb-4">
+            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-1 mb-3">
               Tailored for Every Project Team Member
             </h2>
             <p className="text-base text-[#475569] leading-relaxed">
@@ -832,7 +1124,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
               <div className="w-12 h-12 rounded-2xl bg-[#0B1320] text-[#FF5500] flex items-center justify-center mb-4">
                 <MdBusiness size={22} />
@@ -886,7 +1178,6 @@ export default function LandingPage() {
       <section className="py-20 sm:py-28 bg-[#FAF8F5]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="p-8 sm:p-14 rounded-3xl bg-[#0B1320] text-white warm-card-shadow relative overflow-hidden">
-            {/* Subtle fiber line inside CTA card */}
             <NetworkLines variant="white" className="opacity-25" />
 
             <div className="relative z-10 max-w-2xl mx-auto">
