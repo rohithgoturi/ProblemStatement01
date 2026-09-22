@@ -297,10 +297,10 @@ export default function AuthPage({ initialMode }) {
               }`}
             />
 
-            {/* Brand Warm Gradients for High Readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1320] via-[#0B1320]/65 to-[#0B1320]/40 z-15" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FF5500]/20 via-transparent to-transparent z-15" />
-            <div className="absolute inset-0 bg-technical-grid opacity-15 z-15" />
+            {/* Localized Readability Gradients (preserves image vibrancy while ensuring crisp text contrast) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1320]/85 via-[#0B1320]/45 to-transparent z-15" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0B1320]/30 via-transparent to-transparent z-15" />
+            <div className="absolute inset-0 bg-technical-grid opacity-10 z-15" />
           </div>
 
           {/* Top Brand & Home Bar */}
@@ -314,85 +314,41 @@ export default function AuthPage({ initialMode }) {
             </Link>
           </div>
 
-          {/* Center Brand Editorial Typography */}
-          <div className="relative z-20 px-6 sm:px-10 my-4 sm:my-8">
+          {/* Center Brand Editorial Typography — Concise & High Contrast */}
+          <div className="relative z-20 px-6 sm:px-10 my-auto py-6">
             {isSignup ? (
-              /* SIGNUP Editorial Copy */
-              <div className="space-y-4 animate-in fade-in duration-500">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-xs">
+              /* SIGNUP: Concise Editorial Message */
+              <div className="space-y-3 animate-in fade-in duration-500 max-w-sm">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500] animate-pulse" />
-                  <span>JOIN PRAGATIPATH</span>
+                  <span>PRAGATIPATH</span>
                 </div>
 
-                <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight text-white">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.08] text-white drop-shadow-sm">
                   Build progress <br />
                   <span className="text-[#FF5500]">with clarity.</span>
                 </h2>
 
-                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed max-w-sm">
-                  Turn field updates into structured project progress and eliminate manual schedule reconciliation.
+                <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed font-medium">
+                  Connect field updates with project schedules.
                 </p>
-
-                {/* 3 Civil Infrastructure Value Points */}
-                <div className="space-y-2 pt-2 border-t border-white/15 text-xs text-stone-300 hidden sm:block">
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#FF5500]/25 text-[#FF5500] flex items-center justify-center shrink-0 font-bold text-[10px]">
-                      ✓
-                    </span>
-                    <span>Multi-format field data ingestion (DPRs, Excel, PDFs, Voice)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#FF5500]/25 text-[#FF5500] flex items-center justify-center shrink-0 font-bold text-[10px]">
-                      ✓
-                    </span>
-                    <span>AI-assisted activity matching with confidence scoring</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#FF5500]/25 text-[#FF5500] flex items-center justify-center shrink-0 font-bold text-[10px]">
-                      ✓
-                    </span>
-                    <span>Human planner review governance & immutable audit logs</span>
-                  </div>
-                </div>
               </div>
             ) : (
-              /* LOGIN Editorial Copy */
-              <div className="space-y-4 animate-in fade-in duration-500">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-xs">
+              /* LOGIN: Concise Editorial Message */
+              <div className="space-y-3 animate-in fade-in duration-500 max-w-sm">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500] animate-pulse" />
-                  <span>WORKSPACE ACCESS</span>
+                  <span>PRAGATIPATH</span>
                 </div>
 
-                <h2 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight text-white">
-                  Welcome back <br />
-                  <span className="text-[#FF5500]">to PragatiPath.</span>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.08] text-white drop-shadow-sm">
+                  Welcome <br />
+                  <span className="text-[#FF5500]">back.</span>
                 </h2>
 
-                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed max-w-sm">
-                  Continue tracking project progress with clarity and keeping your schedule baselines aligned.
+                <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed font-medium">
+                  Continue tracking project progress with clarity.
                 </p>
-
-                {/* 3 Active Capabilities */}
-                <div className="space-y-2 pt-2 border-t border-white/15 text-xs text-stone-300 hidden sm:block">
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#FF5500]/25 text-[#FF5500] flex items-center justify-center shrink-0 font-bold text-[10px]">
-                      ✓
-                    </span>
-                    <span>Seamless planning-to-execution synchronization</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#FF5500]/25 text-[#FF5500] flex items-center justify-center shrink-0 font-bold text-[10px]">
-                      ✓
-                    </span>
-                    <span>Direct import from Primavera P6 & Microsoft Project</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full bg-[#FF5500]/25 text-[#FF5500] flex items-center justify-center shrink-0 font-bold text-[10px]">
-                      ✓
-                    </span>
-                    <span>Role-Based Access Control (PM, Planner, Supervisor, Admin)</span>
-                  </div>
-                </div>
               </div>
             )}
           </div>

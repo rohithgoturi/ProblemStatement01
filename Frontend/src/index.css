@@ -216,6 +216,16 @@
   to { stroke-dashoffset: -40; }
 }
 
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(7px); }
+}
+
 .animate-pulse-subtle {
   animation: pulse-subtle 4s ease-in-out infinite;
 }
@@ -223,5 +233,22 @@
 .animate-flow-dash {
   stroke-dasharray: 6 6;
   animation: flow-dash 2.5s linear infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-reverse,
+  .animate-flow-dash,
+  .animate-pulse-subtle {
+    animation: none !important;
+  }
 }
 
