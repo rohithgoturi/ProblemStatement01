@@ -8,6 +8,7 @@ import { PublicLayout } from './components/layout/PublicLayout';
 import { AppShell } from './components/layout/AppShell';
 import { RouteErrorBoundary } from './components/shared/ErrorBoundary';
 import { ProtectedRoute } from './components/shared/ProtectedRoute';
+import { useAuth } from './hooks/useAuth';
 
 // Public Pages
 import LandingPage from './pages/Landing/LandingPage';
@@ -31,6 +32,37 @@ import ReportsPage from './pages/Reports/ReportsPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import TeamPage from './pages/Team/TeamPage';
 import LocationsPage from './pages/Locations/LocationsPage';
+
+/**
+ * Adaptive wrapper for Team and Locations pages:
+ * - If authenticated: renders seamlessly inside AppShell with sidebar & project controls.
+ * - If public: renders inside PublicLayout with floating navbar, public header, and intentional empty state.
+ */
+function AdaptiveRoute({ component: Component }) {
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center">
+        <div className="w-10 h-10 border-3 border-[#FF5500]/20 border-t-[#FF5500] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (isAuthenticated && user) {
+    return (
+      <AppShell>
+        <Component isPublic={false} />
+      </AppShell>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <Component isPublic={true} />
+    </PublicLayout>
+  );
+}
 
 export const router = createBrowserRouter([
   // Public website routes (wrapped in PublicLayout with navbar & footer)
@@ -75,6 +107,18 @@ export const router = createBrowserRouter([
   {
     path: '/signup',
     element: <SignupPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+
+  // Adaptive routes for Team & Locations (support both public access & authenticated AppShell)
+  {
+    path: '/team',
+    element: <AdaptiveRoute component={TeamPage} />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/locations',
+    element: <AdaptiveRoute component={LocationsPage} />,
     errorElement: <RouteErrorBoundary />,
   },
 
@@ -124,14 +168,6 @@ export const router = createBrowserRouter([
       {
         path: 'reports',
         element: <ReportsPage />,
-      },
-      {
-        path: 'team',
-        element: <TeamPage />,
-      },
-      {
-        path: 'locations',
-        element: <LocationsPage />,
       },
       {
         path: 'settings',

@@ -9,7 +9,7 @@ import { TopHeader } from './TopHeader';
 import { cn } from '../../utils/helpers';
 import { useAuth } from '../../hooks/useAuth';
 
-export function AppShell() {
+export function AppShell({ children }) {
   const [collapsed, setCollapsed] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 1024 : false));
   const { user } = useAuth();
 
@@ -45,7 +45,7 @@ export function AppShell() {
         )}
       >
         <div className="p-4 sm:p-6">
-          <Outlet />
+          {children || <Outlet />}
         </div>
       </main>
     </div>

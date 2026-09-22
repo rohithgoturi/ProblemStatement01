@@ -1,8 +1,10 @@
 /**
  * PragatiPath — Services & Capabilities Page (Clienter-inspired Redesign)
- * Warm cream background, technical engineering grid, orange accents, rounded-3xl cards.
+ * Varied card hierarchy (hero feature card, supporting cards, orange pipeline section, dark action block),
+ * connected 6-stage pipeline, and subtle hover animations.
  */
 import { Link } from 'react-router-dom';
+import { PublicPageHeader } from '../../components/shared/PublicPageHeader';
 import { NetworkLines } from '../../components/shared/NetworkLines';
 import {
   MdCalendarToday,
@@ -13,139 +15,300 @@ import {
   MdTrendingUp,
   MdArrowForward,
   MdCheckCircle,
+  MdLayers,
+  MdHistoryEdu,
+  MdFactCheck,
 } from 'react-icons/md';
 
 export default function ServicesPage() {
-  const capabilities = [
-    {
-      id: 'schedule',
-      title: 'Schedule Baseline Management',
-      icon: <MdCalendarToday size={24} />,
-      desc: 'Import, browse, and manage planned activities across complex multi-tier Work Breakdown Structures (WBS L1 to L6).',
-      points: [
-        'Import from Excel (.xlsx), CSV, or structured JSON baseline files',
-        'Automatic validation of activity IDs, planned dates, and disciplines',
-        'Support for Civil, Piping, Electrical, Instrumentation, and HSE disciplines',
-      ],
-    },
-    {
-      id: 'dpr',
-      title: 'Daily Progress Data Ingestion',
-      icon: <MdInbox size={24} />,
-      desc: 'Capture daily site execution updates without requiring field engineers to navigate complicated enterprise scheduling tools.',
-      points: [
-        'Direct upload of supervisor daily logs, DPR files, and contractor updates',
-        'Centralized DPR inbox tracking source documents and raw submission text',
-        'Support for spreadsheet tables, PDF text reports, and field notes',
-      ],
-    },
-    {
-      id: 'extraction',
-      title: 'Progress Information Extraction',
-      icon: <MdSearch size={24} />,
-      desc: 'Parses unstructured daily reports into discrete, auditable progress events.',
-      points: [
-        'Identifies work descriptions, work locations, and completed quantities',
-        'Captures reported dates and associated engineering disciplines',
-        'Maintains exact raw text references for complete audit integrity',
-      ],
-    },
-    {
-      id: 'matching',
-      title: 'Schedule Activity Matching Engine',
-      icon: <MdLink size={24} />,
-      desc: 'Compares extracted field updates against planned schedule activities to find the exact work package.',
-      points: [
-        'Suggests best-matching schedule activities based on work description and context',
-        'Provides transparent confidence rankings and candidate options',
-        'Clearly flags unmatched field updates so nothing is missed or lost',
-      ],
-    },
-    {
-      id: 'review',
-      title: 'Planner Review & Approval Governance',
-      icon: <MdAssignmentTurnedIn size={24} />,
-      desc: 'Enforces human-in-the-loop authorization before any schedule baseline is modified.',
-      points: [
-        'Planners can Approve, Edit & Approve, or Reject candidate matches',
-        'Adjust actual start/finish dates and progress percentages on the fly',
-        'Mandatory reviewer notes stored permanently on every decision',
-      ],
-    },
-    {
-      id: 'tracking',
-      title: 'Progress Tracking & Audit Records',
-      icon: <MdTrendingUp size={24} />,
-      desc: 'Provides real-time visibility into planned vs actual completion status across the project.',
-      points: [
-        'Activity status tracking: Planned, In Progress, Completed, Delayed',
-        'Immutable server-side audit logs capturing who reviewed what and when',
-        'Executive project summary metrics and historical activity timelines',
-      ],
-    },
-  ];
-
   return (
     <div className="bg-[#FAF8F5] text-[#0B1320] pb-24 selection:bg-[#FF5500] selection:text-white">
-      {/* Page Header */}
-      <section className="relative pt-12 pb-16 lg:pt-16 lg:pb-20 bg-technical-grid border-b border-[#E8E1D5] overflow-hidden">
-        <NetworkLines variant="orange" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E8E1D5] text-[#FF5500] text-xs font-bold uppercase tracking-wider mb-4 shadow-2xs">
-            Capabilities & Services
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-2 mb-6">
-            Core Modules for Infrastructure Project Tracking
-          </h1>
-          <p className="text-base sm:text-lg text-[#475569] leading-relaxed max-w-2xl mx-auto font-normal">
-            Every capability in PragatiPath is designed to solve specific operational bottlenecks between project planning and site execution.
-          </p>
-        </div>
-      </section>
+      {/* 1. HERO HEADER */}
+      <PublicPageHeader
+        badge="CAPABILITIES & SERVICES"
+        title="Core Modules for Infrastructure Project Tracking"
+        description="Every capability in PragatiPath is built to resolve operational bottlenecks between planned schedule baselines and daily field reports."
+      />
 
-      {/* Grid of Capabilities */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {capabilities.map((cap) => (
-            <div
-              key={cap.id}
-              className="p-6 sm:p-7 rounded-3xl bg-white border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow flex flex-col justify-between transition-all duration-200"
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center mb-5">
-                  {cap.icon}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 space-y-20">
+        
+        {/* 2. DIVERSE CARD LAYOUT: LARGE FEATURE CARD + SUPPORTING CARDS */}
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-2">
+            <div>
+              <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
+                System Capabilities
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-black text-[#0B1320] tracking-tight mt-1">
+                Built for Project Reality
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-[#64748B] max-w-sm sm:text-right">
+              Explore the six working modules powering our planning-to-execution layer.
+            </p>
+          </div>
+
+          {/* Row 1: Large Feature Hero Card (Schedule & WBS Engine) */}
+          <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow transition-all duration-300 group relative overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-7 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <MdCalendarToday size={24} />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#FF5500] uppercase tracking-wider">
+                    01 · Core Schedule Baseline
+                  </span>
                 </div>
-                <h3 className="text-lg font-black text-[#0B1320] mb-2">{cap.title}</h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed mb-4">{cap.desc}</p>
+
+                <h3 className="text-2xl sm:text-3xl font-black text-[#0B1320]">
+                  Schedule Baseline & WBS Management
+                </h3>
+                <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
+                  Import, validate, and navigate complex project schedules across 6 tiers of Work Breakdown Structure (L1 Project to L6 Activity). Maintain authoritative dates, activity IDs, and engineering disciplines in one place.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                  <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#E8E1D5]">
+                    <span className="text-[10px] font-bold uppercase text-[#94A3B8] block">Inputs</span>
+                    <strong className="text-xs text-[#0B1320]">Excel, CSV & JSON</strong>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#E8E1D5]">
+                    <span className="text-[10px] font-bold uppercase text-[#94A3B8] block">Hierarchy</span>
+                    <strong className="text-xs text-[#0B1320]">L1 to L6 WBS</strong>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#E8E1D5]">
+                    <span className="text-[10px] font-bold uppercase text-[#94A3B8] block">Disciplines</span>
+                    <strong className="text-xs text-[#0B1320]">Civil, Piping, HSE</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 bg-[#FAF8F5] rounded-2xl p-5 border border-[#E8E1D5] space-y-2.5 text-xs">
+                <div className="flex items-center justify-between font-bold text-[#0B1320] border-b border-[#E8E1D5] pb-2">
+                  <span>WBS Activity Hierarchy Preview</span>
+                  <span className="text-[#FF5500] text-[10px]">Authoritative Baseline</span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-white border border-[#E8E1D5]">
+                  <span className="text-[10px] text-[#94A3B8] font-mono font-bold">L2 WBS: Civil Substructure</span>
+                  <p className="font-bold text-[#0B1320] text-xs">Unit 2 Raw Water Pump House</p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-white border border-[#E8E1D5] pl-5 border-l-2 border-l-[#FF5500]">
+                  <span className="text-[10px] text-[#FF5500] font-mono font-bold">L5 Activity: ACT-1042</span>
+                  <p className="font-bold text-[#0B1320] text-xs">P-101 Foundation Bay 3 Raft Concrete</p>
+                  <span className="text-[10px] text-slate-500">Planned: 01 Sept – 12 Sept 2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 2: Two Medium Cards (DPR Ingestion & Information Extraction) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Card 02 */}
+            <div className="bg-white rounded-3xl p-7 border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <MdInbox size={24} />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#94A3B8] group-hover:text-[#FF5500] transition-colors">
+                    02
+                  </span>
+                </div>
+
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF5500]">
+                  Field Data Capture
+                </span>
+                <h3 className="text-xl font-bold text-[#0B1320] mt-1 mb-2">
+                  Daily Progress Report (DPR) Ingestion
+                </h3>
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed mb-4">
+                  Capture shift logs, contractor spreadsheets, and site reports in a centralized inbox without forcing field engineers into complicated scheduling software.
+                </p>
+
                 <ul className="space-y-2 text-xs text-[#334155] border-t border-[#E8E1D5]/60 pt-4">
-                  {cap.points.map((pt, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <MdCheckCircle className="text-emerald-600 flex-shrink-0 mt-0.5" size={14} />
-                      <span>{pt}</span>
-                    </li>
-                  ))}
+                  <li className="flex items-center gap-2">
+                    <MdCheckCircle className="text-emerald-600 flex-shrink-0" />
+                    <span>Upload PDF, spreadsheet (.xlsx), or plain text reports</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <MdCheckCircle className="text-emerald-600 flex-shrink-0" />
+                    <span>Preserves raw source text permanently for audit verification</span>
+                  </li>
                 </ul>
               </div>
             </div>
-          ))}
+
+            {/* Card 03 */}
+            <div className="bg-white rounded-3xl p-7 border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <MdSearch size={24} />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#94A3B8] group-hover:text-[#FF5500] transition-colors">
+                    03
+                  </span>
+                </div>
+
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF5500]">
+                  Parsing & Standardization
+                </span>
+                <h3 className="text-xl font-bold text-[#0B1320] mt-1 mb-2">
+                  Progress Information Extraction
+                </h3>
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed mb-4">
+                  Parses unstructured daily reports into discrete progress events. Isolates work completed, quantities poured/erected, work locations, and dates.
+                </p>
+
+                <ul className="space-y-2 text-xs text-[#334155] border-t border-[#E8E1D5]/60 pt-4">
+                  <li className="flex items-center gap-2">
+                    <MdCheckCircle className="text-emerald-600 flex-shrink-0" />
+                    <span>Extracts quantities (m³, meters, metric tons, bays)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <MdCheckCircle className="text-emerald-600 flex-shrink-0" />
+                    <span>Tags reported engineering disciplines automatically</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 3: Three Supporting Cards (Matching, Review, Audit) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 04 */}
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <MdLink size={22} />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#94A3B8] group-hover:text-[#FF5500] transition-colors">
+                    04
+                  </span>
+                </div>
+
+                <h3 className="text-base font-bold text-[#0B1320] mb-2">
+                  Activity Matching Engine
+                </h3>
+                <p className="text-xs text-[#475569] leading-relaxed">
+                  Compares field work descriptions against planned activities. Proposes ranked candidate matches with transparent confidence ratings.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 05 */}
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <MdAssignmentTurnedIn size={22} />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#94A3B8] group-hover:text-[#FF5500] transition-colors">
+                    05
+                  </span>
+                </div>
+
+                <h3 className="text-base font-bold text-[#0B1320] mb-2">
+                  Planner Review & Governance
+                </h3>
+                <p className="text-xs text-[#475569] leading-relaxed">
+                  One-click Approve, Edit & Approve (adjusting dates and progress %), or Reject with mandatory reviewer notes. Planners stay in control.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 06 */}
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <MdTrendingUp size={22} />
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#94A3B8] group-hover:text-[#FF5500] transition-colors">
+                    06
+                  </span>
+                </div>
+
+                <h3 className="text-base font-bold text-[#0B1320] mb-2">
+                  Audit History & Progress Record
+                </h3>
+                <p className="text-xs text-[#475569] leading-relaxed">
+                  Every decision updates project completion status and writes an immutable server-side audit entry capturing reviewer identity and timestamp.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Action CTA */}
-        <div className="mt-16 p-8 sm:p-10 rounded-3xl bg-[#0B1320] text-white text-center max-w-3xl mx-auto warm-card-shadow">
-          <h2 className="text-2xl sm:text-3xl font-black mb-2 text-white">
-            Ready to test these capabilities on your project?
+        {/* 3. ORANGE FEATURE SECTION: "From Site Update to Schedule Activity" */}
+        <section className="bg-gradient-to-br from-[#FF5500] via-[#F94D00] to-[#E64400] text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl">
+          <NetworkLines variant="white" className="opacity-25" />
+
+          <div className="max-w-3xl mx-auto text-center relative z-10 mb-10">
+            <span className="inline-block px-3.5 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider mb-3">
+              The Real-Time Pipeline
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+              From Site Update to Schedule Activity
+            </h2>
+            <p className="text-base sm:text-lg text-white/90 mt-4 leading-relaxed font-normal">
+              Trace how raw field updates travel through verification into the permanent project record.
+            </p>
+          </div>
+
+          {/* 6 Connected Pipeline Nodes */}
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 relative z-10">
+            {[
+              { label: '01 Report', desc: 'Daily site submission' },
+              { label: '02 Extract', desc: 'Isolate quantities & dates' },
+              { label: '03 Normalize', desc: 'Standardize discipline & units' },
+              { label: '04 Match', desc: 'Candidate activity ranking' },
+              { label: '05 Review', desc: 'Planner verification' },
+              { label: '06 Update', desc: 'Approved baseline actual' },
+            ].map((st, i) => (
+              <div
+                key={st.label}
+                className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 text-center flex flex-col justify-between hover:bg-white/15 transition-colors"
+              >
+                <div>
+                  <span className="block text-xs font-bold text-white mb-1">{st.label}</span>
+                  <p className="text-[11px] text-white/80 leading-tight">{st.desc}</p>
+                </div>
+                {i < 5 && (
+                  <span className="hidden md:block text-white/40 text-sm font-bold mt-2">→</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. DARK ACTION BLOCK */}
+        <section className="p-8 sm:p-12 rounded-3xl bg-[#0B1320] text-white text-center warm-card-shadow">
+          <h2 className="text-2xl sm:text-4xl font-black mb-3">
+            Ready to Connect Your Projects?
           </h2>
-          <p className="text-sm text-[#DDD3C1] mb-6 max-w-md mx-auto">
-            Access your project workspace and start linking daily site reports with schedule activities.
+          <p className="text-sm sm:text-base text-[#DDD3C1] mb-8 max-w-lg mx-auto">
+            Experience how PragatiPath eliminates manual schedule cross-referencing and provides genuine progress clarity.
           </p>
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#FF5500] hover:bg-[#E64D00] text-white text-sm font-bold shadow-md transition-colors"
-          >
-            <span>Get Started</span>
-            <MdArrowForward size={16} />
-          </Link>
-        </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#FF5500] hover:bg-[#E64D00] text-white text-sm font-bold shadow-md transition-colors"
+            >
+              <span>Get Started</span>
+              <MdArrowForward size={16} />
+            </Link>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/15 text-white border border-white/20 text-sm font-bold transition-colors"
+            >
+              <span>Contact Inquiries</span>
+            </Link>
+          </div>
+        </section>
+
       </div>
     </div>
   );
