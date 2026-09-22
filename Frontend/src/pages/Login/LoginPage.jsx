@@ -23,6 +23,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { Logo } from '../../components/shared/Logo';
 import { useAuth } from '../../hooks/useAuth';
 import { useRole } from '../../context/RoleContext';
+import { forgotPassword } from '../../services/api';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ export default function LoginPage() {
   const [googleNotice, setGoogleNotice] = useState('');
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotSuccess, setForgotSuccess] = useState(false);
+  const [isForgotLoading, setIsForgotLoading] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
 
   // Handle standard login submission
@@ -104,15 +106,24 @@ export default function LoginPage() {
     setPassword('');
   };
 
-  const handleForgotSubmit = (e) => {
+  const handleForgotSubmit = async (e) => {
     e.preventDefault();
-    if (!forgotEmail) return;
-    setForgotSuccess(true);
-    setTimeout(() => {
-      setShowForgotModal(false);
-      setForgotSuccess(false);
-      setForgotEmail('');
-    }, 2000);
+    if (!forgotEmail || !forgotEmail.trim()) return;
+    setIsForgotLoading(true);
+
+    try {
+      await forgotPassword({ email: forgotEmail.trim() });
+      setForgotSuccess(true);
+      setTimeout(() => {
+        setShowForgotModal(false);
+        setForgotSuccess(false);
+        setForgotEmail('');
+      }, 3500);
+    } catch (err) {
+      setForgotSuccess(true);
+    } finally {
+      setIsForgotLoading(false);
+    }
   };
 
   return (
@@ -438,9 +449,17 @@ export default function LoginPage() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-2.5 rounded-full bg-[#0B1320] hover:bg-[#1A2332] text-white text-xs font-bold tracking-tight shadow transition-colors"
+                    disabled={isForgotLoading}
+                    className="flex-1 py-2.5 rounded-full bg-[#0B1320] hover:bg-[#1A2332] disabled:opacity-50 text-white text-xs font-bold tracking-tight shadow transition-colors flex items-center justify-center gap-2"
                   >
-                    Send Reset Link
+                    {isForgotLoading ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <span>Send Reset Link</span>
+                    )}
                   </button>
                 </div>
               </form>

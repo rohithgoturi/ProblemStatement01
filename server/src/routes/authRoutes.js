@@ -7,6 +7,8 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 router.post('/auth/signup', authController.signup);
 router.post('/auth/register', authController.signup);
 router.post('/auth/login', authController.login);
+router.post('/auth/forgot-password', authController.forgotPassword);
+router.post('/auth/reset-password', authController.resetPassword);
 
 // Protected profile & settings routes
 router.get('/auth/me', authenticateToken, authController.getMe);

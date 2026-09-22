@@ -6,10 +6,10 @@
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
+import brandLogo from '../../assets/logo.png';
 
 /**
- * Standalone Icon Mark (Crisp Vector Emblem with White Background)
- * Represents a civil infrastructure bridge viaduct and advancing progress path.
+ * Standalone Icon Mark using official logo.png asset from assets directory
  */
 export function PragatiPathIcon({
   size = 36,
@@ -25,34 +25,11 @@ export function PragatiPathIcon({
       } ${className}`}
       title={alt}
     >
-      <svg
-        viewBox="0 0 48 48"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-[78%] h-[78%] transition-transform duration-200 hover:scale-105"
-      >
-        {/* Structural Charcoal Base Tier (Foundation Baseline) */}
-        <path
-          d="M8 38L22 38L27 28L13 28L8 38Z"
-          fill="#0B1320"
-        />
-        {/* Ascending Orange Progress Highway / Viaduct Chevron */}
-        <path
-          d="M17 26L31 26L38 12L24 12L17 26Z"
-          fill="#FF5500"
-        />
-        {/* Dynamic Forward Alignment Node (Orange + White Accent) */}
-        <circle cx="34" cy="33" r="4.5" fill="#FF5500" />
-        <circle cx="34" cy="33" r="2" fill="#FFFFFF" />
-        {/* Subtle Civil Center Milestone Notch */}
-        <path
-          d="M20 22L24 14"
-          stroke="#FFFFFF"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeDasharray="2 2"
-        />
-      </svg>
+      <img
+        src={brandLogo}
+        alt={alt}
+        className="w-[86%] h-[86%] object-contain transition-transform duration-200 hover:scale-105"
+      />
     </div>
   );
 }

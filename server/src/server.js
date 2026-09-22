@@ -5,6 +5,25 @@ const { connectDB } = require('./config/db');
 
 const PORT = process.env.PORT || 5000;
 
+// Environment variable validation at server startup
+function validateEnv() {
+  const critical = ['MONGODB_URI', 'JWT_SECRET'];
+  const missingCritical = critical.filter((key) => !process.env[key] || !process.env[key].trim());
+
+  if (missingCritical.length > 0) {
+    console.error(`[CRITICAL] Server startup halted: Missing required environment variable(s): ${missingCritical.join(', ')}`);
+    console.error('Please configure them in server/.env before launching.');
+  }
+
+  const emailVars = ['EMAIL_USER', 'EMAIL_HOST'];
+  const missingEmail = emailVars.filter((key) => !process.env[key]);
+  if (missingEmail.length > 0) {
+    console.warn(`[WARN] Email service notification: Missing email variable(s): ${missingEmail.join(', ')}. Notifications will fall back to server console.`);
+  }
+}
+
+validateEnv();
+
 const startServer = async () => {
   // Attempt initial DB connection
   const conn = await connectDB();

@@ -48,6 +48,14 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
   return handleRequest(client.put('/auth/change-password', { currentPassword, newPassword }));
 };
 
+export const forgotPassword = async ({ email }) => {
+  return handleRequest(client.post('/auth/forgot-password', { email }));
+};
+
+export const resetPassword = async ({ token, password }) => {
+  return handleRequest(client.post('/auth/reset-password', { token, password }));
+};
+
 // ==========================================
 // 1b. ADMIN GOVERNANCE API
 // ==========================================

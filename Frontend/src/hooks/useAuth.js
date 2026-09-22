@@ -108,6 +108,7 @@ export function useAuth() {
     user,
     isAuthenticated: !!user,
     loading,
+    isLoading: loading,
     error,
     signup,
     login,

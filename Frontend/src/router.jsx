@@ -19,6 +19,7 @@ import PrivacyPage from './pages/Public/PrivacyPage';
 import TermsPage from './pages/Public/TermsPage';
 import LoginPage from './pages/Login/LoginPage';
 import SignupPage from './pages/Signup/SignupPage';
+import ResetPasswordPage from './pages/Auth/ResetPasswordPage';
 
 // Authenticated Pages
 import DashboardPage from './pages/Dashboard/DashboardPage';
@@ -108,6 +109,11 @@ export const router = createBrowserRouter([
   {
     path: '/signup',
     element: <SignupPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPasswordPage />,
     errorElement: <RouteErrorBoundary />,
   },
 

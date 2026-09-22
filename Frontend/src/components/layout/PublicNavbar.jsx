@@ -42,10 +42,10 @@ export function PublicNavbar() {
                 <NavLink
                   key={link.path}
                   to={link.path}
-                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 ${
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-250 ${
                     isActive
-                      ? 'bg-[#EAE2D5]/70 text-[#0B1320]'
-                      : 'text-[#475569] hover:text-[#0B1320] hover:bg-black/[0.03]'
+                      ? 'bg-[#FF5500] text-white shadow-xs'
+                      : 'text-[#475569] hover:text-[#FF5500] hover:bg-[#FFF2EB]'
                   }`}
                 >
                   {link.label}
@@ -93,10 +93,10 @@ export function PublicNavbar() {
                     key={link.path}
                     to={link.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`block px-4 py-2.5 rounded-xl text-sm font-bold transition-colors ${
+                    className={`block px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
                       isActive
-                        ? 'bg-[#FF5500]/10 text-[#FF5500]'
-                        : 'text-[#0B1320] hover:bg-[#EAE2D5]/40'
+                        ? 'bg-[#FF5500] text-white shadow-xs'
+                        : 'text-[#0B1320] hover:bg-[#FFF2EB] hover:text-[#FF5500]'
                     }`}
                   >
                     {link.label}

@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { ensureDBConnected } = require('../config/db');
 const { JWT_SECRET } = require('../middleware/authMiddleware');
+const emailService = require('../services/emailService');
 
 /**
  * Hash password using Node crypto.pbkdf2
@@ -115,6 +116,11 @@ exports.signup = async (req, res, next) => {
     });
 
     await user.save();
+
+    // Trigger welcome email asynchronously (never block signup if email provider fails)
+    emailService.sendWelcomeEmail(user.email, user.name).catch((err) => {
+      console.warn('[Signup] Could not deliver welcome email:', err.message);
+    });
 
     // 5. Generate cryptographically signed JWT token
     const token = issueToken(user);
@@ -391,4 +397,142 @@ exports.getTeam = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * POST /api/auth/forgot-password
+ * Initiates secure password reset flow.
+ * Emits generic response to prevent account enumeration.
+ */
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body || {};
+
+    if (!email || !email.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address',
+        error: { code: 'MISSING_FIELD', field: 'email' },
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address',
+        error: { code: 'INVALID_EMAIL', field: 'email' },
+      });
+    }
+
+    const isConnected = await ensureDBConnected(3000);
+    if (!isConnected) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database service is temporarily unavailable. Please try again shortly.',
+        error: { code: 'SERVICE_UNAVAILABLE' },
+      });
+    }
+
+    // Generic safe response to prevent user enumeration attacks
+    const safeResponse = {
+      success: true,
+      message: 'If an account exists for this email address, a password reset link has been sent.',
+    };
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return res.status(200).json(safeResponse);
+    }
+
+    // Generate cryptographically secure single-use token (32 bytes = 64 hex chars)
+    const rawResetToken = crypto.randomBytes(32).toString('hex');
+    const hashedResetToken = crypto.createHash('sha256').update(rawResetToken).digest('hex');
+
+    // Token expires in 60 minutes
+    const expiresMinutes = parseInt(process.env.PASSWORD_RESET_EXPIRES_MINUTES, 10) || 60;
+    user.resetPasswordToken = hashedResetToken;
+    user.resetPasswordExpires = Date.now() + expiresMinutes * 60 * 1000;
+
+    await user.save();
+
+    // Dispatch reset email
+    await emailService.sendPasswordResetEmail(user.email, rawResetToken, user.name);
+
+    return res.status(200).json(safeResponse);
+  } catch (error) {
+    console.error('[forgotPassword] Error:', error);
+    next(error);
+  }
+};
+
+/**
+ * POST /api/auth/reset-password
+ * Completes secure password reset using cryptographic token.
+ */
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { token, newPassword, password } = req.body || {};
+    const candidatePassword = newPassword || password;
+
+    if (!token || !token.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Reset token is required',
+        error: { code: 'MISSING_TOKEN' },
+      });
+    }
+
+    if (!candidatePassword || candidatePassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long',
+        error: { code: 'INVALID_PASSWORD' },
+      });
+    }
+
+    const isConnected = await ensureDBConnected(3000);
+    if (!isConnected) {
+      return res.status(503).json({
+        success: false,
+        message: 'Database service is temporarily unavailable. Please try again shortly.',
+        error: { code: 'SERVICE_UNAVAILABLE' },
+      });
+    }
+
+    // Hash incoming candidate raw token to match stored sha256 hash
+    const hashedResetToken = crypto.createHash('sha256').update(token.trim()).digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedResetToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password reset link is invalid or has expired. Please request a new link.',
+        error: { code: 'INVALID_OR_EXPIRED_TOKEN' },
+      });
+    }
+
+    // Hash the new password securely
+    const { hash } = hashPassword(candidatePassword);
+    user.password = hash;
+
+    // Single-use token invalidation
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Your password has been successfully updated. You can now sign in with your new password.',
+    });
+  } catch (error) {
+    console.error('[resetPassword] Error:', error);
+    next(error);
+  }
+};
+
 
