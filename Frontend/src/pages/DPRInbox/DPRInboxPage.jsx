@@ -1,12 +1,12 @@
 /**
  * PragatiPath — DPR Inbox Page (Full Backend API Integrated)
- * All mock data removed. Real file uploads & text progress reports connected to backend.
+ * Clienter-inspired warm rounded cards, orange upload accents, and real report ingestion.
+ * Connected directly to Node + Express + MongoDB backend.
  */
 import { useState, useRef, useEffect } from 'react';
 import {
-  MdOutlineArticle, MdTableChart, MdPictureAsPdf,
-  MdAttachFile, MdSend, MdInfoOutline,
-  MdCheckCircle, MdInbox, MdCloudUpload
+  MdOutlineArticle, MdSend,
+  MdCheckCircle, MdInbox, MdCloudUpload, MdArrowForward
 } from 'react-icons/md';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { getSourceDocuments, getProgressEvents, submitTextProgress, uploadProgressFile } from '../../services/api';
@@ -113,57 +113,57 @@ export default function DPRInboxPage() {
   const activeEvents = events.filter((ev) => (ev.sourceDocumentId?._id || ev.sourceDocumentId || ev.sourceDocument) === (activeSource?._id || activeSource?.id));
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 pb-16 font-sans">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-6 z-50 bg-[#0B192C] text-white px-4 py-3 rounded-lg shadow-xl text-sm font-medium flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-4 duration-200">
-          <MdCheckCircle className="text-emerald-400 text-lg shrink-0" />
+        <div className="fixed top-20 right-6 z-50 bg-[#0B1320] text-white px-5 py-3 rounded-full shadow-2xl text-xs font-bold flex items-center gap-2 border border-white/20 animate-in fade-in slide-in-from-top-4 duration-200">
+          <MdCheckCircle className="text-emerald-400 text-base shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Page Header */}
       <PageHeader
-        title="DPR & Progress Report Inbox"
-        subtitle="Ingest text progress reports, spreadsheets, and site diaries"
+        title="DPR & Progress Report Ingestion"
+        subtitle="Ingest raw text updates, supervisor logs, and spreadsheet site diaries"
         icon={<MdInbox />}
       />
 
       {/* Error Message */}
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs font-bold text-rose-800">
           {errorMsg}
         </div>
       )}
 
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Progress Submission Form */}
-        <div className="lg:col-span-6 space-y-5">
+        <div className="lg:col-span-6 space-y-6">
           {/* Submission Mode Card */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] shadow-2xs space-y-5">
             {/* Mode Switcher Tabs */}
-            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl text-xs font-semibold">
+            <div className="flex items-center gap-2 p-1.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-full text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setActiveMode('text')}
-                className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                  activeMode === 'text' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                className={`flex-1 py-2 px-4 rounded-full transition-all flex items-center justify-center gap-2 ${
+                  activeMode === 'text' ? 'bg-[#0B1320] text-white shadow-2xs font-bold' : 'text-stone-600 hover:text-[#0B1320]'
                 }`}
               >
                 <MdOutlineArticle size={16} />
-                <span>Text Progress</span>
+                <span>Text Progress Entry</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveMode('file')}
-                className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                  activeMode === 'file' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                className={`flex-1 py-2 px-4 rounded-full transition-all flex items-center justify-center gap-2 ${
+                  activeMode === 'file' ? 'bg-[#0B1320] text-white shadow-2xs font-bold' : 'text-stone-600 hover:text-[#0B1320]'
                 }`}
               >
                 <MdCloudUpload size={16} />
-                <span>Upload Report / File</span>
+                <span>Upload Report File</span>
               </button>
             </div>
 
@@ -171,29 +171,29 @@ export default function DPRInboxPage() {
             {activeMode === 'text' && (
               <form onSubmit={handleSubmitText} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Daily Progress Report Text
+                  <label className="block text-xs font-bold text-[#0B1320] mb-2">
+                    Daily Progress Report Content
                   </label>
                   <textarea
                     rows={5}
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
                     placeholder="Enter site progress updates (e.g. 'Piping activity P-102 completed in Unit 2 today. Foundation pouring ongoing.')"
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-[#0056D2] focus:bg-white transition-all placeholder:text-slate-400"
+                    className="w-full p-4 bg-[#FAF8F5] border border-[#E8E1D5] rounded-2xl text-xs text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all placeholder:text-stone-400"
                   />
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-slate-400">
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-stone-400 font-mono">
                     {textInput.length} characters
                   </span>
                   <button
                     type="submit"
                     disabled={isSubmitting || !textInput.trim()}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0056D2] hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#FF5500] hover:bg-[#EA580C] text-white font-bold text-xs shadow-sm transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
-                    <MdSend size={16} />
-                    <span>{isSubmitting ? 'Processing AI Extraction...' : 'Submit Update'}</span>
+                    <MdSend size={15} />
+                    <span>{isSubmitting ? 'Extracting Progress...' : 'Submit Update'}</span>
                   </button>
                 </div>
               </form>
@@ -201,13 +201,13 @@ export default function DPRInboxPage() {
 
             {/* Mode 2: File Upload */}
             {activeMode === 'file' && (
-              <div className="text-center py-6 border-2 border-dashed border-slate-200 rounded-xl space-y-3">
-                <div className="w-12 h-12 mx-auto rounded-full bg-blue-50 text-[#0056D2] flex items-center justify-center">
+              <div className="text-center py-8 border-2 border-dashed border-[#E8E1D5] rounded-2xl space-y-4 bg-[#FAF8F5]/50">
+                <div className="w-14 h-14 mx-auto rounded-2xl bg-[#FF5500]/10 text-[#FF5500] flex items-center justify-center shadow-2xs">
                   <MdCloudUpload size={28} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Upload Site Progress Report</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <h3 className="text-sm font-bold text-[#0B1320]">Upload Site Progress Report</h3>
+                  <p className="text-xs text-stone-500 mt-1">
                     Supports Excel (.xlsx, .xls), CSV, or text reports
                   </p>
                 </div>
@@ -224,7 +224,7 @@ export default function DPRInboxPage() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isSubmitting}
-                  className="px-5 py-2 bg-[#0056D2] text-white text-xs font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
+                  className="px-6 py-2.5 bg-[#0B1320] hover:bg-[#FF5500] text-white text-xs font-bold rounded-full transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting ? 'Uploading & Parsing...' : 'Select Report File'}
                 </button>
@@ -233,22 +233,26 @@ export default function DPRInboxPage() {
           </div>
 
           {/* Submitted Source Documents List */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] shadow-2xs space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Ingested Sources ({sources.length})</h2>
-              <button onClick={fetchData} className="text-xs text-blue-600 font-bold hover:underline">
+              <h2 className="text-base font-bold text-[#0B1320]">Ingested Sources ({sources.length})</h2>
+              <button
+                type="button"
+                onClick={fetchData}
+                className="text-xs text-[#FF5500] font-bold hover:text-[#EA580C]"
+              >
                 Refresh
               </button>
             </div>
 
             {loading ? (
-              <div className="py-8 text-center text-xs text-slate-400">Loading sources...</div>
+              <div className="py-8 text-center text-xs text-stone-400">Loading sources...</div>
             ) : sources.length === 0 ? (
-              <div className="py-8 text-center text-xs text-slate-400 border border-dashed rounded-xl">
+              <div className="py-8 text-center text-xs text-stone-500 bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] p-6">
                 No progress reports submitted yet.
               </div>
             ) : (
-              <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
                 {sources.map((src) => {
                   const id = src._id || src.id;
                   const isSelected = id === (activeSource?._id || activeSource?.id);
@@ -256,21 +260,23 @@ export default function DPRInboxPage() {
                     <div
                       key={id}
                       onClick={() => setSelectedSourceId(id)}
-                      className={`p-3 rounded-xl border text-xs cursor-pointer transition-all ${
+                      className={`p-4 rounded-2xl border text-xs cursor-pointer transition-all ${
                         isSelected
-                          ? 'border-[#0056D2] bg-blue-50/50 shadow-2xs ring-1 ring-[#0056D2]'
-                          : 'border-slate-200 bg-white hover:bg-slate-50'
+                          ? 'border-[#FF5500] bg-white shadow-xs ring-2 ring-[#FF5500]/10'
+                          : 'border-[#E8E1D5] bg-[#FAF8F5]/60 hover:bg-[#FAF8F5]'
                       }`}
                     >
-                      <div className="flex items-center justify-between font-bold text-slate-800">
-                        <span>{src.originalFileName || src.sourceType || 'Text Progress Report'}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 uppercase font-mono">
+                      <div className="flex items-center justify-between font-bold text-[#0B1320]">
+                        <span className="truncate pr-2">{src.originalFileName || src.sourceType || 'Text Progress Report'}</span>
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white text-stone-700 uppercase font-mono border border-[#E8E1D5] shrink-0">
                           {src.fileType || 'text'}
                         </span>
                       </div>
-                      <div className="text-[11px] text-slate-500 mt-1 flex items-center justify-between">
-                        <span>Submitted: {new Date(src.createdAt || Date.now()).toLocaleString()}</span>
-                        <span className="font-semibold text-blue-700">View Events →</span>
+                      <div className="text-[11px] text-stone-500 mt-2 flex items-center justify-between">
+                        <span>Submitted: {new Date(src.createdAt || Date.now()).toLocaleDateString()}</span>
+                        <span className="font-bold text-[#FF5500] flex items-center gap-1">
+                          View Events <MdArrowForward size={12} />
+                        </span>
                       </div>
                     </div>
                   );
@@ -281,53 +287,53 @@ export default function DPRInboxPage() {
         </div>
 
         {/* Right Column: AI Extraction & Events Preview */}
-        <div className="lg:col-span-6 space-y-5">
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+        <div className="lg:col-span-6 space-y-6">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] shadow-2xs space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Extracted Progress Events</h2>
-              <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0056D2] text-xs font-bold">
+              <h2 className="text-base font-bold text-[#0B1320]">Extracted Progress Events</h2>
+              <span className="px-3 py-1 rounded-full bg-[#FF5500]/10 text-[#FF5500] border border-[#FF5500]/20 text-xs font-bold">
                 {activeEvents.length} Extracted
               </span>
             </div>
 
             {!activeSource ? (
-              <div className="py-12 text-center text-xs text-slate-400">
+              <div className="py-12 text-center text-xs text-stone-400">
                 Select or submit a progress report to view AI extracted events.
               </div>
             ) : activeEvents.length === 0 ? (
-              <div className="py-12 text-center bg-slate-50 rounded-xl border border-dashed text-xs text-slate-500 p-6">
+              <div className="py-12 text-center bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] text-xs text-stone-500 p-6">
                 No progress events extracted for this source yet.
               </div>
             ) : (
               <div className="space-y-3">
                 {activeEvents.map((ev) => (
-                  <div key={ev._id || ev.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <div className="flex items-start justify-between">
+                  <div key={ev._id || ev.id} className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5] space-y-3">
+                    <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h4 className="text-xs font-bold text-slate-900">{ev.rawActivityName || ev.extractedActivityName}</h4>
-                        <span className="text-[10px] font-mono text-slate-500">{ev.discipline || 'General Discipline'}</span>
+                        <h4 className="text-xs font-bold text-[#0B1320]">{ev.rawActivityName || ev.extractedActivityName}</h4>
+                        <span className="text-[10px] font-mono text-stone-500">{ev.discipline || 'General Discipline'}</span>
                       </div>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border shrink-0 ${
                           ev.status === 'APPROVED'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : ev.status === 'MATCH_SUGGESTED' || ev.status === 'PENDING_REVIEW'
                             ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-slate-100 text-slate-600'
+                            : 'bg-stone-50 text-stone-600 border-stone-200'
                         }`}
                       >
                         {ev.status}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-100">
+                    <div className="grid grid-cols-2 gap-2 text-[11px] text-stone-600 bg-white p-3 rounded-xl border border-[#E8E1D5]">
                       <div>
-                        <span className="text-slate-400">Actual Start: </span>
-                        <strong className="text-slate-700">{ev.actualStartDate ? new Date(ev.actualStartDate).toLocaleDateString() : 'N/A'}</strong>
+                        <span className="text-stone-400 block text-[10px] uppercase font-bold">Actual Start</span>
+                        <strong className="text-[#0B1320]">{ev.actualStartDate ? new Date(ev.actualStartDate).toLocaleDateString() : 'N/A'}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-400">Actual Finish: </span>
-                        <strong className="text-slate-700">{ev.actualFinishDate ? new Date(ev.actualFinishDate).toLocaleDateString() : 'N/A'}</strong>
+                        <span className="text-stone-400 block text-[10px] uppercase font-bold">Actual Finish</span>
+                        <strong className="text-[#0B1320]">{ev.actualFinishDate ? new Date(ev.actualFinishDate).toLocaleDateString() : 'N/A'}</strong>
                       </div>
                     </div>
                   </div>

@@ -15,7 +15,7 @@ export function PublicFooter() {
           {/* Brand & Description */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center">
-              <Logo size="md" variant="orange" to="/" />
+              <Logo size="md" variant="white" to="/" />
             </div>
             <p className="text-sm text-stone-400 leading-relaxed max-w-md">
               PragatiPath connects infrastructure project schedules with real site progress reports so planners and engineers can see what is actually happening.

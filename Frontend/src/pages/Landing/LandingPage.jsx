@@ -304,7 +304,7 @@ export default function LandingPage() {
             ].map((fact, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-2.5 p-3 rounded-xl bg-white/80 border border-[#E8E1D5] text-[#0B1320] text-xs font-bold shadow-2xs hover:bg-white transition-colors"
+                className="flex items-center gap-2.5 p-3 rounded-xl bg-white/80 border border-[#E8E1D5] text-[#0B1320] text-xs font-bold shadow-2xs hover:bg-white hover:-translate-y-0.5 transition-all"
               >
                 <span className="text-[#FF5500] flex-shrink-0">{fact.icon}</span>
                 <span className="truncate">{fact.text}</span>
@@ -315,153 +315,251 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 3 — LARGE ORANGE FEATURE SECTION (CLIENTER-INSPIRED)              */}
+      {/* SECTION 2.5 — CONSTRUCTION VISUAL STORY: PLAN TO PROGRESS                 */}
+      {/* ========================================================================= */}
+      <section className="py-10 bg-[#FAF8F5] border-b border-[#E8E1D5] overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-6">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#FF5500]">
+              The Planning-to-Execution Bridge
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black text-[#0B1320] mt-1">
+              How Information Flows from Site to Schedule
+            </h3>
+          </div>
+
+          {/* Visual Step Banner */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 relative">
+            {[
+              { step: '01', label: 'PLAN', sub: 'Schedule Baseline', icon: <MdCalendarToday size={18} /> },
+              { step: '02', label: 'SITE', sub: 'Daily Field Diary', icon: <MdConstruction size={18} /> },
+              { step: '03', label: 'DATA', sub: 'Extracted Quantities', icon: <MdSearch size={18} /> },
+              { step: '04', label: 'MATCH', sub: 'AI Match Candidate', icon: <MdLink size={18} /> },
+              { step: '05', label: 'REVIEW', sub: 'Planner Approval', icon: <MdAssignmentTurnedIn size={18} /> },
+              { step: '06', label: 'PROGRESS', sub: 'Traceable Update', icon: <MdTrendingUp size={18} /> },
+            ].map((item, idx) => (
+              <div
+                key={item.step}
+                className="p-4 rounded-2xl bg-white border border-[#E8E1D5] hover:border-[#FF5500]/50 hover:-translate-y-1 shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="w-8 h-8 rounded-xl bg-[#FFF2EB] text-[#FF5500] flex items-center justify-center font-bold group-hover:scale-105 transition-transform">
+                    {item.icon}
+                  </span>
+                  <span className="text-[10px] font-mono font-black text-stone-400 group-hover:text-[#FF5500]">
+                    {item.step}
+                  </span>
+                </div>
+                <div>
+                  <h4 className="text-xs font-black tracking-wide text-[#0B1320]">{item.label}</h4>
+                  <p className="text-[11px] text-stone-500 truncate mt-0.5">{item.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* SECTION 3 — THE CIVIL PROJECT CHALLENGE & REAL INFRASTRUCTURE IMAGE       */}
       {/* ========================================================================= */}
       <section className="py-16 sm:py-24 bg-gradient-to-br from-[#FF5500] via-[#F94D00] to-[#E64400] text-white relative overflow-hidden">
-        {/* Subtle white grid overlay */}
+        {/* White grid overlay */}
         <div className="absolute inset-0 bg-orange-grid opacity-30 pointer-events-none" />
 
-        {/* Decorative Floating Badges */}
-        <div className="hidden lg:block absolute inset-0 pointer-events-none overflow-hidden select-none">
-          <span className="absolute top-12 left-10 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-bold animate-pulse-subtle">
-            DPR Reports
-          </span>
-          <span className="absolute top-24 right-16 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-bold animate-pulse-subtle" style={{ animationDelay: '1s' }}>
-            Site Diaries
-          </span>
-          <span className="absolute bottom-20 left-16 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-bold animate-pulse-subtle" style={{ animationDelay: '2s' }}>
-            Schedule Activities
-          </span>
-          <span className="absolute bottom-16 right-12 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-bold animate-pulse-subtle" style={{ animationDelay: '1.5s' }}>
-            Planner Review
-          </span>
-        </div>
-
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-14">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="inline-block px-3.5 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider mb-3">
               The Real Project Challenge
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-[-0.03em] leading-tight">
               Project updates should not stay disconnected from the plan.
             </h2>
-            <p className="text-base sm:text-lg text-white/90 mt-4 leading-relaxed font-normal">
+            <p className="text-base sm:text-lg text-white/90 mt-3 leading-relaxed font-normal">
               When site reports arrive in spreadsheets, text notes, and daily diaries, connecting them to scheduled activities takes hours of manual guesswork. PragatiPath builds the bridge.
             </p>
           </div>
 
-          {/* The Old Way vs The PragatiPath Way Cards (Clienter Layout) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
-            
-            {/* The Old Way Card */}
-            <div className="bg-[#FAF8F5] text-[#0B1320] rounded-3xl p-6 sm:p-8 border border-[#E8E1D5] shadow-lg flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between pb-4 mb-5 border-b border-[#E8E1D5]">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
-                    Traditional Method
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-[#EAE2D5] text-[#475569] text-xs font-bold">
-                    The Old Way
-                  </span>
+          {/* Infrastructure Image + Side-by-Side Comparison */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-10">
+            {/* Visual Infrastructure Mega-Project Image (lg:col-span-5) */}
+            <div className="lg:col-span-5 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl relative group flex flex-col justify-end min-h-[360px] bg-[#0B1320]">
+              <img
+                src="/infrastructure-flyover.jpg"
+                alt="Active civil infrastructure elevated viaduct and bridge construction project"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B1320] via-[#0B1320]/40 to-transparent" />
+              <div className="relative z-10 p-6 text-white space-y-2">
+                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#FF5500] text-white text-[10px] font-bold uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  <span>Real Construction Execution</span>
                 </div>
-
-                <ul className="space-y-4 text-sm text-[#475569]">
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✕
-                    </span>
-                    <span><strong>Information across different files:</strong> DPRs, site diaries, and spreadsheets stored in separate folders and emails.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✕
-                    </span>
-                    <span><strong>Different names for activities:</strong> Site supervisors describe work in everyday terms that do not match schedule activity IDs.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✕
-                    </span>
-                    <span><strong>Manual progress checking:</strong> Planners spend days cross-referencing text notes against critical path schedules.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✕
-                    </span>
-                    <span><strong>Updates disconnected from schedules:</strong> Unmatched field updates get overlooked, causing surprise delays at milestones.</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-[#E8E1D5] text-xs text-[#64748B]">
-                Result: Delayed progress visibility and slow milestone tracking.
+                <h3 className="text-lg font-bold leading-snug">
+                  Metro Corridors & Elevated Highways
+                </h3>
+                <p className="text-xs text-stone-300">
+                  Multiple contractors pouring piers, launching precast girders, and filing daily logs that must link to the master schedule.
+                </p>
               </div>
             </div>
 
-            {/* The PragatiPath Way Card */}
-            <div className="bg-white text-[#0B1320] rounded-3xl p-6 sm:p-8 border-2 border-white shadow-xl flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between pb-4 mb-5 border-b border-[#E8E1D5]">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#FF5500]">
-                    Schedule-Linking Layer
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-[#FFF2EB] text-[#FF5500] text-xs font-bold border border-[#FFD8C7]">
-                    The PragatiPath Way
-                  </span>
+            {/* Comparison Cards (lg:col-span-7) */}
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* The Old Way Card */}
+              <div className="bg-[#FAF8F5] text-[#0B1320] rounded-3xl p-6 border border-[#E8E1D5] shadow-lg flex flex-col justify-between hover:-translate-y-1 transition-all">
+                <div>
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E8E1D5]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+                      Traditional Method
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#EAE2D5] text-[#475569] text-[11px] font-bold">
+                      The Old Way
+                    </span>
+                  </div>
+
+                  {/* Visual Information Block (Steps) */}
+                  <div className="mb-4 p-3 rounded-xl bg-white border border-[#E8E1D5] text-[11px] space-y-1.5 font-mono text-stone-600">
+                    <div className="flex items-center gap-2 text-rose-600 font-bold">
+                      <span>01</span> <span>Site diary filed in email</span>
+                    </div>
+                    <div className="text-stone-400 pl-4">↓</div>
+                    <div className="flex items-center gap-2 text-rose-600 font-bold">
+                      <span>02</span> <span>Planner reads raw text</span>
+                    </div>
+                    <div className="text-stone-400 pl-4">↓</div>
+                    <div className="flex items-center gap-2 text-rose-600 font-bold">
+                      <span>03</span> <span>Manual CPM activity search</span>
+                    </div>
+                    <div className="text-stone-400 pl-4">↓</div>
+                    <div className="flex items-center gap-2 text-rose-600 font-bold">
+                      <span>04</span> <span>Unverified date updates</span>
+                    </div>
+                  </div>
+
+                  <ul className="space-y-2.5 text-xs text-[#475569]">
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-600 font-bold">✕</span>
+                      <span>Information fragmented in WhatsApp & spreadsheets</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-600 font-bold">✕</span>
+                      <span>Field descriptions don't match schedule IDs</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-rose-600 font-bold">✕</span>
+                      <span>Unmatched field work causes milestone surprises</span>
+                    </li>
+                  </ul>
                 </div>
 
-                <ul className="space-y-4 text-sm text-[#0B1320]">
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✓
-                    </span>
-                    <span><strong>Project updates in one workflow:</strong> Upload daily reports, spreadsheets, or notes directly into a central inbox.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✓
-                    </span>
-                    <span><strong>Extracted progress details:</strong> Automatically captures completed quantities, locations, and reported dates.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✓
-                    </span>
-                    <span><strong>Suggested activity matches:</strong> System proposes candidate schedule activities with clear confidence ratings.</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
-                      ✓
-                    </span>
-                    <span><strong>Planner reviews & full audit trail:</strong> The project planner reviews, adjusts, and approves before the schedule updates.</span>
-                  </li>
-                </ul>
+                <div className="mt-4 pt-3 border-t border-[#E8E1D5] text-[11px] text-rose-700 font-semibold">
+                  Result: Slow visibility and delayed progress decisions.
+                </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#E8E1D5] text-xs text-emerald-700 font-bold">
-                Result: Continuous, verified alignment between site execution and schedule baseline.
+              {/* The PragatiPath Way Card */}
+              <div className="bg-white text-[#0B1320] rounded-3xl p-6 border-2 border-white shadow-xl flex flex-col justify-between hover:-translate-y-1 transition-all">
+                <div>
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E8E1D5]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#FF5500]">
+                      Schedule-Linking Layer
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#FFF2EB] text-[#FF5500] text-[11px] font-bold border border-[#FFD8C7]">
+                      The PragatiPath Way
+                    </span>
+                  </div>
+
+                  {/* Visual Information Block (Steps) */}
+                  <div className="mb-4 p-3 rounded-xl bg-[#FAF8F5] border border-[#E8E1D5] text-[11px] space-y-1.5 font-mono text-stone-700">
+                    <div className="flex items-center gap-2 text-emerald-700 font-bold">
+                      <span>01</span> <span>Upload DPR / Site Log</span>
+                    </div>
+                    <div className="text-stone-400 pl-4">↓</div>
+                    <div className="flex items-center gap-2 text-emerald-700 font-bold">
+                      <span>02</span> <span>Extract Work & Quantities</span>
+                    </div>
+                    <div className="text-stone-400 pl-4">↓</div>
+                    <div className="flex items-center gap-2 text-emerald-700 font-bold">
+                      <span>03</span> <span>Suggest Activity Match</span>
+                    </div>
+                    <div className="text-stone-400 pl-4">↓</div>
+                    <div className="flex items-center gap-2 text-emerald-700 font-bold">
+                      <span>04</span> <span>Planner Approves & Updates</span>
+                    </div>
+                  </div>
+
+                  <ul className="space-y-2.5 text-xs text-[#0B1320]">
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-600 font-bold">✓</span>
+                      <span>All progress ingested into one unified workspace</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-600 font-bold">✓</span>
+                      <span>Automated activity matching with confidence scores</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-600 font-bold">✓</span>
+                      <span>Planner verifies every single update before save</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-[#E8E1D5] text-[11px] text-emerald-700 font-bold">
+                  Result: Continuous verified progress alignment with audit logs.
+                </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 4 — HOW PRAGATIPATH WORKS (CONNECTED WORKFLOW)                    */}
+      {/* SECTION 4 — HOW PRAGATIPATH WORKS (CONNECTED WORKFLOW + PLANNING DESK)    */}
       {/* ========================================================================= */}
       <section id="how-it-works" className="py-16 sm:py-24 bg-[#FAF8F5] border-b border-[#E8E1D5]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold text-[#FF5500] uppercase tracking-wider">
               Step-by-Step Workflow
             </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-2 mb-4">
+            <h2 className="text-3xl sm:text-5xl font-black text-[#0B1320] tracking-tight mt-2 mb-3">
               How PragatiPath Works
             </h2>
             <p className="text-base text-[#475569] leading-relaxed">
               A transparent, connected 6-step workflow built around how civil engineering teams already operate.
             </p>
+          </div>
+
+          {/* Planning Desk Image Callout */}
+          <div className="mb-12 rounded-3xl overflow-hidden border border-[#E8E1D5] warm-card-shadow bg-white grid grid-cols-1 lg:grid-cols-12 items-center">
+            <div className="lg:col-span-6 h-64 sm:h-80 overflow-hidden relative">
+              <img
+                src="/planning-desk.jpg"
+                alt="Civil engineering project planning office desk with blueprints and schedule Gantt charts"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-[#0B1320]/80 backdrop-blur-xs text-white text-[11px] font-bold">
+                Planning Office Workspace
+              </div>
+            </div>
+            <div className="lg:col-span-6 p-6 sm:p-10 space-y-3">
+              <span className="text-[11px] font-bold text-[#FF5500] uppercase tracking-wider">
+                Engineering Governance
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black text-[#0B1320]">
+                Built for Planners in the Office & Supervisors on Site
+              </h3>
+              <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                Connect schedule activities (Primavera P6, MS Project) with daily site reports without disrupting the engineering workflow.
+              </p>
+              <div className="pt-2 flex items-center gap-4 text-xs font-bold text-[#0B1320]">
+                <span className="flex items-center gap-1 text-emerald-600">✓ Zero Schedule Overwrites</span>
+                <span className="flex items-center gap-1 text-emerald-600">✓ 100% Audit Logging</span>
+              </div>
+            </div>
           </div>
 
           {/* Connected Steps Grid */}
@@ -506,7 +604,7 @@ export default function LandingPage() {
             ].map((st, i) => (
               <div
                 key={st.step}
-                className="bg-white rounded-3xl p-6 border border-[#E8E1D5] hover:border-[#FF5500]/40 warm-card-shadow transition-all duration-200 group flex flex-col justify-between"
+                className="bg-white rounded-3xl p-6 border border-[#E8E1D5] hover:border-[#FF5500]/50 hover:-translate-y-1.5 warm-card-shadow transition-all duration-200 group flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -584,7 +682,7 @@ export default function LandingPage() {
             ].map((dt, i) => (
               <div
                 key={i}
-                className="p-6 rounded-3xl bg-white border border-[#E8E1D5] hover:border-[#D5CBB9] warm-card-shadow transition-all"
+                className="p-6 rounded-3xl bg-white border border-[#E8E1D5] hover:border-[#D5CBB9] hover:-translate-y-1 warm-card-shadow transition-all"
               >
                 <div className="w-11 h-11 rounded-2xl bg-[#FFF2EB] border border-[#FFD8C7] text-[#FF5500] flex items-center justify-center mb-4">
                   {dt.icon}
@@ -615,7 +713,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center hover:-translate-y-1 transition-all">
               <span className="block text-4xl sm:text-5xl lg:text-6xl font-black text-[#0B1320] tracking-tight font-mono">
                 L1–L6
               </span>
@@ -623,7 +721,7 @@ export default function LandingPage() {
               <p className="text-xs text-[#64748B] mt-1">From project summary down to detailed activity packages</p>
             </div>
 
-            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center hover:-translate-y-1 transition-all">
               <span className="block text-4xl sm:text-5xl lg:text-6xl font-black text-[#FF5500] tracking-tight font-mono">
                 1
               </span>
@@ -631,7 +729,7 @@ export default function LandingPage() {
               <p className="text-xs text-[#64748B] mt-1">Authorized human engineer verifies every schedule change</p>
             </div>
 
-            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center hover:-translate-y-1 transition-all">
               <span className="block text-4xl sm:text-5xl lg:text-6xl font-black text-[#0B1320] tracking-tight font-mono">
                 5+
               </span>
@@ -639,7 +737,7 @@ export default function LandingPage() {
               <p className="text-xs text-[#64748B] mt-1">Spreadsheets, CSV, JSON, daily report text, and PDFs</p>
             </div>
 
-            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center">
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow text-center hover:-translate-y-1 transition-all">
               <span className="block text-4xl sm:text-5xl lg:text-6xl font-black text-[#FF5500] tracking-tight font-mono">
                 100%
               </span>
@@ -702,7 +800,7 @@ export default function LandingPage() {
             ].map((item) => (
               <div
                 key={item.num}
-                className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] warm-card-shadow flex flex-col justify-between"
+                className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] hover:border-[#FF5500]/40 hover:-translate-y-1 warm-card-shadow flex flex-col justify-between transition-all"
               >
                 <div>
                   <span className="text-xs font-mono font-black text-[#FF5500] mb-2 block">
@@ -735,7 +833,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow">
+            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
               <div className="w-12 h-12 rounded-2xl bg-[#0B1320] text-[#FF5500] flex items-center justify-center mb-4">
                 <MdBusiness size={22} />
               </div>
@@ -746,7 +844,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow">
+            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
               <div className="w-12 h-12 rounded-2xl bg-[#0B1320] text-[#FF5500] flex items-center justify-center mb-4">
                 <MdEngineering size={22} />
               </div>
@@ -757,7 +855,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow">
+            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
               <div className="w-12 h-12 rounded-2xl bg-[#0B1320] text-[#FF5500] flex items-center justify-center mb-4">
                 <MdSupervisorAccount size={22} />
               </div>
@@ -768,7 +866,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow">
+            <div className="p-6 rounded-3xl bg-white border border-[#E8E1D5] warm-card-shadow hover:-translate-y-1 transition-all">
               <div className="w-12 h-12 rounded-2xl bg-[#0B1320] text-[#FF5500] flex items-center justify-center mb-4">
                 <MdConstruction size={22} />
               </div>

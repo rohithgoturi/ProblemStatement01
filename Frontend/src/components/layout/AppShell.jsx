@@ -14,7 +14,7 @@ export function AppShell({ children }) {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-surface-light font-sans">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#0B1320] font-sans selection:bg-[#FF5500]/20 selection:text-[#FF5500]">
       {/* Mobile backdrop when sidebar is open on small screens */}
       {!collapsed && (
         <div

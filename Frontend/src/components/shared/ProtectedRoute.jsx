@@ -6,15 +6,15 @@ import { Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { MdSecurity, MdArrowBack } from 'react-icons/md';
 
-export function ProtectedRoute({ children, allowedRoles = null, requiredPermission = null }) {
+export function ProtectedRoute({ children, allowedRoles = null }) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-8">
-        <div className="w-10 h-10 border-4 border-[#0056D2]/20 border-t-[#0056D2] rounded-full animate-spin mb-4" />
-        <p className="text-sm text-slate-500 font-medium">Verifying authorization...</p>
+        <div className="w-10 h-10 border-3 border-[#FF5500]/20 border-t-[#FF5500] rounded-full animate-spin mb-4" />
+        <p className="text-xs text-stone-500 font-semibold tracking-wide uppercase">Verifying authorization...</p>
       </div>
     );
   }
@@ -25,20 +25,20 @@ export function ProtectedRoute({ children, allowedRoles = null, requiredPermissi
 
   if (allowedRoles && Array.isArray(allowedRoles) && !allowedRoles.includes(user.role)) {
     return (
-      <div className="max-w-2xl mx-auto my-12 p-8 bg-white border border-slate-200 rounded-2xl shadow-sm text-center">
-        <div className="w-16 h-16 bg-amber-50 border border-amber-200 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+      <div className="max-w-2xl mx-auto my-16 p-8 sm:p-10 bg-white border border-[#E8E1D5] rounded-3xl shadow-sm text-center">
+        <div className="w-16 h-16 bg-[#FF5500]/10 border border-[#FF5500]/20 text-[#FF5500] rounded-2xl flex items-center justify-center mx-auto mb-4">
           <MdSecurity size={32} />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Access Restricted (403 Forbidden)</h2>
-        <p className="text-sm text-slate-600 mb-6 max-w-md mx-auto">
-          Your current account role (<span className="font-semibold text-slate-800">{user.role}</span>) does not have permission to access this module. Please contact your system administrator if you require access.
+        <h2 className="text-xl font-bold text-[#0B1320] mb-2">Access Restricted (403 Forbidden)</h2>
+        <p className="text-xs text-stone-600 mb-6 max-w-md mx-auto leading-relaxed">
+          Your current account role (<span className="font-bold text-[#0B1320]">{user.role}</span>) does not have permission to access this module. Please contact your system administrator if you require access.
         </p>
         <div className="flex items-center justify-center gap-3">
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#0056D2] hover:bg-[#1A73E8] text-white rounded-xl text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0B1320] hover:bg-[#FF5500] text-white rounded-full text-xs font-bold transition-colors shadow-2xs"
           >
-            <MdArrowBack size={18} />
+            <MdArrowBack size={16} />
             <span>Return to Dashboard</span>
           </Link>
         </div>
@@ -48,3 +48,5 @@ export function ProtectedRoute({ children, allowedRoles = null, requiredPermissi
 
   return children;
 }
+
+export default ProtectedRoute;

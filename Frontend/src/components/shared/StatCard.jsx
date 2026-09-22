@@ -1,5 +1,6 @@
 /**
  * StatCard — KPI stat card with icon, value, label, trend
+ * Styled with Clienter-inspired warm rounded-3xl cards, dark bold numbers, and orange accents.
  */
 import { cn } from '../../utils/helpers';
 
@@ -18,45 +19,49 @@ export function StatCard({
   icon,
   trend,
   trendType = 'neutral',
-  color = 'bg-brand-blue-xlight text-brand-blue',
+  color = 'bg-[#FF5500]/10 text-[#FF5500]',
   subvalue,
   className = '',
   onClick,
 }) {
   const trendColors = {
-    positive: 'text-status-green',
-    negative: 'text-status-red',
-    neutral:  'text-ink-muted',
+    positive: 'text-emerald-700 bg-emerald-50 border border-emerald-200',
+    negative: 'text-rose-700 bg-rose-50 border border-rose-200',
+    neutral:  'text-stone-600 bg-stone-50 border border-stone-200',
   };
 
   return (
     <div
       className={cn(
-        'bg-white border border-surface-border rounded-lg p-5 flex flex-col gap-3',
-        onClick && 'cursor-pointer card-hover',
+        'bg-white border border-[#E8E1D5] rounded-3xl p-5 flex flex-col justify-between gap-3 shadow-2xs hover:shadow-xs transition-all',
+        onClick && 'cursor-pointer hover:border-[#FF5500]/40',
         className,
       )}
       onClick={onClick}
     >
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-1">{label}</p>
-          <p className="text-2xl font-bold text-ink-primary">{value}</p>
+          <p className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-1">{label}</p>
+          <p className="text-2xl sm:text-3xl font-black text-[#0B1320] tracking-tight">{value}</p>
           {subvalue && (
-            <p className="text-xs text-ink-muted mt-0.5">{subvalue}</p>
+            <p className="text-xs text-stone-500 mt-1">{subvalue}</p>
           )}
         </div>
         {icon && (
-          <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0', color)}>
+          <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 shadow-2xs', color)}>
             {icon}
           </div>
         )}
       </div>
       {trend && (
-        <p className={cn('text-xs font-medium', trendColors[trendType] || trendColors.neutral)}>
-          {trend}
-        </p>
+        <div className="pt-2 border-t border-stone-100 flex items-center">
+          <span className={cn('text-[11px] font-bold px-2 py-0.5 rounded-full inline-block', trendColors[trendType] || trendColors.neutral)}>
+            {trend}
+          </span>
+        </div>
       )}
     </div>
   );
 }
+
+export default StatCard;

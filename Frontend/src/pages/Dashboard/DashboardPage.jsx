@@ -1,6 +1,7 @@
 /**
  * PragatiPath — Dashboard Page (Full Backend API Integrated)
- * All mock data removed. Connected directly to Express API & MongoDB aggregator.
+ * Clienter-inspired warm neutral control center, bold KPI cards, and orange accents.
+ * All data sourced directly from Express API & MongoDB aggregator.
  */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,11 +9,12 @@ import {
   MdDashboard,
   MdCheckCircle,
   MdCalendarToday,
-  MdInbox,
   MdAutoAwesome,
   MdRefresh,
-  MdLayers,
-  MdInfoOutline
+  MdInfoOutline,
+  MdArrowForward,
+  MdHistory,
+  MdCheck,
 } from 'react-icons/md';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { getDashboardSummary, getAuditLogs } from '../../services/api';
@@ -68,100 +70,127 @@ export default function DashboardPage() {
   const pendingReviews = summary?.pendingReviews || [];
 
   return (
-    <div className="space-y-5 font-sans">
+    <div className="space-y-6 font-sans pb-16">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-6 z-50 bg-[#0B192C] text-white px-4 py-3 rounded-lg shadow-xl text-sm font-medium flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-4 duration-200">
-          <MdCheckCircle className="text-emerald-400 text-lg shrink-0" />
+        <div className="fixed top-20 right-6 z-50 bg-[#0B1320] text-white px-5 py-3 rounded-full shadow-2xl text-xs font-bold flex items-center gap-2 border border-white/20 animate-in fade-in slide-in-from-top-4 duration-200">
+          <MdCheckCircle className="text-emerald-400 text-base shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Page Header */}
+      {/* Standardized Page Header */}
       <PageHeader
-        title="Infrastructure Project Dashboard"
-        subtitle={`PragatiPath Overview • Role: ${currentRole.replace('_', ' ').toUpperCase()}`}
+        title="Infrastructure Project Control Center"
+        subtitle={`Live Operations Overview • Authorized Role: ${currentRole.replace('_', ' ').toUpperCase()}`}
         icon={<MdDashboard />}
         actions={
           <button
             type="button"
             onClick={loadData}
-            className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 cursor-pointer inline-flex items-center gap-1.5"
+            className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs cursor-pointer inline-flex items-center gap-2 transition-all shadow-2xs"
           >
-            <MdRefresh size={16} />
+            <MdRefresh size={16} className={loading ? 'animate-spin text-[#FF5500]' : ''} />
             <span>Refresh Overview</span>
           </button>
         }
       />
 
-      {/* Error Message */}
+      {/* Error Message Banner */}
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700">
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs font-bold text-rose-800">
           {errorMsg}
         </div>
       )}
 
-      {/* Top 5 KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs text-center">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase">Schedule Activities</div>
-          <div className="text-2xl font-black text-slate-900 mt-1">{totalAct}</div>
+      {/* KPI Cards Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div className="bg-white p-5 rounded-3xl border border-[#E8E1D5] shadow-2xs text-center transition-all hover:shadow-xs">
+          <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">Schedule Activities</div>
+          <div className="text-2xl sm:text-3xl font-black text-[#0B1320] mt-1.5">{totalAct}</div>
+          <div className="text-[10px] text-stone-500 mt-1">Primavera / Excel</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs text-center">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase">Completed</div>
-          <div className="text-2xl font-black text-emerald-600 mt-1">{completed}</div>
+        <div className="bg-white p-5 rounded-3xl border border-[#E8E1D5] shadow-2xs text-center transition-all hover:shadow-xs">
+          <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">Completed</div>
+          <div className="text-2xl sm:text-3xl font-black text-emerald-700 mt-1.5">{completed}</div>
+          <div className="text-[10px] text-stone-500 mt-1">Verified Finish</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs text-center">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase">In Progress</div>
-          <div className="text-2xl font-black text-amber-600 mt-1">{inProgress}</div>
+        <div className="bg-white p-5 rounded-3xl border border-[#E8E1D5] shadow-2xs text-center transition-all hover:shadow-xs">
+          <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">In Progress</div>
+          <div className="text-2xl sm:text-3xl font-black text-amber-600 mt-1.5">{inProgress}</div>
+          <div className="text-[10px] text-stone-500 mt-1">Active on Site</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs text-center">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase">Pending Planner Review</div>
-          <div className="text-2xl font-black text-rose-600 mt-1">{pendingCount}</div>
+        <div className="bg-white p-5 rounded-3xl border border-[#E8E1D5] shadow-2xs text-center transition-all hover:shadow-xs ring-2 ring-[#FF5500]/10">
+          <div className="text-[11px] font-bold text-[#FF5500] uppercase tracking-wider">Pending Planner Review</div>
+          <div className="text-2xl sm:text-3xl font-black text-[#FF5500] mt-1.5">{pendingCount}</div>
+          <div className="text-[10px] text-stone-500 mt-1">Awaiting Decision</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs text-center col-span-2 sm:col-span-1">
-          <div className="text-[11px] font-semibold text-slate-400 uppercase">Ingested Sources</div>
-          <div className="text-2xl font-black text-blue-600 mt-1">{sourcesCount}</div>
+        <div className="bg-white p-5 rounded-3xl border border-[#E8E1D5] shadow-2xs text-center transition-all hover:shadow-xs col-span-2 sm:col-span-1">
+          <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">Ingested Sources</div>
+          <div className="text-2xl sm:text-3xl font-black text-[#0B1320] mt-1.5">{sourcesCount}</div>
+          <div className="text-[10px] text-stone-500 mt-1">DPRs & Field Logs</div>
         </div>
       </div>
 
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Recent Schedule & Review Queue */}
-        <div className="lg:col-span-7 space-y-5">
+        <div className="lg:col-span-7 space-y-6">
           {/* Pending Planner Review Queue Action Card */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] shadow-2xs space-y-5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-rose-50 text-rose-600">
-                  <MdAutoAwesome size={18} />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#FF5500]/10 text-[#FF5500] flex items-center justify-center">
+                  <MdAutoAwesome size={20} />
                 </div>
-                <h2 className="text-sm font-bold text-slate-900">Pending Planner Review Queue</h2>
+                <div>
+                  <h2 className="text-base font-bold text-[#0B1320]">Pending Planner Review Queue</h2>
+                  <p className="text-xs text-stone-500">Extracted progress matches awaiting verification</p>
+                </div>
               </div>
-              <Link to="/ai-matching" className="text-xs font-bold text-blue-600 hover:underline">
-                Open Full Review Queue →
+              <Link
+                to="/ai-matching"
+                className="inline-flex items-center gap-1 text-xs font-bold text-[#FF5500] hover:text-[#EA580C] transition-colors"
+              >
+                <span>Open Queue</span>
+                <MdArrowForward size={14} />
               </Link>
             </div>
 
             {loading ? (
-              <div className="py-8 text-center text-xs text-slate-400">Loading pending items...</div>
+              <div className="py-8 text-center text-xs text-stone-400">Loading pending items...</div>
             ) : pendingReviews.length === 0 ? (
-              <div className="py-8 text-center bg-slate-50 rounded-xl border border-dashed text-xs text-slate-400">
-                All extracted progress updates reviewed! No items pending planner action.
+              <div className="py-10 text-center bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] p-6 space-y-2">
+                <MdCheck className="mx-auto text-emerald-600 text-2xl" />
+                <h3 className="text-xs font-bold text-[#0B1320]">All Extracted Progress Updates Reviewed</h3>
+                <p className="text-xs text-stone-500">No pending items in queue. Submit new DPRs to extract updates.</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {pendingReviews.slice(0, 4).map((item) => (
-                  <div key={item._id || item.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                  <div
+                    key={item._id || item.id}
+                    className="p-4 bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                  >
                     <div>
-                      <div className="font-bold text-slate-800">{item.extractedActivityName || item.rawActivityName}</div>
-                      <div className="text-[10px] text-slate-500 font-mono">Suggested: {item.matchedScheduleActivity?.activityId || 'Unlinked'}</div>
+                      <div className="font-bold text-[#0B1320]">
+                        {item.extractedActivityName || item.rawActivityName}
+                      </div>
+                      <div className="text-[11px] text-stone-500 mt-0.5">
+                        Suggested Link:{' '}
+                        <strong className="font-mono text-[#0B1320]">
+                          {item.matchedScheduleActivity?.activityId || 'Unlinked'}
+                        </strong>
+                      </div>
                     </div>
-                    <Link to="/ai-matching" className="px-3 py-1 bg-emerald-600 text-white font-bold rounded-md hover:bg-emerald-700">
+                    <Link
+                      to="/ai-matching"
+                      className="inline-flex items-center justify-center px-4 py-2 bg-[#0B1320] hover:bg-[#FF5500] text-white font-bold rounded-full text-xs transition-colors self-start sm:self-auto"
+                    >
                       Review Match
                     </Link>
                   </div>
@@ -171,49 +200,59 @@ export default function DashboardPage() {
           </div>
 
           {/* Schedule Activities Overview */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] shadow-2xs space-y-5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#0B1320]/5 text-[#0B1320] flex items-center justify-center">
                   <MdCalendarToday size={18} />
                 </div>
-                <h2 className="text-sm font-bold text-slate-900">Project Schedule Activities</h2>
+                <div>
+                  <h2 className="text-base font-bold text-[#0B1320]">Project Schedule Activities</h2>
+                  <p className="text-xs text-stone-500">Current baseline activities loaded in project</p>
+                </div>
               </div>
-              <Link to="/schedule" className="text-xs font-bold text-blue-600 hover:underline">
-                Manage Schedule →
+              <Link
+                to="/schedule"
+                className="inline-flex items-center gap-1 text-xs font-bold text-[#FF5500] hover:text-[#EA580C] transition-colors"
+              >
+                <span>Manage Schedule</span>
+                <MdArrowForward size={14} />
               </Link>
             </div>
 
             {loading ? (
-              <div className="py-8 text-center text-xs text-slate-400">Loading schedule...</div>
+              <div className="py-8 text-center text-xs text-stone-400">Loading schedule...</div>
             ) : activities.length === 0 ? (
-              <div className="py-8 text-center bg-slate-50 rounded-xl border border-dashed text-xs text-slate-400 space-y-2">
-                <p>No baseline schedule loaded in MongoDB.</p>
-                <Link to="/schedule" className="inline-block px-3 py-1.5 bg-blue-600 text-white font-bold rounded-lg text-xs">
-                  Upload Schedule CSV / Excel
+              <div className="py-10 text-center bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] p-6 space-y-3">
+                <p className="text-xs text-stone-600">No baseline schedule loaded yet.</p>
+                <Link
+                  to="/schedule"
+                  className="inline-block px-5 py-2.5 bg-[#0B1320] hover:bg-[#FF5500] text-white font-bold rounded-full text-xs transition-colors"
+                >
+                  Upload Schedule File (.xlsx / .csv)
                 </Link>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] font-bold">
-                      <th className="pb-2">Activity ID</th>
-                      <th className="pb-2">Name</th>
-                      <th className="pb-2">Discipline</th>
-                      <th className="pb-2">Progress</th>
-                      <th className="pb-2">Status</th>
+                    <tr className="border-b border-[#E8E1D5] text-stone-400 uppercase text-[10px] font-bold">
+                      <th className="pb-3">Activity ID</th>
+                      <th className="pb-3">Name</th>
+                      <th className="pb-3">Discipline</th>
+                      <th className="pb-3">Progress</th>
+                      <th className="pb-3">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-stone-100">
                     {activities.slice(0, 5).map((act) => (
-                      <tr key={act._id || act.activityId}>
-                        <td className="py-2.5 font-mono font-bold text-slate-800">{act.activityId}</td>
-                        <td className="py-2.5 font-bold text-slate-800">{act.activityName}</td>
-                        <td className="py-2.5 text-slate-600">{act.discipline || '-'}</td>
-                        <td className="py-2.5 font-bold text-blue-700">{act.progressPercentage || 0}%</td>
-                        <td className="py-2.5">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                      <tr key={act._id || act.activityId} className="hover:bg-[#FAF8F5] transition-colors">
+                        <td className="py-3 font-mono font-bold text-[#0B1320]">{act.activityId}</td>
+                        <td className="py-3 font-semibold text-[#0B1320]">{act.activityName}</td>
+                        <td className="py-3 text-stone-600">{act.discipline || '-'}</td>
+                        <td className="py-3 font-bold text-[#FF5500]">{act.progressPercentage || 0}%</td>
+                        <td className="py-3">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF8F5] text-stone-700 border border-[#E8E1D5]">
                             {act.status || 'NOT_STARTED'}
                           </span>
                         </td>
@@ -226,43 +265,60 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Right Column: Audit History & Quick Links */}
-        <div className="lg:col-span-5 space-y-5">
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+        {/* Right Column: Audit History & Information Box */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8E1D5] shadow-2xs space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Recent Audit History</h2>
-              <Link to="/reports" className="text-xs font-bold text-blue-600 hover:underline">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#0B1320]/5 text-[#0B1320] flex items-center justify-center">
+                  <MdHistory size={18} />
+                </div>
+                <h2 className="text-sm font-bold text-[#0B1320]">Recent Audit History</h2>
+              </div>
+              <Link
+                to="/reports"
+                className="text-xs font-bold text-[#FF5500] hover:text-[#EA580C]"
+              >
                 View All →
               </Link>
             </div>
 
             {loading ? (
-              <div className="py-8 text-center text-xs text-slate-400">Loading audit history...</div>
+              <div className="py-8 text-center text-xs text-stone-400">Loading audit history...</div>
             ) : auditLogs.length === 0 ? (
-              <div className="py-8 text-center bg-slate-50 rounded-xl border border-dashed text-xs text-slate-400">
+              <div className="py-8 text-center bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] text-xs text-stone-500">
                 No audit decisions recorded yet.
               </div>
             ) : (
               <div className="space-y-3">
                 {auditLogs.slice(0, 5).map((log) => (
-                  <div key={log._id || log.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+                  <div
+                    key={log._id || log.id}
+                    className="p-3.5 bg-[#FAF8F5] rounded-2xl border border-[#E8E1D5] text-xs space-y-1"
+                  >
                     <div className="flex items-center justify-between font-bold">
-                      <span className="text-slate-800">{log.action}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">{new Date(log.timestamp || Date.now()).toLocaleTimeString()}</span>
+                      <span className="text-[#0B1320]">{log.action}</span>
+                      <span className="text-[10px] text-stone-400 font-mono">
+                        {new Date(log.timestamp || Date.now()).toLocaleTimeString()}
+                      </span>
                     </div>
-                    <div className="text-[11px] text-slate-500">By {log.performedBy || log.actor || 'SYSTEM'}</div>
+                    <div className="text-[11px] text-stone-500">
+                      By {log.performedBy || log.actor || 'SYSTEM'}
+                    </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="bg-blue-50/60 border border-blue-100 p-5 rounded-2xl space-y-2 text-xs text-blue-900">
-            <div className="font-bold flex items-center gap-1.5 text-blue-800">
-              <MdInfoOutline size={18} /> PragatiPath Real Data Pipeline
+          {/* Operational Pipeline Note */}
+          <div className="bg-[#FAF8F5] border border-[#E8E1D5] p-6 rounded-3xl space-y-3 text-xs text-stone-700 shadow-2xs">
+            <div className="font-bold flex items-center gap-2 text-[#0B1320] text-sm">
+              <MdInfoOutline size={20} className="text-[#FF5500]" />
+              <span>Real-Time Schedule Linking Flow</span>
             </div>
-            <p>
-              Upload progress reports via <strong>DPR Inbox</strong> or baseline schedules via <strong>Schedule</strong>. All extracted events are validated, matched by the matching engine, and stored in MongoDB upon planner approval.
+            <p className="leading-relaxed">
+              Upload daily reports via <strong>DPR Inbox</strong> or baseline schedules via <strong>Schedule</strong>. All extracted progress updates require human planner approval before updating project data in MongoDB.
             </p>
           </div>
         </div>

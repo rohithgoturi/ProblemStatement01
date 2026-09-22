@@ -84,7 +84,18 @@ export default function ServicesPage() {
                 </div>
               </div>
 
-              <div className="lg:col-span-5 bg-[#FAF8F5] rounded-2xl p-5 border border-[#E8E1D5] space-y-2.5 text-xs">
+              <div className="lg:col-span-5 bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 border border-[#E8E1D5] space-y-2.5 text-xs">
+                <div className="h-28 rounded-xl overflow-hidden relative mb-2">
+                  <img
+                    src="/planning-desk.jpg"
+                    alt="Civil project planning office desk with schedule baselines"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B1320]/80 via-transparent to-transparent flex items-end p-2.5">
+                    <span className="text-[10px] text-white font-bold">WBS Schedule & CPM Baselines</span>
+                  </div>
+                </div>
                 <div className="flex items-center justify-between font-bold text-[#0B1320] border-b border-[#E8E1D5] pb-2">
                   <span>WBS Activity Hierarchy Preview</span>
                   <span className="text-[#FF5500] text-[10px]">Authoritative Baseline</span>

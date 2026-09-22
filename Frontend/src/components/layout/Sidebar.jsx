@@ -1,207 +1,164 @@
 /**
  * Sidebar — Left navigation panel
  * Persistent on desktop, collapsible on mobile
- * Faithfully matches Phase 2 Reference Screens (Main Dashboard & Project Dashboard)
+ * Clienter-inspired dark navy surface, orange active indicator, and professional spacing.
  */
 import { NavLink, Link } from 'react-router-dom';
 import {
   MdDashboard, MdFolderOpen, MdInbox, MdCalendarToday,
   MdAutoAwesome, MdTrendingUp, MdBarChart, MdPeople,
   MdLocationOn, MdSettings, MdHelpOutline,
-  MdChevronLeft, MdChevronRight, MdWorkspacePremium,
-  MdArrowForward, MdKeyboardArrowRight,
+  MdChevronLeft, MdChevronRight,
+  MdKeyboardArrowRight, MdLayers,
 } from 'react-icons/md';
 import { cn } from '../../utils/helpers';
 import { Logo, PragatiPathIcon } from '../shared/Logo';
 import { useRole } from '../../context/RoleContext';
 
 const ICON_MAP = {
-  MdDashboard:    <MdDashboard size={18} />,
-  MdFolderOpen:   <MdFolderOpen size={18} />,
-  MdInbox:        <MdInbox size={18} />,
-  MdCalendarToday:<MdCalendarToday size={18} />,
-  MdAutoAwesome:  <MdAutoAwesome size={18} />,
-  MdTrendingUp:   <MdTrendingUp size={18} />,
-  MdBarChart:     <MdBarChart size={18} />,
-  MdPeople:       <MdPeople size={18} />,
-  MdLocationOn:   <MdLocationOn size={18} />,
-  MdSettings:     <MdSettings size={18} />,
-  MdHelpOutline:  <MdHelpOutline size={18} />,
+  MdDashboard:    <MdDashboard size={19} />,
+  MdFolderOpen:   <MdFolderOpen size={19} />,
+  MdInbox:        <MdInbox size={19} />,
+  MdCalendarToday:<MdCalendarToday size={19} />,
+  MdAutoAwesome:  <MdAutoAwesome size={19} />,
+  MdTrendingUp:   <MdTrendingUp size={19} />,
+  MdBarChart:     <MdBarChart size={19} />,
+  MdPeople:       <MdPeople size={19} />,
+  MdLocationOn:   <MdLocationOn size={19} />,
+  MdSettings:     <MdSettings size={19} />,
+  MdHelpOutline:  <MdHelpOutline size={19} />,
 };
 
 const NAV_GROUPS = [
   {
     id: 'main',
-    label: 'MAIN MENU',
+    label: 'MAIN WORKFLOW',
     items: [
-      { id: 'dashboard',  label: 'Dashboard',  path: '/dashboard',  icon: 'MdDashboard' },
-      { id: 'projects',   label: 'Projects',   path: '/projects',   icon: 'MdFolderOpen',   badge: 12 },
-      { id: 'dpr',        label: 'DPR Inbox',  path: '/dpr',        icon: 'MdInbox',        badge: 24 },
-      { id: 'schedule',   label: 'Schedule',   path: '/schedule',   icon: 'MdCalendarToday' },
-      { id: 'ai-matching',label: 'AI Matching',path: '/ai-matching', icon: 'MdAutoAwesome', allowedRoles: ['planner', 'project_manager', 'admin'] },
-      { id: 'progress',   label: 'Progress',   path: '/progress',   icon: 'MdTrendingUp' },
-      { id: 'reports',    label: 'Reports',    path: '/reports',    icon: 'MdBarChart' },
+      { id: 'dashboard',  label: 'Dashboard',   path: '/dashboard',   icon: 'MdDashboard' },
+      { id: 'projects',   label: 'Projects',    path: '/projects',    icon: 'MdFolderOpen' },
+      { id: 'dpr',        label: 'DPR Inbox',   path: '/dpr',         icon: 'MdInbox' },
+      { id: 'schedule',   label: 'Schedule',    path: '/schedule',    icon: 'MdCalendarToday' },
+      { id: 'ai-matching',label: 'AI Matching', path: '/ai-matching', icon: 'MdAutoAwesome', allowedRoles: ['planner', 'project_manager', 'admin'] },
+      { id: 'progress',   label: 'Progress',    path: '/progress',    icon: 'MdTrendingUp' },
+      { id: 'reports',    label: 'Reports',     path: '/reports',     icon: 'MdBarChart' },
     ],
   },
   {
     id: 'project',
-    label: 'PROJECT MANAGEMENT',
+    label: 'PROJECT GOVERNANCE',
     items: [
-      { id: 'team',      label: 'Team',      path: '/team',      icon: 'MdPeople' },
-      { id: 'locations', label: 'Locations', path: '/locations', icon: 'MdLocationOn' },
-      { id: 'settings',  label: 'Settings',  path: '/settings',  icon: 'MdSettings' },
-      { id: 'help',      label: 'Help',      path: '/help',      icon: 'MdHelpOutline' },
+      { id: 'team',      label: 'Team Roster', path: '/team',      icon: 'MdPeople' },
+      { id: 'locations', label: 'Locations',   path: '/locations', icon: 'MdLocationOn' },
+      { id: 'settings',  label: 'Settings',    path: '/settings',  icon: 'MdSettings' },
+      { id: 'help',      label: 'Help & Docs', path: '/help',      icon: 'MdHelpOutline' },
     ],
   },
 ];
 
 export function Sidebar({ collapsed = false, onToggle }) {
   const { currentRole } = useRole();
+
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 bottom-0 bg-white border-r border-slate-200/80 flex flex-col z-30 transition-all duration-300',
+        'fixed left-0 top-0 bottom-0 bg-[#0B1320] border-r border-white/10 flex flex-col z-30 transition-all duration-300 select-none',
         collapsed
-          ? '-translate-x-full lg:translate-x-0 lg:w-16'
-          : 'translate-x-0 w-64 shadow-2xl lg:shadow-xs',
+          ? '-translate-x-full lg:translate-x-0 lg:w-18'
+          : 'translate-x-0 w-64 shadow-2xl lg:shadow-md',
       )}
     >
-      {/* Brand Logo */}
+      {/* Brand Logo Header */}
       <div className={cn(
-        'flex items-center border-b border-slate-100 flex-shrink-0',
-        collapsed ? 'h-16 lg:justify-center px-4 lg:px-0' : 'h-16 px-4 gap-2.5',
+        'flex items-center border-b border-white/10 flex-shrink-0 bg-[#080E18]',
+        collapsed ? 'h-16 lg:justify-center px-3' : 'h-16 px-5 gap-3',
       )}>
         {collapsed ? (
-          <div className="hidden lg:block">
-            <PragatiPathIcon size={28} />
-          </div>
+          <Link to="/dashboard" title="PragatiPath Dashboard">
+            <PragatiPathIcon size={30} />
+          </Link>
         ) : (
-          <Logo size="sm" to="/dashboard" />
+          <Logo size="sm" to="/dashboard" variant="white" wordmarkVariant="white" />
         )}
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-5 custom-scrollbar">
-        {NAV_GROUPS.map(group => (
+      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6 custom-scrollbar">
+        {NAV_GROUPS.map((group) => (
           <div key={group.id}>
             {!collapsed && (
-              <p className="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-stone-400">
                 {group.label}
               </p>
             )}
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {group.items
-                .filter(item => !item.allowedRoles || item.allowedRoles.includes(currentRole))
-                .map(item => (
-                <li key={item.id}>
-                  <NavLink
-                    to={item.path}
-                    title={collapsed ? item.label : undefined}
-                    className={({ isActive }) => cn(
-                      'flex items-center gap-3 rounded-lg transition-all duration-150 relative text-sm',
-                      collapsed ? 'justify-center h-10 w-10 mx-auto' : 'px-3 py-2',
-                      isActive
-                        ? 'bg-[#0056D2] text-white font-semibold shadow-xs'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
-                    )}
-                  >
-                    <span className="flex-shrink-0">{ICON_MAP[item.icon]}</span>
-                    {!collapsed && (
-                      <span className="flex-1 min-w-0 truncate">{item.label}</span>
-                    )}
-                    {!collapsed && item.badge != null && (
-                      <span className={cn(
-                        'ml-auto text-[10px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center flex-shrink-0',
-                        item.path === '/dashboard' ? 'bg-white text-[#0056D2]' : 'bg-[#0056D2] text-white'
-                      )}>
-                        {item.badge}
-                      </span>
-                    )}
-                    {collapsed && item.badge != null && (
-                      <span className="absolute top-1 right-1 w-2 h-2 bg-[#0056D2] rounded-full" />
-                    )}
-                  </NavLink>
-                </li>
-              ))}
+                .filter((item) => !item.allowedRoles || item.allowedRoles.includes(currentRole))
+                .map((item) => (
+                  <li key={item.id}>
+                    <NavLink
+                      to={item.path}
+                      title={collapsed ? item.label : undefined}
+                      className={({ isActive }) => cn(
+                        'flex items-center gap-3 rounded-xl transition-all duration-150 relative text-xs sm:text-sm font-medium',
+                        collapsed ? 'justify-center h-11 w-11 mx-auto' : 'px-3.5 py-2.5',
+                        isActive
+                          ? 'bg-[#FF5500] text-white font-bold shadow-sm shadow-[#FF5500]/20'
+                          : 'text-stone-300 hover:bg-white/5 hover:text-white',
+                      )}
+                    >
+                      <span className="flex-shrink-0">{ICON_MAP[item.icon]}</span>
+                      {!collapsed && (
+                        <span className="flex-1 min-w-0 truncate">{item.label}</span>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
             </ul>
           </div>
         ))}
-
-        {/* Upgrade to Pro Card (visible when expanded) */}
-        {!collapsed && (
-          <div className="pt-2 px-1">
-            <div className="rounded-xl bg-gradient-to-br from-blue-50/80 to-indigo-50/50 border border-blue-100 p-3.5 relative overflow-hidden">
-              <div className="flex items-center gap-1.5 text-[#0056D2] mb-1 font-bold text-xs">
-                <MdWorkspacePremium className="text-base text-amber-500" />
-                <span>Upgrade to Pro</span>
-              </div>
-              <p className="text-[11px] text-slate-500 leading-tight mb-3">
-                Get advanced analytics, more exports and priority support.
-              </p>
-              <button
-                type="button"
-                className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-3 rounded-lg bg-[#0056D2] hover:bg-[#1A73E8] text-white text-xs font-semibold shadow-xs transition-colors"
-              >
-                <span>Upgrade Now</span>
-                <MdArrowForward size={12} />
-              </button>
-            </div>
-          </div>
-        )}
       </nav>
 
-      {/* Selected Project Switcher (Bottom Widget matching reference) */}
-      <div className="border-t border-slate-100 p-2 flex-shrink-0 bg-white">
+      {/* Selected Project Status Widget (Bottom) */}
+      <div className="border-t border-white/10 p-3 flex-shrink-0 bg-[#080E18]">
         {!collapsed ? (
           <Link
             to="/projects/PS-26122"
-            title="Open PS 26122 Project Dashboard"
-            className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors border border-slate-100 group"
+            title="Open Active Project Dashboard"
+            className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors border border-white/10 group"
           >
-            <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-200">
-              <img
-                src="https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=150&auto=format&fit=crop&q=60"
-                alt="PS 26122"
-                className="w-8 h-8 object-cover group-hover:scale-105 transition-transform"
-              />
+            <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-[#FF5500]/15 border border-[#FF5500]/30 text-[#FF5500] flex items-center justify-center">
+              <MdLayers size={18} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-bold text-slate-900 truncate flex items-center gap-1">
-                PS 26122
+              <div className="text-xs font-bold text-white truncate flex items-center gap-1">
+                PS-26122
               </div>
-              <p className="text-[10px] text-slate-500 truncate">
-                Pump P-101 · Unit 2
-              </p>
-              <p className="text-[9px] text-slate-400 truncate">
-                Report Date: 10 Sept 2026
+              <p className="text-[10px] text-stone-400 truncate">
+                Active Project Scope
               </p>
             </div>
-            <MdKeyboardArrowRight className="text-slate-400 group-hover:text-[#0056D2] group-hover:translate-x-0.5 transition-all text-base" />
+            <MdKeyboardArrowRight className="text-stone-400 group-hover:text-[#FF5500] group-hover:translate-x-0.5 transition-all text-base" />
           </Link>
         ) : (
           <Link
             to="/projects/PS-26122"
-            title="PS 26122"
-            className="w-10 h-10 mx-auto rounded-lg overflow-hidden flex items-center justify-center bg-slate-100 border border-slate-200 hover:border-[#0056D2] transition-colors"
+            title="PS-26122 Active Project"
+            className="w-10 h-10 mx-auto rounded-xl flex items-center justify-center bg-white/5 border border-white/10 hover:border-[#FF5500] text-[#FF5500] transition-colors"
           >
-            <img
-              src="https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=150&auto=format&fit=crop&q=60"
-              alt="PS 26122"
-              className="w-full h-full object-cover"
-            />
+            <MdLayers size={18} />
           </Link>
         )}
 
-        {/* Collapse toggle */}
-        <div className="mt-1 pt-1 flex justify-end">
+        {/* Collapse Toggle Control */}
+        <div className="mt-2 pt-2 border-t border-white/5 flex justify-end">
           <button
             type="button"
             onClick={onToggle}
-            className="text-slate-400 hover:text-slate-600 p-1 rounded-md text-xs flex items-center gap-1 transition-colors"
+            className="text-stone-400 hover:text-white p-1 rounded-md text-xs flex items-center gap-1 transition-colors"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <MdChevronRight size={18} /> : <MdChevronLeft size={18} />}
-            {!collapsed && <span className="text-[11px]">Collapse</span>}
+            {!collapsed && <span className="text-[11px] font-semibold">Collapse</span>}
           </button>
         </div>
       </div>

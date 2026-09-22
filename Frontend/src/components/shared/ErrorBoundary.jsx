@@ -43,7 +43,7 @@ export function RouteErrorBoundary() {
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            className="px-4 py-2 rounded-xl bg-[#0056D2] text-white font-bold text-xs hover:bg-blue-700 cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+            className="px-5 py-2.5 rounded-full bg-[#0B1320] text-white font-bold text-xs hover:bg-[#FF5500] cursor-pointer inline-flex items-center gap-1.5 shadow-sm transition-colors"
           >
             <MdHome size={16} />
             <span>Go to Dashboard</span>

@@ -54,30 +54,53 @@ export function Logo({
   const current = sizeConfig[size] || sizeConfig.md;
 
   const wordmarkColors = {
+    // Light backgrounds (cream #FAF8F5, white)
+    primary: {
+      pragati: 'text-[#0B1320]',
+      path: 'text-[#FF5500]',
+      tagline: 'text-stone-500',
+    },
+    dark: {
+      pragati: 'text-[#0B1320]',
+      path: 'text-[#FF5500]',
+      tagline: 'text-stone-500',
+    },
     orange: {
       pragati: 'text-[#0B1320]',
       path: 'text-[#FF5500]',
       tagline: 'text-stone-500',
     },
-    primary: {
-      pragati: 'text-[#0B192C]',
-      path: 'text-[#0056D2]',
-      tagline: 'text-slate-500',
-    },
-    monochrome: {
-      pragati: 'text-[#0B192C]',
-      path: 'text-[#0B192C]',
-      tagline: 'text-slate-600',
+    // Dark backgrounds (near-black #0B1320, sidebar, footer)
+    white: {
+      pragati: 'text-white',
+      path: 'text-[#FF5500]',
+      tagline: 'text-stone-300',
     },
     reversed: {
       pragati: 'text-white',
-      path: 'text-[#60A5FA]',
-      tagline: 'text-blue-200/80',
+      path: 'text-[#FF5500]',
+      tagline: 'text-stone-300',
+    },
+    'dark-bg': {
+      pragati: 'text-white',
+      path: 'text-[#FF5500]',
+      tagline: 'text-stone-300',
+    },
+    // Orange hero / highlight cards
+    'on-orange': {
+      pragati: 'text-white',
+      path: 'text-[#0B1320]',
+      tagline: 'text-white/80',
+    },
+    monochrome: {
+      pragati: 'text-[#0B1320]',
+      path: 'text-[#0B1320]',
+      tagline: 'text-stone-600',
     },
   }[variant] || {
-    pragati: 'text-[#0B192C]',
-    path: 'text-[#0056D2]',
-    tagline: 'text-slate-500',
+    pragati: 'text-[#0B1320]',
+    path: 'text-[#FF5500]',
+    tagline: 'text-stone-500',
   };
 
   const content = (

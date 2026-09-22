@@ -1,5 +1,6 @@
 /**
  * DataTable — Reusable sortable, paginated table
+ * Clienter-inspired warm neutral table surfaces, subtle borders, orange sort indicators, and clean pagination.
  */
 import { useState, useMemo } from 'react';
 import {
@@ -61,7 +62,7 @@ export function DataTable({
 
   const handleSort = (key) => {
     if (sortKey === key) {
-      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortKey(key);
       setSortDir('asc');
@@ -71,14 +72,14 @@ export function DataTable({
 
   if (loading) {
     return (
-      <div className="overflow-hidden rounded-lg border border-surface-border">
+      <div className="overflow-hidden rounded-2xl border border-[#E8E1D5] bg-white shadow-2xs">
         <div className="animate-pulse">
-          <div className="bg-surface-muted h-10 border-b border-surface-border" />
+          <div className="bg-[#FAF8F5] h-11 border-b border-[#E8E1D5]" />
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-12 border-b border-surface-border flex items-center px-4 gap-4">
-              <div className="h-3 bg-surface-muted rounded w-1/4" />
-              <div className="h-3 bg-surface-muted rounded w-1/3" />
-              <div className="h-3 bg-surface-muted rounded w-1/6" />
+            <div key={i} className="h-12 border-b border-stone-100 flex items-center px-4 gap-4">
+              <div className="h-3 bg-stone-200 rounded w-1/4" />
+              <div className="h-3 bg-stone-200 rounded w-1/3" />
+              <div className="h-3 bg-stone-200 rounded w-1/6" />
             </div>
           ))}
         </div>
@@ -88,57 +89,57 @@ export function DataTable({
 
   if (!data.length) {
     return (
-      <div className={cn('border border-surface-border rounded-lg', className)}>
+      <div className={cn('border border-[#E8E1D5] rounded-2xl bg-white p-8 shadow-2xs text-center', className)}>
         <EmptyState title={emptyTitle} description={emptyDescription} />
       </div>
     );
   }
 
   return (
-    <div className={cn('border border-surface-border rounded-lg overflow-hidden bg-white', className)}>
+    <div className={cn('border border-[#E8E1D5] rounded-2xl overflow-hidden bg-white shadow-2xs', className)}>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left border-collapse">
+        <table className="w-full text-xs sm:text-sm text-left border-collapse">
           <thead>
-            <tr>
-              {columns.map(col => (
+            <tr className="border-b border-[#E8E1D5] bg-[#FAF8F5]">
+              {columns.map((col) => (
                 <th
                   key={col.key}
                   style={col.width ? { width: col.width } : undefined}
                   className={cn(
-                    'px-4 py-3 text-xs font-semibold uppercase tracking-wider text-ink-muted bg-surface-light border-b border-surface-border whitespace-nowrap',
-                    col.sortable && 'cursor-pointer select-none hover:text-ink-primary',
+                    'px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-stone-500 whitespace-nowrap',
+                    col.sortable && 'cursor-pointer select-none hover:text-[#0B1320]',
                     col.headerClass,
                   )}
                   onClick={col.sortable ? () => handleSort(col.key) : undefined}
                 >
-                  <span className="inline-flex items-center gap-1">
+                  <span className="inline-flex items-center gap-1.5">
                     {col.label}
                     {col.sortable && sortKey === col.key && (
                       sortDir === 'asc'
-                        ? <MdArrowUpward size={12} className="text-brand-blue" />
-                        : <MdArrowDownward size={12} className="text-brand-blue" />
+                        ? <MdArrowUpward size={13} className="text-[#FF5500]" />
+                        : <MdArrowDownward size={13} className="text-[#FF5500]" />
                     )}
                   </span>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-stone-100">
             {paginated.map((row, idx) => (
               <tr
                 key={row[rowKey] ?? idx}
                 className={cn(
-                  'border-b border-surface-border last:border-b-0',
-                  striped && idx % 2 === 1 && 'bg-surface-light',
-                  onRowClick && 'cursor-pointer hover:bg-brand-blue-xlight transition-colors',
-                  !onRowClick && 'hover:bg-surface-light transition-colors',
+                  'transition-colors',
+                  striped && idx % 2 === 1 && 'bg-[#FAF8F5]/40',
+                  onRowClick && 'cursor-pointer hover:bg-[#FAF8F5]',
+                  !onRowClick && 'hover:bg-[#FAF8F5]',
                 )}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
-                {columns.map(col => (
+                {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={cn('px-4 py-3 text-ink-secondary align-middle', col.className)}
+                    className={cn('px-4 py-3 text-stone-700 align-middle', col.className)}
                   >
                     {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '—')}
                   </td>
@@ -149,17 +150,17 @@ export function DataTable({
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="px-4 py-3 border-t border-surface-border flex items-center justify-between bg-white">
-          <p className="text-xs text-ink-muted">
-            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, sorted.length)} of {sorted.length}
+        <div className="px-5 py-3.5 border-t border-[#E8E1D5] flex items-center justify-between bg-white">
+          <p className="text-xs text-stone-500">
+            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, sorted.length)} of {sorted.length} records
           </p>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="w-8 h-8 flex items-center justify-center rounded text-ink-muted hover:bg-surface-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-600 hover:bg-[#FAF8F5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <MdChevronLeft size={18} />
             </button>
@@ -170,10 +171,10 @@ export function DataTable({
                   key={p}
                   onClick={() => setPage(p)}
                   className={cn(
-                    'w-8 h-8 flex items-center justify-center rounded text-xs font-medium transition-colors',
+                    'w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-colors',
                     page === p
-                      ? 'bg-brand-blue text-white'
-                      : 'text-ink-muted hover:bg-surface-muted',
+                      ? 'bg-[#0B1320] text-white shadow-2xs'
+                      : 'text-stone-600 hover:bg-[#FAF8F5]',
                   )}
                 >
                   {p}
@@ -181,9 +182,9 @@ export function DataTable({
               );
             })}
             <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="w-8 h-8 flex items-center justify-center rounded text-ink-muted hover:bg-surface-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-600 hover:bg-[#FAF8F5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <MdChevronRight size={18} />
             </button>
@@ -193,3 +194,5 @@ export function DataTable({
     </div>
   );
 }
+
+export default DataTable;

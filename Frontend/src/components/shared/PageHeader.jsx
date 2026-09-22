@@ -1,19 +1,8 @@
 /**
  * PageHeader — Global Standardized Page Header Component for PragatiPath
  *
- * Canonical Reference: Reports & Export Screen Header
- *
- * Strict Design Specifications:
- * - Background: #3158C9 to #3F63D5 linear blue gradient
- * - Border radius: 20px (rounded-[20px])
- * - Minimum height: 138px (min-h-[138px])
- * - Horizontal padding: 32px (px-6 sm:px-8), Vertical: py-5 sm:py-6
- * - Icon container: 58px x 58px, rounded-[16px], bg-white/15, border 1px solid rgba(255,255,255,0.20)
- * - Gap between icon and title: 20px (gap-5)
- * - Title: 24-28px (text-2xl sm:text-[26px]), font-bold (700), #FFFFFF
- * - Subtitle: 15-17px (text-[15px]), font-normal (400-500), rgba(255,255,255,0.80)
- * - Vertical alignment: Perfectly centered flex container
- * - Responsive: Stacks cleanly on smaller screens while preserving identical visual identity
+ * Clienter-inspired dark navy surface, subtle technical grid overlay,
+ * signature orange icon container, white bold typography, and pill actions.
  */
 import React from 'react';
 import { cn } from '../../utils/helpers';
@@ -31,19 +20,22 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        'w-full min-h-[138px] rounded-[20px] px-6 sm:px-8 py-5 sm:py-6',
-        'bg-gradient-to-r from-[#3158C9] to-[#3F63D5]',
-        'shadow-[0_4px_20px_rgba(49,88,201,0.18)] border border-[#4870E8]/30',
+        'relative w-full min-h-[128px] rounded-3xl px-6 sm:px-8 py-5 sm:py-6',
+        'bg-[#0B1320] text-white',
+        'shadow-md border border-white/10 overflow-hidden',
         'flex flex-col md:flex-row md:items-center justify-between gap-4',
         'transition-all duration-200',
         className
       )}
     >
+      {/* Subtle background technical grid overlay */}
+      <div className="absolute inset-0 bg-technical-grid opacity-20 pointer-events-none rounded-3xl" />
+
       {/* Left Section: Icon Container + Title & Subtitle */}
-      <div className="flex items-center gap-5 min-w-0">
-        {/* Icon Container: 58px x 58px, 16px radius, translucent white with border */}
+      <div className="relative z-10 flex items-center gap-5 min-w-0">
+        {/* Icon Container with signature orange accent */}
         {icon && (
-          <div className="w-[58px] h-[58px] rounded-[16px] bg-white/15 border border-white/20 flex items-center justify-center text-white text-[28px] shrink-0 backdrop-blur-xs shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-[#FF5500]/15 border border-[#FF5500]/30 flex items-center justify-center text-[#FF5500] text-2xl shrink-0 shadow-sm">
             {icon}
           </div>
         )}
@@ -54,7 +46,7 @@ export function PageHeader({
             {title}
           </h1>
           {subtitle && (
-            <p className="text-[15px] font-normal text-white/80 leading-normal mt-1">
+            <p className="text-xs sm:text-sm font-normal text-stone-300 leading-normal mt-1">
               {subtitle}
             </p>
           )}
@@ -63,7 +55,7 @@ export function PageHeader({
 
       {/* Right Section: Page-Specific Controls / Actions */}
       {rightControls && (
-        <div className="flex flex-wrap items-center gap-3 shrink-0 self-start md:self-auto">
+        <div className="relative z-10 flex flex-wrap items-center gap-3 shrink-0 self-start md:self-auto">
           {rightControls}
         </div>
       )}
@@ -71,6 +63,4 @@ export function PageHeader({
   );
 }
 
-// Export both PageHeader and PageHero as aliases for full backward compatibility
-export const PageHero = PageHeader;
 export default PageHeader;
