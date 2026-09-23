@@ -12,7 +12,10 @@ function validateEnv() {
 
   if (missingCritical.length > 0) {
     console.error(`[CRITICAL] Server startup halted: Missing required environment variable(s): ${missingCritical.join(', ')}`);
-    console.error('Please configure them in server/.env before launching.');
+    console.error('Please configure them in environment variables before launching.');
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1);
+    }
   }
 
   const emailVars = ['EMAIL_USER', 'EMAIL_HOST'];

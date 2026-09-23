@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'pragatipath_super_secure_jwt_secret_2026_sih';
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'pragatipath_dev_jwt_secret_key');
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('[FATAL] JWT_SECRET must be configured in environment variables for production.');
+}
 
 /**
  * Middleware to authenticate requests using JWT Bearer tokens.

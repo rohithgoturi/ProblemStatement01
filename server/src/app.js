@@ -13,7 +13,14 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const app = express();
 
 // Middleware for CORS, JSON and URL-encoded data
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
