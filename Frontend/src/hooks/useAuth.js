@@ -22,6 +22,20 @@ function getStoredAuth() {
   }
 }
 
+/**
+ * Strictly sanitizes user data before persistent storage.
+ * Security Policy: Never persist email, password, confirmPassword, or passwordHash to localStorage.
+ */
+function sanitizeUserForStorage(user) {
+  if (!user) return null;
+  return {
+    id: user.id || user._id,
+    name: user.name,
+    role: user.role,
+    avatar: user.avatar || null,
+  };
+}
+
 export function useAuth() {
   const [user, setUser] = useState(() => getStoredAuth());
   const [loading, setLoading] = useState(false);
@@ -37,7 +51,7 @@ export function useAuth() {
       if (!isMounted) return;
       if (res.data && res.data.id) {
         setUser(res.data);
-        localStorage.setItem(AUTH_KEY, JSON.stringify(res.data));
+        localStorage.setItem(AUTH_KEY, JSON.stringify(sanitizeUserForStorage(res.data)));
       } else if (res.error) {
         // Token invalid or user no longer exists
         setUser(null);
@@ -62,7 +76,7 @@ export function useAuth() {
         localStorage.setItem(TOKEN_KEY, data.token);
       }
       setUser(data.user);
-      localStorage.setItem(AUTH_KEY, JSON.stringify(data.user));
+      localStorage.setItem(AUTH_KEY, JSON.stringify(sanitizeUserForStorage(data.user)));
     }
     setLoading(false);
     return { data, error: err };
@@ -79,7 +93,7 @@ export function useAuth() {
         localStorage.setItem(TOKEN_KEY, data.token);
       }
       setUser(data.user);
-      localStorage.setItem(AUTH_KEY, JSON.stringify(data.user));
+      localStorage.setItem(AUTH_KEY, JSON.stringify(sanitizeUserForStorage(data.user)));
     }
     setLoading(false);
     return { data, error: err };
@@ -99,7 +113,7 @@ export function useAuth() {
     const res = await getCurrentUser();
     if (res.data && res.data.id) {
       setUser(res.data);
-      localStorage.setItem(AUTH_KEY, JSON.stringify(res.data));
+      localStorage.setItem(AUTH_KEY, JSON.stringify(sanitizeUserForStorage(res.data)));
     }
     return res;
   }, []);

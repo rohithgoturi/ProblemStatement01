@@ -5,6 +5,16 @@
  */
 const nodemailer = require('nodemailer');
 
+function maskEmail(email) {
+  if (!email || typeof email !== 'string') return '***';
+  const parts = email.split('@');
+  if (parts.length !== 2) return '***';
+  const user = parts[0];
+  const domain = parts[1];
+  const maskedUser = user.length <= 2 ? user[0] + '***' : user[0] + '***' + user[user.length - 1];
+  return `${maskedUser}@${domain}`;
+}
+
 class EmailService {
   constructor() {
     this.transporter = null;
@@ -28,10 +38,10 @@ class EmailService {
           pass,
         },
       });
-      console.log(`[EmailService] Transporter initialized for ${user} via ${host}:${port}`);
+      console.log(`[EmailService] Transporter initialized for ${maskEmail(user)} via ${host}:${port}`);
     } else {
       this.transporter = null;
-      console.log('[EmailService] SMTP credentials not fully configured. Emails will be logged to server console in development mode.');
+      console.log('[EmailService] SMTP credentials not fully configured. Running in secure simulated mode.');
     }
   }
 
@@ -82,7 +92,7 @@ PragatiPath`;
     `;
 
     if (!this.transporter) {
-      console.log(`[EmailService:MOCK] Welcome email prepared for ${toEmail}:\n${textContent}`);
+      console.log(`[EmailService:MOCK] Welcome email prepared for ${maskEmail(toEmail)}`);
       return { success: true, simulated: true };
     }
 
@@ -94,10 +104,10 @@ PragatiPath`;
         text: textContent,
         html: htmlContent,
       });
-      console.log(`[EmailService] Welcome email sent to ${toEmail} (Message ID: ${info.messageId})`);
+      console.log(`[EmailService] Welcome email sent to ${maskEmail(toEmail)} (Message ID: ${info.messageId})`);
       return { success: true, messageId: info.messageId };
     } catch (err) {
-      console.error(`[EmailService] Failed to send welcome email to ${toEmail}:`, err.message);
+      console.error(`[EmailService] Failed to send welcome email to ${maskEmail(toEmail)}:`, err.message);
       return { success: false, error: err.message };
     }
   }
@@ -159,8 +169,8 @@ PragatiPath`;
     `;
 
     if (!this.transporter) {
-      console.log(`[EmailService:MOCK] Password reset link for ${toEmail}:\n${resetUrl}`);
-      return { success: true, simulated: true, resetUrl };
+      console.log(`[EmailService:MOCK] Password reset email prepared securely for ${maskEmail(toEmail)}`);
+      return { success: true, simulated: true };
     }
 
     try {
@@ -171,11 +181,11 @@ PragatiPath`;
         text: textContent,
         html: htmlContent,
       });
-      console.log(`[EmailService] Password reset email sent to ${toEmail} (Message ID: ${info.messageId})`);
-      return { success: true, messageId: info.messageId, resetUrl };
+      console.log(`[EmailService] Password reset email sent to ${maskEmail(toEmail)} (Message ID: ${info.messageId})`);
+      return { success: true, messageId: info.messageId };
     } catch (err) {
-      console.error(`[EmailService] Failed to send password reset email to ${toEmail}:`, err.message);
-      return { success: false, error: err.message, resetUrl };
+      console.error(`[EmailService] Failed to send password reset email to ${maskEmail(toEmail)}:`, err.message);
+      return { success: false, error: err.message };
     }
   }
 }

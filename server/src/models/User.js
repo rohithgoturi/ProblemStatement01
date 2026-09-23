@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters long'],
+      select: false,
     },
     role: {
       type: String,
@@ -34,15 +35,38 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
       index: true,
+      select: false,
     },
     resetPasswordExpires: {
       type: Date,
       default: null,
+      select: false,
     },
   },
   {
     timestamps: true,
   }
 );
+
+// Automatic sanitization on serialization: strictly strip password and reset tokens
+userSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpires;
+    delete ret.__v;
+    return ret;
+  },
+});
+
+userSchema.set('toObject', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpires;
+    delete ret.__v;
+    return ret;
+  },
+});
 
 module.exports = mongoose.model('User', userSchema);

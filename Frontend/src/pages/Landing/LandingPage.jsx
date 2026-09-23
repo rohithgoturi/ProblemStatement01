@@ -293,7 +293,7 @@ export default function LandingPage() {
 
               <div className="flex items-center gap-2 text-xs font-semibold self-start sm:self-auto">
                 <span className="px-2.5 py-1 rounded-full bg-[#FFF2EB] text-[#FF5500] border border-[#FFD8C7]">
-                  Civil Project PS-26122
+                  Infrastructure Project Management
                 </span>
               </div>
             </div>

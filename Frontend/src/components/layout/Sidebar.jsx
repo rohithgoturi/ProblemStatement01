@@ -131,7 +131,7 @@ export function Sidebar({ collapsed = false, onToggle }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-xs font-bold text-white truncate flex items-center gap-1">
-                PS-26122
+                Metro Project
               </div>
               <p className="text-[10px] text-stone-400 truncate">
                 Active Project Scope
@@ -142,7 +142,7 @@ export function Sidebar({ collapsed = false, onToggle }) {
         ) : (
           <Link
             to="/projects/PS-26122"
-            title="PS-26122 Active Project"
+            title="Active Project Workspace"
             className="w-10 h-10 mx-auto rounded-xl flex items-center justify-center bg-white/5 border border-white/10 hover:border-[#FF5500] text-[#FF5500] transition-colors"
           >
             <MdLayers size={18} />

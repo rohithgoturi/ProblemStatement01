@@ -58,7 +58,15 @@ exports.updateUserRole = async (req, res, next) => {
       success: true,
       message: `User role successfully updated to '${role}'`,
       data: {
-        user: updatedUser,
+        user: {
+          id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          avatar: updatedUser.avatar,
+          createdAt: updatedUser.createdAt,
+          updatedAt: updatedUser.updatedAt,
+        },
       },
     });
   } catch (err) {

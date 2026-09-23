@@ -164,11 +164,13 @@ export default function ResetPasswordPage() {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    autoComplete="username"
                     required
                     value={requestEmail}
                     onChange={(e) => setRequestEmail(e.target.value)}
-                    placeholder="engineer@pragatipath.com"
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all"
+                    placeholder=""
+                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all"
                   />
                 </div>
                 <button
@@ -228,11 +230,13 @@ export default function ResetPasswordPage() {
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    name="newPassword"
+                    autoComplete="new-password"
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password"
-                    className="w-full pl-10 pr-10 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all"
+                    placeholder=""
+                    className="w-full pl-10 pr-10 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all"
                   />
                   <button
                     type="button"
@@ -254,11 +258,13 @@ export default function ResetPasswordPage() {
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    autoComplete="new-password"
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Repeat new password"
-                    className="w-full pl-10 pr-10 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all"
+                    placeholder=""
+                    className="w-full pl-10 pr-10 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all"
                   />
                 </div>
               </div>

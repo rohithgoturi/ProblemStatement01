@@ -141,7 +141,7 @@ export default function SchedulePage() {
       {/* 1. PAGE HEADER */}
       <PageHeader
         title="Schedule Baseline Workspace"
-        subtitle="PS-26122 • Real Schedule Activities & WBS Hierarchy"
+        subtitle="Real Schedule Activities & WBS Hierarchy • Planning-to-Execution Bridge"
         icon={<MdCalendarToday />}
         actions={
           <div className="flex items-center gap-2.5">

@@ -123,17 +123,22 @@ export default function SettingsPage() {
 
     setSecuritySaving(true);
     try {
-      const res = await changePassword(oldPassword, newPassword);
-      if (res.success) {
+      const res = await changePassword({ currentPassword: oldPassword, newPassword });
+      if (!res.error) {
         setSecurityMsg({ type: 'success', text: 'Password changed successfully!' });
         setOldPassword('');
         setNewPassword('');
         setConfirmPassword('');
+      } else {
+        setSecurityMsg({
+          type: 'error',
+          text: res.error || 'Failed to change password.',
+        });
       }
     } catch (err) {
       setSecurityMsg({
         type: 'error',
-        text: err.response?.data?.message || 'Failed to change password.',
+        text: err.response?.data?.message || err.message || 'Failed to change password.',
       });
     } finally {
       setSecuritySaving(false);

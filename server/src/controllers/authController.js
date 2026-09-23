@@ -198,7 +198,7 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    const user = await User.findOne({ email: normalizedEmail });
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -342,8 +342,8 @@ exports.changePassword = async (req, res, next) => {
       });
     }
 
-    // Load full user with password
-    const user = await User.findById(req.user._id);
+    // Load full user with password for verification
+    const user = await User.findById(req.user._id).select('+password');
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -381,16 +381,32 @@ exports.changePassword = async (req, res, next) => {
  */
 exports.getTeam = async (req, res, next) => {
   try {
+    const currentUserId = req.user?._id?.toString();
+    const isAdmin = req.user?.role === 'admin';
+
     const users = await User.find()
       .select('name email role avatar createdAt')
       .sort({ createdAt: 1 });
+
+    const sanitizedMembers = users.map((u) => {
+      const isSelf = currentUserId && u._id.toString() === currentUserId;
+      return {
+        _id: u._id,
+        name: u.name,
+        // Only expose email to self or system admin to prevent email harvesting
+        email: (isSelf || isAdmin) ? u.email : undefined,
+        role: u.role,
+        avatar: u.avatar,
+        createdAt: u.createdAt,
+      };
+    });
 
     return res.status(200).json({
       success: true,
       message: 'Project team members retrieved successfully',
       data: {
-        total: users.length,
-        members: users,
+        total: sanitizedMembers.length,
+        members: sanitizedMembers,
       },
     });
   } catch (error) {
@@ -505,7 +521,7 @@ exports.resetPassword = async (req, res, next) => {
     const user = await User.findOne({
       resetPasswordToken: hashedResetToken,
       resetPasswordExpires: { $gt: Date.now() },
-    });
+    }).select('+resetPasswordToken +resetPasswordExpires +password');
 
     if (!user) {
       return res.status(400).json({

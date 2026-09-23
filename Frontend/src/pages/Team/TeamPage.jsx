@@ -183,7 +183,9 @@ export default function TeamPage({ isPublic = false }) {
 
                       <p className="text-xs text-stone-500 truncate flex items-center gap-1 mt-1">
                         <MdMailOutline size={14} className="text-stone-400 flex-shrink-0" />
-                        <span className="truncate">{member.email}</span>
+                        <span className="truncate">
+                          {isCurrentUser ? (member.email || currentUser?.email) : (member.email || 'Authorized Project Team')}
+                        </span>
                       </p>
 
                       <div className="mt-3.5">

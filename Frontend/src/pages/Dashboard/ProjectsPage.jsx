@@ -48,7 +48,7 @@ export default function ProjectsPage() {
   const realProjects = [
     {
       id: 'PS-26122',
-      name: 'PragatiPath Infrastructure Project 26122',
+      name: 'PragatiPath Infrastructure Project',
       unit: 'Unit 1 · Civil & Mechanical',
       location: 'Site Alpha',
       activitiesCount: totalAct,

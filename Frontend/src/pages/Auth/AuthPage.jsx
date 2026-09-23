@@ -25,7 +25,6 @@ import {
   MdCheck,
   MdHelpOutline,
 } from 'react-icons/md';
-import { FcGoogle } from 'react-icons/fc';
 import { Logo } from '../../components/shared/Logo';
 import { useAuth } from '../../hooks/useAuth';
 import { useRole } from '../../context/RoleContext';
@@ -70,20 +69,28 @@ export default function AuthPage({ initialMode }) {
   const [signupError, setSignupError] = useState('');
   const [signupSuccess, setSignupSuccess] = useState('');
 
-  // Shared alerts
-  const [googleNotice, setGoogleNotice] = useState('');
-
   // Forgot password modal state
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [isForgotLoading, setIsForgotLoading] = useState(false);
   const [forgotSuccess, setForgotSuccess] = useState(false);
 
-  // Clear errors when mode changes
+  // Clear form state, errors, and passwords on mount and when switching between LOGIN and SIGNUP
   useEffect(() => {
     setLoginError('');
     setSignupError('');
-    setGoogleNotice('');
+    setLoginPassword('');
+    setLoginIdentifier('');
+    setLoginShowPassword(false);
+    setSignupData({
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: 'project_manager',
+    });
+    setSignupShowPassword(false);
+    setSignupShowConfirmPassword(false);
   }, [mode]);
 
   // Roles available for civil engineering teams
@@ -98,40 +105,13 @@ export default function AuthPage({ initialMode }) {
   const handleRoleQuickSelect = (roleKey) => {
     setLoginRole(roleKey);
     setLoginError('');
-    setGoogleNotice('');
-
-    const roleEmails = {
-      planner: 'planner@pragatipath.com',
-      site_supervisor: 'supervisor@pragatipath.com',
-      project_manager: 'manager@pragatipath.com',
-      admin: 'admin@pragatipath.com',
-    };
-
-    setLoginIdentifier(roleEmails[roleKey] || 'user@pragatipath.com');
     setLoginPassword('');
-  };
-
-  // Google OAuth click handler
-  const handleGoogleAuth = () => {
-    setLoginError('');
-    setSignupError('');
-    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (googleClientId) {
-      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${encodeURIComponent(
-        window.location.origin + '/auth/google/callback'
-      )}&response_type=code&scope=openid%20email%20profile`;
-    } else {
-      setGoogleNotice(
-        'Google Single Sign-On requires VITE_GOOGLE_CLIENT_ID configuration. Please sign in with email & password or configure Google credentials in your environment.'
-      );
-    }
   };
 
   // Handle Login Submit
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError('');
-    setGoogleNotice('');
 
     if (!loginIdentifier.trim() || !loginPassword) {
       setLoginError('Please enter both your work email and password.');
@@ -165,7 +145,6 @@ export default function AuthPage({ initialMode }) {
     e.preventDefault();
     setSignupError('');
     setSignupSuccess('');
-    setGoogleNotice('');
 
     if (!signupData.name.trim()) {
       setSignupError('Please enter your full name');
@@ -399,20 +378,6 @@ export default function AuthPage({ initialMode }) {
                 </div>
               )}
 
-              {/* Google Notice Banner */}
-              {googleNotice && (
-                <div className="mb-4 p-3.5 rounded-xl bg-[#FFF2EB] border border-[#FFD8C7] text-xs font-medium text-[#0B1320] flex items-start justify-between gap-2">
-                  <span>{googleNotice}</span>
-                  <button
-                    type="button"
-                    onClick={() => setGoogleNotice('')}
-                    className="text-stone-400 hover:text-stone-700 shrink-0 cursor-pointer"
-                  >
-                    <MdClose size={16} />
-                  </button>
-                </div>
-              )}
-
               {/* Success Banner */}
               {signupSuccess && (
                 <div className="mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 flex items-center gap-2">
@@ -455,11 +420,13 @@ export default function AuthPage({ initialMode }) {
                       </span>
                       <input
                         type="email"
+                        name="email"
+                        autoComplete="username"
                         required
                         value={signupData.email}
                         onChange={(e) => setSignupData((p) => ({ ...p, email: e.target.value }))}
-                        placeholder="engineer@project.com"
-                        className="w-full pl-9 pr-3 py-2 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
+                        placeholder=""
+                        className="w-full pl-9 pr-3 py-2 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
                         disabled={signupLoading}
                       />
                     </div>
@@ -507,11 +474,13 @@ export default function AuthPage({ initialMode }) {
                       </span>
                       <input
                         type={signupShowPassword ? 'text' : 'password'}
+                        name="password"
+                        autoComplete="new-password"
                         required
                         value={signupData.password}
                         onChange={(e) => setSignupData((p) => ({ ...p, password: e.target.value }))}
-                        placeholder="••••••••"
-                        className="w-full pl-9 pr-9 py-2 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
+                        placeholder=""
+                        className="w-full pl-9 pr-9 py-2 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
                         disabled={signupLoading}
                       />
                       <button
@@ -535,11 +504,13 @@ export default function AuthPage({ initialMode }) {
                       </span>
                       <input
                         type={signupShowConfirmPassword ? 'text' : 'password'}
+                        name="confirmPassword"
+                        autoComplete="new-password"
                         required
                         value={signupData.confirmPassword}
                         onChange={(e) => setSignupData((p) => ({ ...p, confirmPassword: e.target.value }))}
-                        placeholder="••••••••"
-                        className="w-full pl-9 pr-9 py-2 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
+                        placeholder=""
+                        className="w-full pl-9 pr-9 py-2 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
                         disabled={signupLoading}
                       />
                       <button
@@ -570,26 +541,6 @@ export default function AuthPage({ initialMode }) {
                   )}
                 </button>
               </form>
-
-              {/* Divider */}
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#E8E1D5]" />
-                </div>
-                <div className="relative flex justify-center text-[11px] uppercase tracking-wider font-bold">
-                  <span className="bg-white px-3 text-stone-400">or</span>
-                </div>
-              </div>
-
-              {/* Google Signup Button */}
-              <button
-                type="button"
-                onClick={handleGoogleAuth}
-                className="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-full bg-[#FAF8F5] hover:bg-stone-100 text-[#0B1320] border border-[#E8E1D5] text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer"
-              >
-                <FcGoogle size={20} />
-                <span>Continue with Google</span>
-              </button>
             </div>
           ) : (
             /* ===================================================================== */
@@ -619,27 +570,13 @@ export default function AuthPage({ initialMode }) {
                 </div>
               )}
 
-              {/* Google Notice Banner */}
-              {googleNotice && (
-                <div className="mb-4 p-3.5 rounded-xl bg-[#FFF2EB] border border-[#FFD8C7] text-xs font-medium text-[#0B1320] flex items-start justify-between gap-2">
-                  <span>{googleNotice}</span>
-                  <button
-                    type="button"
-                    onClick={() => setGoogleNotice('')}
-                    className="text-stone-400 hover:text-stone-700 shrink-0 cursor-pointer"
-                  >
-                    <MdClose size={16} />
-                  </button>
-                </div>
-              )}
-
               {/* Quick Role Fill Pills */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
                     Quick Role Access
                   </span>
-                  <span className="text-[10px] text-stone-400">Pre-fills test credentials</span>
+                  <span className="text-[10px] text-stone-400">Select workspace role</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {roles.map((r) => {
@@ -677,11 +614,13 @@ export default function AuthPage({ initialMode }) {
                     </span>
                     <input
                       type="email"
+                      name="email"
+                      autoComplete="username"
                       required
                       value={loginIdentifier}
                       onChange={(e) => setLoginIdentifier(e.target.value)}
-                      placeholder="engineer@pragatipath.com"
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
+                      placeholder=""
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
                       disabled={loginLoading}
                     />
                   </div>
@@ -706,11 +645,13 @@ export default function AuthPage({ initialMode }) {
                     </span>
                     <input
                       type={loginShowPassword ? 'text' : 'password'}
+                      name="password"
+                      autoComplete="current-password"
                       required
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full pl-10 pr-10 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
+                      placeholder=""
+                      className="w-full pl-10 pr-10 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 focus:bg-white transition-all shadow-2xs"
                       disabled={loginLoading}
                     />
                     <button
@@ -740,26 +681,6 @@ export default function AuthPage({ initialMode }) {
                   )}
                 </button>
               </form>
-
-              {/* Divider */}
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#E8E1D5]" />
-                </div>
-                <div className="relative flex justify-center text-[11px] uppercase tracking-wider font-bold">
-                  <span className="bg-white px-3 text-stone-400">or</span>
-                </div>
-              </div>
-
-              {/* Google Login Button */}
-              <button
-                type="button"
-                onClick={handleGoogleAuth}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-full bg-[#FAF8F5] hover:bg-stone-100 text-[#0B1320] border border-[#E8E1D5] text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer"
-              >
-                <FcGoogle size={20} />
-                <span>Continue with Google</span>
-              </button>
             </div>
           )}
 
@@ -855,11 +776,13 @@ export default function AuthPage({ initialMode }) {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    autoComplete="username"
                     required
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
-                    placeholder="engineer@pragatipath.com"
-                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] placeholder:text-stone-400 focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all shadow-2xs"
+                    placeholder=""
+                    className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#E8E1D5] rounded-xl text-xs sm:text-sm text-[#0B1320] focus:outline-none focus:border-[#FF5500] focus:ring-2 focus:ring-[#FF5500]/10 transition-all shadow-2xs"
                   />
                 </div>
 

@@ -65,7 +65,7 @@ export default function ProjectDashboardPage() {
 
       {/* Standardized Page Header */}
       <PageHeader
-        title="PS-26122 • Infrastructure Project Workspace"
+        title="Infrastructure Project Workspace"
         subtitle="Schedule linking, AI progress extraction & planner review hub"
         icon={<MdDashboard />}
         actions={
