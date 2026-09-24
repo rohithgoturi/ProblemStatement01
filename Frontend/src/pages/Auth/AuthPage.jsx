@@ -245,7 +245,7 @@ export default function AuthPage({ initialMode }) {
         {/* SIGNUP: Left (0%) | LOGIN: Right (100%)                                  */}
         {/* ========================================================================= */}
         <div
-          className={`w-full lg:w-1/2 h-44 sm:h-60 lg:h-full lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 bg-[#0B1320] text-white z-20 overflow-hidden flex flex-col justify-between transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          className={`relative w-full lg:w-1/2 h-48 sm:h-60 lg:h-full lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 bg-[#0B1320] text-white z-20 overflow-hidden flex flex-col justify-between transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
             isSignup
               ? 'order-1 lg:translate-x-0'
               : 'order-1 lg:translate-x-full'
@@ -343,7 +343,7 @@ export default function AuthPage({ initialMode }) {
         {/* SIGNUP: Right (0%) | LOGIN: Left (-100%)                                 */}
         {/* ========================================================================= */}
         <div
-          className={`w-full lg:w-1/2 p-4 sm:p-8 lg:p-12 flex flex-col justify-between bg-white z-10 transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          className={`relative w-full lg:w-1/2 p-4 sm:p-8 lg:p-12 flex flex-col justify-between bg-white z-10 transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
             isSignup
               ? 'order-2 lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 lg:left-1/2 lg:translate-x-0'
               : 'order-2 lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 lg:left-1/2 lg:-translate-x-full'
