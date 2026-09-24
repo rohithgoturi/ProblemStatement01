@@ -252,3 +252,9 @@
   }
 }
 
+/* Responsive Dynamic Viewport Height Utility */
+.min-h-dvh {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+

@@ -89,14 +89,14 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans antialiased text-[#0B1320] bg-technical-grid relative">
+    <div className="min-h-screen min-h-dvh bg-[#FAF8F5] flex flex-col justify-start sm:justify-center items-center py-6 px-3 sm:px-6 lg:px-8 font-sans antialiased text-[#0B1320] bg-technical-grid relative overflow-x-hidden">
       {/* Background Soft Glow */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#FF5500]/[0.05] rounded-full blur-3xl"
       />
 
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-[#E8E1D5] p-6 sm:p-8 relative z-10">
+      <div className="w-full max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-[#E8E1D5] p-5 sm:p-8 relative z-10 my-auto">
         {/* Header Logo */}
         <div className="flex items-center justify-between mb-8 pb-5 border-b border-[#E8E1D5]">
           <Logo size="md" variant="default" to="/" />

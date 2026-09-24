@@ -114,6 +114,9 @@ export default {
         '72':   '18rem',
         '80':   '20rem',
       },
+      minHeight: {
+        'dvh': '100dvh',
+      },
       transitionDuration: {
         '150': '150ms',
         '200': '200ms',

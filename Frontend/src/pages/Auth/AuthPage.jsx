@@ -22,7 +22,6 @@ import {
   MdCheckCircle,
   MdClose,
   MdArrowForward,
-  MdCheck,
   MdHelpOutline,
 } from 'react-icons/md';
 import { Logo } from '../../components/shared/Logo';
@@ -231,7 +230,7 @@ export default function AuthPage({ initialMode }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-3 sm:p-6 lg:p-8 font-sans antialiased text-[#0B1320] bg-technical-grid relative overflow-x-hidden selection:bg-[#FF5500] selection:text-white">
+    <div className="min-h-screen min-h-dvh bg-[#FAF8F5] flex flex-col justify-start sm:justify-center items-center py-4 sm:py-8 px-3 sm:px-6 lg:px-8 font-sans antialiased text-[#0B1320] bg-technical-grid relative overflow-x-hidden selection:bg-[#FF5500] selection:text-white">
       {/* Background Soft Glow */}
       <div
         aria-hidden="true"
@@ -239,14 +238,14 @@ export default function AuthPage({ initialMode }) {
       />
 
       {/* Main Authentication Split-Screen Card */}
-      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl border border-[#E8E1D5] overflow-hidden min-h-[660px] lg:min-h-[720px] relative z-10 flex flex-col lg:block">
+      <div className="w-full max-w-5xl bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-[#E8E1D5] overflow-hidden min-h-0 lg:min-h-[720px] relative z-10 flex flex-col lg:block my-auto">
         
         {/* ========================================================================= */}
         {/* PANEL 1: IMAGE PANEL (Slides between LEFT and RIGHT on Desktop)          */}
         {/* SIGNUP: Left (0%) | LOGIN: Right (100%)                                  */}
         {/* ========================================================================= */}
         <div
-          className={`w-full lg:w-1/2 h-64 sm:h-80 lg:h-full lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 bg-[#0B1320] text-white z-20 overflow-hidden flex flex-col justify-between transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          className={`w-full lg:w-1/2 h-44 sm:h-60 lg:h-full lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 bg-[#0B1320] text-white z-20 overflow-hidden flex flex-col justify-between transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
             isSignup
               ? 'order-1 lg:translate-x-0'
               : 'order-1 lg:translate-x-full'
@@ -283,57 +282,57 @@ export default function AuthPage({ initialMode }) {
           </div>
 
           {/* Top Brand & Home Bar */}
-          <div className="relative z-20 p-5 sm:p-8 flex items-center justify-between">
+          <div className="relative z-20 p-3.5 sm:p-6 lg:p-8 flex items-center justify-between">
             <Logo size="md" variant="white" to="/" />
             <Link
               to="/"
-              className="text-xs font-semibold text-stone-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-full border border-white/10 backdrop-blur-xs"
+              className="text-xs font-semibold text-stone-300 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-white/10 backdrop-blur-xs"
             >
               Back to Home
             </Link>
           </div>
 
           {/* Center Brand Editorial Typography — Concise & High Contrast */}
-          <div className="relative z-20 px-6 sm:px-10 my-auto py-6">
+          <div className="relative z-20 px-4 sm:px-8 lg:px-10 my-auto py-2 sm:py-4 lg:py-6">
             {isSignup ? (
               /* SIGNUP: Concise Editorial Message */
-              <div className="space-y-3 animate-in fade-in duration-500 max-w-sm">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-md">
+              <div className="space-y-1 sm:space-y-3 animate-in fade-in duration-500 max-w-sm">
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-black/40 border border-white/20 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500] animate-pulse" />
                   <span>PRAGATIPATH</span>
                 </div>
 
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.08] text-white drop-shadow-sm">
+                <h2 className="text-xl sm:text-3xl lg:text-5xl font-black tracking-tight leading-tight lg:leading-[1.08] text-white drop-shadow-sm">
                   Build progress <br />
                   <span className="text-[#FF5500]">with clarity.</span>
                 </h2>
 
-                <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed font-medium">
+                <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed font-medium line-clamp-1 sm:line-clamp-none">
                   Connect field updates with project schedules.
                 </p>
               </div>
             ) : (
               /* LOGIN: Concise Editorial Message */
-              <div className="space-y-3 animate-in fade-in duration-500 max-w-sm">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 border border-white/20 text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-md">
+              <div className="space-y-1 sm:space-y-3 animate-in fade-in duration-500 max-w-sm">
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-black/40 border border-white/20 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#FF5500] backdrop-blur-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500] animate-pulse" />
                   <span>PRAGATIPATH</span>
                 </div>
 
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.08] text-white drop-shadow-sm">
+                <h2 className="text-xl sm:text-3xl lg:text-5xl font-black tracking-tight leading-tight lg:leading-[1.08] text-white drop-shadow-sm">
                   Welcome <br />
                   <span className="text-[#FF5500]">back.</span>
                 </h2>
 
-                <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed font-medium">
+                <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed font-medium line-clamp-1 sm:line-clamp-none">
                   Continue tracking project progress with clarity.
                 </p>
               </div>
             )}
           </div>
 
-          {/* Bottom Footnote Bar */}
-          <div className="relative z-20 p-5 sm:p-8 pt-3 border-t border-white/15 flex items-center justify-between text-[11px] text-stone-400">
+          {/* Bottom Footnote Bar (hidden on small mobile to give priority to the form) */}
+          <div className="relative z-20 hidden sm:flex lg:flex p-5 sm:p-8 pt-3 border-t border-white/15 items-center justify-between text-[11px] text-stone-400">
             <span>Team OG Developers &bull; PragatiPath</span>
             <span className="font-mono text-stone-400">Planning-to-Execution Bridge</span>
           </div>
@@ -344,7 +343,7 @@ export default function AuthPage({ initialMode }) {
         {/* SIGNUP: Right (0%) | LOGIN: Left (-100%)                                 */}
         {/* ========================================================================= */}
         <div
-          className={`w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-between bg-white z-10 transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          className={`w-full lg:w-1/2 p-4 sm:p-8 lg:p-12 flex flex-col justify-between bg-white z-10 transition-transform duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
             isSignup
               ? 'order-2 lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 lg:left-1/2 lg:translate-x-0'
               : 'order-2 lg:absolute lg:inset-y-0 lg:top-0 lg:bottom-0 lg:left-1/2 lg:-translate-x-full'
@@ -438,7 +437,7 @@ export default function AuthPage({ initialMode }) {
                   <label className="block text-xs font-bold text-[#0B1320] mb-1.5">
                     Project Role
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
                     {roles.map((r) => {
                       const isSelected = signupData.role === r.id;
                       return (
@@ -446,7 +445,7 @@ export default function AuthPage({ initialMode }) {
                           key={r.id}
                           type="button"
                           onClick={() => setSignupData((p) => ({ ...p, role: r.id }))}
-                          className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                          className={`flex items-center justify-center gap-1 sm:gap-1.5 py-1.5 sm:py-2 px-1.5 sm:px-2 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
                             isSelected
                               ? 'bg-[#0B1320] text-white border-[#0B1320] shadow-xs'
                               : 'bg-[#FAF8F5] text-stone-600 border-[#E8E1D5] hover:bg-stone-50 hover:text-[#0B1320]'
@@ -578,7 +577,7 @@ export default function AuthPage({ initialMode }) {
                   </span>
                   <span className="text-[10px] text-stone-400">Select workspace role</span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
                   {roles.map((r) => {
                     const isSelected = loginRole === r.id;
                     return (
@@ -586,7 +585,7 @@ export default function AuthPage({ initialMode }) {
                         key={r.id}
                         type="button"
                         onClick={() => handleRoleQuickSelect(r.id)}
-                        className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                        className={`flex items-center justify-center gap-1 sm:gap-1.5 py-1.5 px-1.5 sm:px-2 rounded-xl border text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
                           isSelected
                             ? 'bg-[#0B1320] text-white border-[#0B1320] shadow-xs'
                             : 'bg-[#FAF8F5] text-stone-600 border-[#E8E1D5] hover:bg-stone-50 hover:text-[#0B1320]'
@@ -685,7 +684,7 @@ export default function AuthPage({ initialMode }) {
           )}
 
           {/* Bottom Switcher Navigation Strip */}
-          <div className="mt-6 pt-4 border-t border-[#E8E1D5]/80 flex flex-col sm:flex-row items-center justify-between text-xs text-[#64748B] gap-2">
+          <div className="mt-5 sm:mt-6 pt-3 sm:pt-4 border-t border-[#E8E1D5]/80 flex flex-col sm:flex-row items-center justify-between text-xs text-[#64748B] gap-2">
             {isSignup ? (
               <span>
                 Already have an account?{' '}
@@ -724,8 +723,8 @@ export default function AuthPage({ initialMode }) {
       {/* REAL FORGOT PASSWORD MODAL (Connected to Backend Token Dispatcher)       */}
       {/* ========================================================================= */}
       {showForgotModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl border border-[#E8E1D5] shadow-2xl p-6 sm:p-8 max-w-md w-full relative">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E8E1D5] shadow-2xl p-5 sm:p-8 max-w-md w-full relative my-auto max-h-[90vh] overflow-y-auto">
             <button
               type="button"
               onClick={() => {
